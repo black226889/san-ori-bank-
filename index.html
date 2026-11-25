@@ -151,6 +151,11 @@
       padding: 32px 26px;
       position: relative;
       overflow: hidden;
+      transition: max-width 0.2s ease;
+    }
+
+    .auth-box.wide {
+      max-width: 920px;
     }
 
     .auth-badge {
@@ -214,6 +219,124 @@
       border-top: 1px solid var(--border-soft);
       display: flex;
       justify-content: center;
+    }
+
+    .admin-layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    .admin-subcard {
+      background: rgba(9, 11, 15, 0.72);
+      border: 1px solid var(--border-soft);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .admin-subcard-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--gold-bright);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .accounts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 290px;
+      overflow-y: auto;
+    }
+
+    .account-row {
+      background: rgba(18, 20, 26, 0.9);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .account-row:hover, .account-row.active {
+      border-color: var(--gold);
+      background: rgba(212, 175, 55, 0.08);
+    }
+
+    .account-name {
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .account-meta {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .account-bal {
+      font-weight: 900;
+      color: var(--gold-bright);
+      font-size: 0.88rem;
+      white-space: nowrap;
+    }
+
+    .inspector-box {
+      margin-top: 18px;
+      background: rgba(9, 11, 15, 0.82);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .inspector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat-pill {
+      background: rgba(18, 20, 26, 0.95);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .stat-pill span {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .stat-pill strong {
+      font-size: 0.92rem;
+      color: var(--text-main);
+    }
+
+    .inv-mini-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .inv-chip {
+      background: var(--gold-dim);
+      border: 1px solid var(--border);
+      color: var(--gold-bright);
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
     }
 
     .topbar {
@@ -554,7 +677,7 @@
 
   <!-- بوابة إنشاء الحساب وتسجيل الدخول (مع ظهور لوحة الأدمن بره) -->
   <section id="authSection" class="auth-wrapper">
-    <div class="auth-box glass">
+    <div id="authBox" class="auth-box glass">
       <div id="externalAuthContainer">
         <div class="auth-badge">SAN ORI ROLEPLAY • SIMULATION BANK</div>
         <h1 class="auth-title">بنك وسوق سان أوري</h1>
@@ -613,31 +736,15 @@
         </form>
       </div>
 
-      <!-- إدارة الأرصدة من الخارج بعد التحقق -->
+      <!-- إدارة الأرصدة ومتابعة الحسابات من الخارج بعد التحقق -->
       <div id="standaloneAdminPanelBox" class="hidden">
         <div class="auth-badge">ADMIN CONTROL • SAN ORI</div>
-        <h2 class="auth-title" style="font-size:1.45rem;">إدارة أرصدة اللاعبين</h2>
-        <p class="auth-sub">تعديل رصيد أي حساب مسجل على المتصفح مباشرة.</p>
-        <form onsubmit="handleAdminAdjust(event, true)">
-          <div class="input-group">
-            <label>اختر الحساب</label>
-            <select id="extAdminUserSelect"></select>
-          </div>
-          <div class="input-group">
-            <label>نوع العملية</label>
-            <select id="extAdminAction">
-              <option value="add">إضافة نقاط (+)</option>
-              <option value="sub">خصم نقاط (-)</option>
-              <option value="set">تعيين رصيد محدد (=)</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label>قيمة النقاط</label>
-            <input id="extAdminAmount" class="input" type="number" min="0" required />
-          </div>
-          <button type="submit" class="btn btn-crimson" style="width:100%; margin-bottom:8px;">تطبيق التعديل</button>
-          <button type="button" class="btn btn-ghost" style="width:100%;" onclick="closeStandaloneAdmin()">خروج من لوحة الأدمن</button>
-        </form>
+        <div class="section-title" style="margin-bottom:6px;">
+          <h2 class="auth-title" style="font-size:1.45rem; margin-bottom:0;">لوحة الأدمن وسجل الحسابات</h2>
+          <button type="button" class="btn btn-ghost" style="padding:7px 12px; font-size:0.82rem;" onclick="closeStandaloneAdmin()">خروج من لوحة الأدمن</button>
+        </div>
+        <p class="auth-sub" style="margin-bottom:12px;">استعرض كل الحسابات المفتوحة في البنك وافتح أي حساب لمعرفة آخر دخول وأدواته وفلوسه وتعديله.</p>
+        <div id="extAdminWorkspace"></div>
       </div>
     </div>
   </section>
@@ -743,8 +850,8 @@
 
     <!-- قسم إدارة الأرصدة (لوحة الأدمن المحمية) -->
     <section id="adminView" class="hidden">
-      <div class="section-card glass" style="max-width: 560px; margin: 0 auto;">
-        <div id="adminLoginBox">
+      <div class="section-card glass" style="max-width: 960px; margin: 0 auto;">
+        <div id="adminLoginBox" style="max-width: 560px; margin: 0 auto;">
           <div class="section-title">
             <span>تسجيل دخول لوحة الأدمن</span>
             <span class="tag">محمي بالاسم وكلمة المرور</span>
@@ -765,32 +872,54 @@
 
         <div id="adminPanelBox" class="hidden">
           <div class="section-title">
-            <span>تعديل رصيد حساب لاعب</span>
+            <span>لوحة الأدمن وسجل الحسابات</span>
             <button type="button" class="btn btn-ghost" style="padding: 6px 12px; font-size: 0.82rem;" onclick="lockAdminPanel()">قفل اللوحة</button>
           </div>
-          <form onsubmit="handleAdminAdjust(event, false)">
-            <div class="input-group">
-              <label>اختر الحساب</label>
-              <select id="adminUserSelect"></select>
-            </div>
-            <div class="input-group">
-              <label>نوع العملية</label>
-              <select id="adminAction">
-                <option value="add">إضافة نقاط (+)</option>
-                <option value="sub">خصم نقاط (-)</option>
-                <option value="set">تعيين رصيد محدد (=)</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label>قيمة النقاط</label>
-              <input id="adminAmount" class="input" type="number" min="0" required />
-            </div>
-            <button type="submit" class="btn btn-crimson" style="width:100%;">تطبيق التعديل</button>
-          </form>
+          <div id="inAppAdminWorkspace"></div>
         </div>
       </div>
     </section>
   </main>
+
+  <!-- قالب مساحة عمل الأدمن الموحّد (يعمل في الخارج وداخل المنصة) -->
+  <template id="adminWorkspaceTemplate">
+    <div class="admin-layout">
+      <div class="admin-subcard">
+        <div class="admin-subcard-title">
+          <span>الحسابات المفتوحة في البنك</span>
+          <span class="account-meta" data-role="accountsCount">0 حساب</span>
+        </div>
+        <div class="accounts-list" data-role="accountsList"></div>
+      </div>
+
+      <div class="admin-subcard">
+        <div class="admin-subcard-title">
+          <span>تعديل رصيد حساب لاعب</span>
+        </div>
+        <form data-role="adjustForm">
+          <div class="input-group">
+            <label>اختر الحساب</label>
+            <select data-role="userSelect"></select>
+          </div>
+          <div class="input-group">
+            <label>نوع العملية</label>
+            <select data-role="actionSelect">
+              <option value="add">إضافة نقاط (+)</option>
+              <option value="sub">خصم نقاط (-)</option>
+              <option value="set">تعيين رصيد محدد (=)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>قيمة النقاط</label>
+            <input class="input" type="number" min="0" data-role="amountInput" required />
+          </div>
+          <button type="submit" class="btn btn-crimson" style="width:100%;">تطبيق التعديل</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="inspector-box" data-role="accountInspector"></div>
+  </template>
 
   <footer class="footer-note">
     تنويه: هذا الموقع نظام محاكاة وبنك نقاط وهمي مخصص لأغراض الرول بلاي (San Ori) لشراء المعدات والأسلحة الخفيفة المسموحة فقط، ولا يرتبط بأي معاملات مالية حقيقية.
@@ -818,6 +947,7 @@
 
     let adminUnlocked = false;
     let standaloneAdminMode = 'none'; // 'none' | 'login' | 'panel'
+    let inspectedUsername = null;
 
     // قائمة الأسلحة الخفيفة والمعدات المسموحة في سان أوري (بدون قلاع أو دروع أو MP5 أو P90)
     const SHOP_ITEMS = [
@@ -895,20 +1025,169 @@
       return Math.max(0, DAILY_COOLDOWN_MS - elapsed);
     }
 
-    function populateAdminSelects() {
-      const optionsHtml = state.users.length
-        ? state.users
-            .map(u => `<option value="${u.username}">${u.username} (${u.iban}) — ${u.balance.toLocaleString()} PTS</option>`)
-            .join('')
-        : `<option value="">لا توجد حسابات مسجلة بعد</option>`;
+    function selectInspectedAccount(username) {
+      inspectedUsername = username || null;
+      renderAdminWorkspaces();
+    }
 
-      const adminSelect = document.getElementById('adminUserSelect');
-      const extAdminSelect = document.getElementById('extAdminUserSelect');
-      if (adminSelect) adminSelect.innerHTML = optionsHtml;
-      if (extAdminSelect) extAdminSelect.innerHTML = optionsHtml;
+    function mountAdminWorkspace(targetContainerId) {
+      const container = document.getElementById(targetContainerId);
+      const tpl = document.getElementById('adminWorkspaceTemplate');
+      if (!container || !tpl) return;
+
+      container.innerHTML = '';
+      const clone = tpl.content.cloneNode(true);
+
+      const countEl = clone.querySelector('[data-role="accountsCount"]');
+      const listEl = clone.querySelector('[data-role="accountsList"]');
+      const selectEl = clone.querySelector('[data-role="userSelect"]');
+      const actionEl = clone.querySelector('[data-role="actionSelect"]');
+      const amountEl = clone.querySelector('[data-role="amountInput"]');
+      const formEl = clone.querySelector('[data-role="adjustForm"]');
+      const inspectorEl = clone.querySelector('[data-role="accountInspector"]');
+
+      countEl.textContent = `${state.users.length} حساب`;
+
+      if (!state.users.length) {
+        listEl.innerHTML = `<div class="account-meta">لا توجد حسابات مسجلة في البنك حتى الآن.</div>`;
+        selectEl.innerHTML = `<option value="">لا توجد حسابات مسجلة بعد</option>`;
+        inspectorEl.innerHTML = `<div class="account-meta">لا توجد بيانات حساب لعرضها حالياً.</div>`;
+      } else {
+        if (!inspectedUsername || !state.users.some(u => u.username === inspectedUsername)) {
+          inspectedUsername = state.users[0].username;
+        }
+
+        selectEl.innerHTML = state.users
+          .map(u => `<option value="${u.username}">${u.username} (${u.iban}) — ${Number(u.balance || 0).toLocaleString()} PTS</option>`)
+          .join('');
+        selectEl.value = inspectedUsername;
+
+        selectEl.addEventListener('change', (e) => {
+          inspectedUsername = e.target.value;
+          renderAdminWorkspaces();
+        });
+
+        listEl.innerHTML = state.users.map(u => {
+          const isSelected = u.username === inspectedUsername;
+          const lastLoginText = u.lastLoginAt || 'غير مسجل بعد';
+          const itemsCount = Array.isArray(u.inventory) ? u.inventory.length : 0;
+          return `
+            <div class="account-row ${isSelected ? 'active' : ''}" onclick="selectInspectedAccount('${u.username.replace(/'/g, "\\'")}')">
+              <div>
+                <div class="account-name">${u.username} <span class="account-meta">(${u.iban})</span></div>
+                <div class="account-meta">آخر دخول: ${lastLoginText} • الأدوات: ${itemsCount}</div>
+              </div>
+              <div class="account-bal">${Number(u.balance || 0).toLocaleString()} PTS</div>
+            </div>
+          `;
+        }).join('');
+
+        const selectedUser = state.users.find(u => u.username === inspectedUsername) || state.users[0];
+        const userInv = Array.isArray(selectedUser.inventory) ? selectedUser.inventory : [];
+        const userTx = Array.isArray(selectedUser.transactions) ? selectedUser.transactions : [];
+
+        const invHtml = userInv.length
+          ? userInv.map(entry => `<span class="inv-chip">${entry.name} (${entry.boughtAt || 'مقتنى'})</span>`).join('')
+          : `<span class="account-meta">لا توجد أدوات أو معدات في حقيبة هذا الحساب حالياً.</span>`;
+
+        const txHtml = userTx.length
+          ? userTx.slice(0, 6).map(tx => `
+              <div class="tx-item">
+                <div>
+                  <div class="tx-title">${tx.title}</div>
+                  <div class="tx-sub">${tx.meta} • ${tx.date}</div>
+                </div>
+                <div class="${tx.type === 'in' ? 'tx-plus' : 'tx-minus'}">
+                  ${tx.type === 'in' ? '+' : '-'}${Number(tx.amount).toLocaleString()} PTS
+                </div>
+              </div>
+            `).join('')
+          : `<div class="account-meta">لا توجد عمليات مسجلة لهذا الحساب.</div>`;
+
+        inspectorEl.innerHTML = `
+          <div class="section-title" style="margin-bottom:10px;">
+            <span>تفاصيل الحساب المفتوح: ${selectedUser.username}</span>
+            <span class="account-bal">${Number(selectedUser.balance || 0).toLocaleString()} PTS</span>
+          </div>
+          <div class="inspector-grid">
+            <div class="stat-pill">
+              <span>رقم الحساب (IBAN)</span>
+              <strong>${selectedUser.iban}</strong>
+            </div>
+            <div class="stat-pill">
+              <span>الرصيد الحالي (الفلوس)</span>
+              <strong>${Number(selectedUser.balance || 0).toLocaleString()} PTS</strong>
+            </div>
+            <div class="stat-pill">
+              <span>آخر تسجيل دخول</span>
+              <strong>${selectedUser.lastLoginAt || 'غير مسجل بعد'}</strong>
+            </div>
+            <div class="stat-pill">
+              <span>تاريخ فتح الحساب</span>
+              <strong>${selectedUser.createdAt || 'غير مسجل'}</strong>
+            </div>
+          </div>
+          <div style="margin-bottom:6px; font-size:0.86rem; font-weight:700; color:var(--gold-bright);">الأدوات والمعدات الموجودة معاه (${userInv.length}):</div>
+          <div class="inv-mini-list">${invHtml}</div>
+          <div style="margin-bottom:8px; font-size:0.86rem; font-weight:700; color:var(--gold-bright);">آخر العمليات المالية:</div>
+          <div class="tx-list" style="max-height:200px;">${txHtml}</div>
+        `;
+      }
+
+      formEl.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!adminUnlocked) {
+          showToast('يجب تسجيل دخول الأدمن أولاً.');
+          renderAdminGate();
+          return;
+        }
+
+        const targetName = selectEl.value;
+        const action = actionEl.value;
+        const amount = Number(amountEl.value);
+
+        const target = state.users.find(u => u.username === targetName);
+        if (!target) {
+          showToast('لا يوجد حساب محدد لتعديل رصيده.');
+          return;
+        }
+        if (!Number.isFinite(amount) || amount < 0) return;
+
+        const before = target.balance;
+        if (action === 'add') target.balance += amount;
+        if (action === 'sub') target.balance = Math.max(0, target.balance - amount);
+        if (action === 'set') target.balance = amount;
+
+        const diff = target.balance - before;
+        if (diff !== 0) {
+          target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
+          target.transactions.unshift({
+            id: Date.now(),
+            type: diff >= 0 ? 'in' : 'out',
+            title: 'تعديل رصيد من الإدارة',
+            meta: `الرصيد الجديد: ${target.balance.toLocaleString()} PTS`,
+            amount: Math.abs(diff),
+            date: new Date().toLocaleString('ar-EG')
+          });
+        }
+
+        inspectedUsername = target.username;
+        saveState(state);
+        amountEl.value = '';
+        showToast('تم تحديث رصيد ' + target.username);
+        renderApp();
+      });
+
+      container.appendChild(clone);
+    }
+
+    function renderAdminWorkspaces() {
+      mountAdminWorkspace('extAdminWorkspace');
+      mountAdminWorkspace('inAppAdminWorkspace');
     }
 
     function renderStandaloneAdmin() {
+      const authBoxCard = document.getElementById('authBox');
       const authBox = document.getElementById('externalAuthContainer');
       const loginBox = document.getElementById('standaloneAdminLoginBox');
       const panelBox = document.getElementById('standaloneAdminPanelBox');
@@ -917,11 +1196,16 @@
       authBox.classList.toggle('hidden', standaloneAdminMode !== 'none');
       loginBox.classList.toggle('hidden', standaloneAdminMode !== 'login');
       panelBox.classList.toggle('hidden', standaloneAdminMode !== 'panel');
+      if (authBoxCard) {
+        authBoxCard.classList.toggle('wide', standaloneAdminMode === 'panel');
+      }
+      if (standaloneAdminMode === 'panel') {
+        renderAdminWorkspaces();
+      }
     }
 
     function openStandaloneAdminLogin() {
       standaloneAdminMode = adminUnlocked ? 'panel' : 'login';
-      populateAdminSelects();
       renderStandaloneAdmin();
     }
 
@@ -939,7 +1223,6 @@
         adminUnlocked = true;
         standaloneAdminMode = 'panel';
         e.target.reset();
-        populateAdminSelects();
         renderStandaloneAdmin();
         showToast('تم فتح لوحة الأدمن بنجاح.');
       } else {
@@ -953,6 +1236,9 @@
       if (!loginBox || !panelBox) return;
       loginBox.classList.toggle('hidden', adminUnlocked);
       panelBox.classList.toggle('hidden', !adminUnlocked);
+      if (adminUnlocked) {
+        renderAdminWorkspaces();
+      }
     }
 
     function handleAdminLogin(e) {
@@ -999,11 +1285,14 @@
         return;
       }
 
+      const timestampNow = new Date().toLocaleString('ar-EG');
       const newUser = {
         username,
         password,
         iban: generateIban(),
         balance: INITIAL_BALANCE,
+        createdAt: timestampNow,
+        lastLoginAt: timestampNow,
         inventory: [],
         lastHandcuffBoughtAt: null,
         transactions: [
@@ -1013,13 +1302,14 @@
             title: 'رصيد افتتاحي للحساب الجديد',
             meta: 'منحة بداية السيرفر',
             amount: INITIAL_BALANCE,
-            date: new Date().toLocaleString('ar-EG')
+            date: timestampNow
           }
         ]
       };
 
       state.users.push(newUser);
       state.sessionUser = newUser.username;
+      inspectedUsername = newUser.username;
       standaloneAdminMode = 'none';
       saveState(state);
       e.target.reset();
@@ -1041,7 +1331,13 @@
         return;
       }
 
+      user.lastLoginAt = new Date().toLocaleString('ar-EG');
+      if (!user.createdAt) {
+        user.createdAt = user.lastLoginAt;
+      }
+
       state.sessionUser = user.username;
+      inspectedUsername = user.username;
       standaloneAdminMode = 'none';
       saveState(state);
       e.target.reset();
@@ -1182,54 +1478,10 @@
       renderApp();
     }
 
-    function handleAdminAdjust(e, isStandalone = false) {
-      e.preventDefault();
-      if (!adminUnlocked) {
-        showToast('يجب تسجيل دخول الأدمن أولاً.');
-        renderAdminGate();
-        return;
-      }
-
-      const targetName = document.getElementById(isStandalone ? 'extAdminUserSelect' : 'adminUserSelect').value;
-      const action = document.getElementById(isStandalone ? 'extAdminAction' : 'adminAction').value;
-      const amount = Number(document.getElementById(isStandalone ? 'extAdminAmount' : 'adminAmount').value);
-
-      const target = state.users.find(u => u.username === targetName);
-      if (!target) {
-        showToast('لا يوجد حساب محدد لتعديل رصيده.');
-        return;
-      }
-      if (!Number.isFinite(amount) || amount < 0) return;
-
-      const before = target.balance;
-      if (action === 'add') target.balance += amount;
-      if (action === 'sub') target.balance = Math.max(0, target.balance - amount);
-      if (action === 'set') target.balance = amount;
-
-      const diff = target.balance - before;
-      if (diff !== 0) {
-        target.transactions.unshift({
-          id: Date.now(),
-          type: diff >= 0 ? 'in' : 'out',
-          title: 'تعديل رصيد من الإدارة',
-          meta: `الرصيد الجديد: ${target.balance.toLocaleString()} PTS`,
-          amount: Math.abs(diff),
-          date: new Date().toLocaleString('ar-EG')
-        });
-      }
-
-      saveState(state);
-      e.target.reset();
-      showToast('تم تحديث رصيد ' + target.username);
-      renderApp();
-    }
-
     function renderApp() {
       const user = getCurrentUser();
       const authSec = document.getElementById('authSection');
       const appSec = document.getElementById('appSection');
-
-      populateAdminSelects();
 
       if (!user) {
         authSec.classList.remove('hidden');
