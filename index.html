@@ -1308,21 +1308,39 @@
 
     document.getElementById('transferForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const sender = getCurrentUser();
-      if (!sender) return;
+      const currentSession = getCurrentUser();
+      if (!currentSession) return;
+
       const prefix = document.getElementById('transferBankPrefix').value;
       const targetIban = normalizeTransferTarget(prefix, document.getElementById('targetIban').value);
       const amount = Number(document.getElementById('transferAmount').value);
       const note = document.getElementById('transferNote').value.trim() || 'تحويل نقاط رول بلاي';
 
-      if (!Number.isFinite(amount) || amount <= 0 || sender.balance < amount) {
+      if (!Number.isFinite(amount) || amount <= 0 || Number(currentSession.balance || 0) < amount) {
         toast('رصيدك غير كافٍ أو القيمة غير صحيحة.');
         return;
       }
 
-      const rec = state.users.find(u => String(u.iban || '').toUpperCase() === targetIban);
-      if (!rec || rec.username === sender.username) {
-        toast('لم يتم العثور على حساب بهذا الرقم.');
+      if (String(currentSession.iban || '').toUpperCase() === targetIban) {
+        toast('لا يمكنك التحويل إلى رقم حسابك نفسه.');
+        return;
+      }
+
+      const remoteUsers = await cloudGetUsers();
+      if (cloudConnected) {
+        state.users = mergeUsers(state.users, remoteUsers);
+      }
+
+      const sender = state.users.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
+      const rec = state.users.find(u => String(u.iban || '').trim().toUpperCase() === targetIban);
+
+      if (!sender) {
+        toast('تعذر العثور على حساب المرسل.');
+        return;
+      }
+
+      if (!rec) {
+        toast('الرقم غير صحيح أو الحساب غير مسجل بعد.');
         return;
       }
 
@@ -1332,14 +1350,29 @@
       sender.transactions = Array.isArray(sender.transactions) ? sender.transactions : [];
       rec.transactions = Array.isArray(rec.transactions) ? rec.transactions : [];
 
-      sender.transactions.unshift({ id: Date.now() + 1, type: 'out', title: `تحويل إلى ${rec.username} (${rec.iban})`, meta: note, amount, date: now });
-      rec.transactions.unshift({ id: Date.now() + 2, type: 'in', title: `استلام من ${sender.username} (${sender.iban})`, meta: note, amount, date: now });
+      sender.transactions.unshift({
+        id: Date.now() + 1,
+        type: 'out',
+        title: `تحويل إلى ${rec.username} (${rec.iban})`,
+        meta: note,
+        amount,
+        date: now
+      });
+
+      rec.transactions.unshift({
+        id: Date.now() + 2,
+        type: 'in',
+        title: `استلام من ${sender.username} (${sender.iban})`,
+        meta: note,
+        amount,
+        date: now
+      });
 
       saveLocal();
       e.target.reset();
       document.getElementById('transferBankPrefix').value = 'SO';
       render();
-      toast(`تم تحويل ${amount.toLocaleString()} نقطة بنجاح.`);
+      toast(`تم تحويل ${amount.toLocaleString()} نقطة إلى ${rec.username} بنجاح.`);
       await cloudSaveUsers(state.users);
     });
 
