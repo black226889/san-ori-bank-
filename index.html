@@ -764,6 +764,14 @@
       return typeof FIREBASE_DB_URL === 'string' && FIREBASE_DB_URL.startsWith('https://');
     }
 
+    function cleanIbanKey(val) {
+      return String(val || '')
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, '')
+        .replace(/[–—−]/g, '-');
+    }
+
     function loadLocal() {
       try {
         const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
@@ -790,32 +798,11 @@
       return arr.filter(u => u && typeof u === 'object' && u.username);
     }
 
-    function mergeUsers(localUsers, remoteUsers) {
-      const map = new Map();
-      for (const u of remoteUsers) {
-        map.set(String(u.username).toLowerCase(), { ...u });
-      }
-      for (const u of localUsers) {
-        const key = String(u.username).toLowerCase();
-        if (!map.has(key)) {
-          map.set(key, { ...u });
-        } else {
-          const rem = map.get(key);
-          const locTx = Array.isArray(u.transactions) ? u.transactions.length : 0;
-          const remTx = Array.isArray(rem.transactions) ? rem.transactions.length : 0;
-          if (locTx > remTx) {
-            map.set(key, { ...rem, ...u });
-          }
-        }
-      }
-      return Array.from(map.values());
-    }
-
     async function cloudGetUsers() {
       if (!hasCloudDb()) return state.users;
       try {
         const baseUrl = FIREBASE_DB_URL.replace(/\/+$/, '');
-        const res = await fetch(`${baseUrl}/san_ori_bank/users.json`);
+        const res = await fetch(`${baseUrl}/san_ori_bank/users.json?t=${Date.now()}`);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         cloudConnected = true;
@@ -850,7 +837,7 @@
       if (!hasCloudDb()) return;
       const remoteUsers = await cloudGetUsers();
       if (cloudConnected) {
-        state.users = mergeUsers(state.users, remoteUsers);
+        state.users = remoteUsers;
         saveLocal();
         render();
       }
@@ -875,16 +862,17 @@
       let iban;
       do {
         iban = 'SO-' + Math.floor(1000 + Math.random() * 9000);
-      } while (usersList.some(u => String(u.iban || '').toUpperCase() === iban));
+      } while (usersList.some(u => cleanIbanKey(u.iban) === iban));
       return iban;
     }
 
     function normalizeTransferTarget(prefixRaw, targetRaw) {
-      const cleanTarget = String(targetRaw || '').trim().toUpperCase();
+      const raw = cleanIbanKey(targetRaw);
       const cleanPrefix = String(prefixRaw || 'SO').trim().toUpperCase().replace(/[^A-Z0-9\u0600-\u06FF]/g, '') || 'SO';
-      if (cleanTarget.includes('-')) return cleanTarget;
-      if (/^\d+$/.test(cleanTarget)) return `${cleanPrefix}-${cleanTarget}`;
-      return cleanTarget;
+      if (!raw) return '';
+      if (raw.includes('-')) return raw;
+      if (/^\d+$/.test(raw)) return `${cleanPrefix}-${raw}`;
+      return raw;
     }
 
     function getCurrentUser() {
@@ -1010,7 +998,9 @@
           const val = Number(adjForm.querySelector('.adjAmount').value);
           if (!Number.isFinite(val) || val < 0) return;
 
-          const target = state.users.find(u => u.username === uName);
+          const latest = await cloudGetUsers();
+          const list = cloudConnected ? latest : state.users;
+          const target = list.find(u => u.username === uName);
           if (!target) return;
 
           const before = Number(target.balance || 0);
@@ -1032,9 +1022,8 @@
           }
 
           inspectedUser = target.username;
-          saveLocal();
+          await cloudSaveUsers(list);
           render();
-          await cloudSaveUsers(state.users);
           toast('تم تحديث رصيد ' + target.username);
         });
       }
@@ -1174,13 +1163,16 @@
       const password = document.getElementById('regPassword').value;
       if (!username || !password) return;
 
-      if (state.users.some(u => String(u.username || '').toLowerCase() === username.toLowerCase())) {
+      const latest = await cloudGetUsers();
+      const baseList = cloudConnected ? latest : state.users;
+
+      if (baseList.some(u => String(u.username || '').toLowerCase() === username.toLowerCase())) {
         toast('اسم اللاعب مستخدم بالفعل، اختر اسماً آخر.');
         return;
       }
 
       const now = new Date().toLocaleString('ar-EG');
-      const iban = makeIban(state.users);
+      const iban = makeIban(baseList);
       const newUser = {
         username,
         password,
@@ -1193,14 +1185,13 @@
         transactions: [{ id: Date.now(), type: 'in', title: 'رصيد افتتاحي للحساب الجديد', meta: 'منحة بداية السيرفر', amount: INITIAL_BALANCE, date: now }]
       };
 
-      state.users.push(newUser);
+      baseList.push(newUser);
       state.sessionUser = username;
       inspectedUser = username;
-      saveLocal();
+      await cloudSaveUsers(baseList);
       e.target.reset();
       render();
       toast('تم إنشاء حسابك برصيد 1,000 نقطة!');
-      await cloudSaveUsers(state.users);
     });
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -1208,7 +1199,10 @@
       const username = document.getElementById('loginUsername').value.trim();
       const password = document.getElementById('loginPassword').value;
 
-      const user = state.users.find(
+      const latest = await cloudGetUsers();
+      const baseList = cloudConnected ? latest : state.users;
+
+      const user = baseList.find(
         u => String(u.username || '').toLowerCase() === username.toLowerCase() && u.password === password
       );
 
@@ -1221,11 +1215,10 @@
       if (!user.createdAt) user.createdAt = user.lastLoginAt;
       state.sessionUser = user.username;
       inspectedUser = user.username;
-      saveLocal();
+      await cloudSaveUsers(baseList);
       e.target.reset();
       render();
       toast('أهلاً بك مجدداً يا ' + user.username);
-      await cloudSaveUsers(state.users);
     });
 
     document.getElementById('openAdminBtn').addEventListener('click', async () => {
@@ -1312,7 +1305,9 @@
       if (!currentSession) return;
 
       const prefix = document.getElementById('transferBankPrefix').value;
-      const targetIban = normalizeTransferTarget(prefix, document.getElementById('targetIban').value);
+      const targetInputRaw = document.getElementById('targetIban').value;
+      const targetIban = normalizeTransferTarget(prefix, targetInputRaw);
+      const targetDigitsOnly = cleanIbanKey(targetInputRaw).replace(/^[A-Z0-9\u0600-\u06FF]+-/, '');
       const amount = Number(document.getElementById('transferAmount').value);
       const note = document.getElementById('transferNote').value.trim() || 'تحويل نقاط رول بلاي';
 
@@ -1321,26 +1316,28 @@
         return;
       }
 
-      if (String(currentSession.iban || '').toUpperCase() === targetIban) {
-        toast('لا يمكنك التحويل إلى رقم حسابك نفسه.');
-        return;
-      }
+      const latest = await cloudGetUsers();
+      const list = cloudConnected ? latest : state.users;
 
-      const remoteUsers = await cloudGetUsers();
-      if (cloudConnected) {
-        state.users = mergeUsers(state.users, remoteUsers);
-      }
-
-      const sender = state.users.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
-      const rec = state.users.find(u => String(u.iban || '').trim().toUpperCase() === targetIban);
-
+      const sender = list.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
       if (!sender) {
         toast('تعذر العثور على حساب المرسل.');
         return;
       }
 
+      const rec = list.find(u => {
+        const uIban = cleanIbanKey(u.iban);
+        const uDigits = uIban.replace(/^[A-Z0-9\u0600-\u06FF]+-/, '');
+        return uIban === targetIban || uIban === cleanIbanKey(targetInputRaw) || (targetDigitsOnly && uDigits === targetDigitsOnly);
+      });
+
       if (!rec) {
         toast('الرقم غير صحيح أو الحساب غير مسجل بعد.');
+        return;
+      }
+
+      if (String(rec.username).toLowerCase() === String(sender.username).toLowerCase()) {
+        toast('لا يمكنك التحويل إلى رقم حسابك نفسه.');
         return;
       }
 
@@ -1368,12 +1365,11 @@
         date: now
       });
 
-      saveLocal();
+      await cloudSaveUsers(list);
       e.target.reset();
       document.getElementById('transferBankPrefix').value = 'SO';
       render();
       toast(`تم تحويل ${amount.toLocaleString()} نقطة إلى ${rec.username} بنجاح.`);
-      await cloudSaveUsers(state.users);
     });
 
     setInterval(async () => {
