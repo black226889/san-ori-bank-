@@ -141,7 +141,7 @@
     }
 
     .auth-box.wide {
-      max-width: 900px;
+      max-width: 920px;
     }
 
     .auth-badge {
@@ -228,7 +228,7 @@
       display: grid;
       place-items: center;
       font-weight: 900;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
     }
 
     .brand h1 {
@@ -552,7 +552,7 @@
       <div id="externalAuthContainer">
         <div class="auth-badge">SAN ORI ROLEPLAY • SIMULATION BANK</div>
         <h1 class="auth-title">بنك وسوق سان أوري</h1>
-        <p class="auth-sub">سجّل دخولك أو أنشئ حسابك الجديد برصيد افتتاحي <strong>1,000</strong> نقطة.</p>
+        <p class="auth-sub">سجّل دخولك أو أنشئ حسابك الجديد للبدء برصيد افتتاحي <strong>1,000</strong> نقطة داخل الرول بلاي.</p>
 
         <div class="auth-tabs">
           <button type="button" id="tabLogin" class="auth-tab active">تسجيل الدخول</button>
@@ -561,15 +561,11 @@
 
         <form id="loginForm">
           <div class="input-group">
-            <label>اسم اللاعب أو رقم الحساب</label>
-            <input id="loginUsername" class="input" type="text" placeholder="مثال: SO-5149 أو اسمك" required />
+            <label>اسم اللاعب (Username)</label>
+            <input id="loginUsername" class="input" type="text" placeholder="اكتب اسمك اللي سجلت بيه" required />
           </div>
           <div class="input-group">
-            <label>رمز البنك (اختياري — مثال: SO)</label>
-            <input id="loginBankCode" class="input" type="text" placeholder="مثال: SO" />
-          </div>
-          <div class="input-group">
-            <label>كلمة المرور</label>
+            <label>كلمة المرور (Password)</label>
             <input id="loginPassword" class="input" type="password" placeholder="••••••••" required />
           </div>
           <button type="submit" class="btn btn-gold" style="width:100%;">دخول إلى الحساب</button>
@@ -577,16 +573,12 @@
 
         <form id="registerForm" class="hidden">
           <div class="input-group">
-            <label>اسم اللاعب الجديد</label>
-            <input id="regUsername" class="input" type="text" placeholder="اكتب اسمك في الرول بلاي" required />
+            <label>اسم اللاعب الجديد (Username)</label>
+            <input id="regUsername" class="input" type="text" placeholder="اختر اسمك في الرول بلاي" required />
           </div>
           <div class="input-group">
-            <label>رمز البنك / بادئة الحساب (مثال: SO)</label>
-            <input id="regBankCode" class="input" type="text" value="SO" required />
-          </div>
-          <div class="input-group">
-            <label>كلمة المرور</label>
-            <input id="regPassword" class="input" type="password" placeholder="أنشئ كلمة مرور" required />
+            <label>كلمة المرور (Password)</label>
+            <input id="regPassword" class="input" type="password" placeholder="أنشئ كلمة مرور قوية" required />
           </div>
           <button type="submit" class="btn btn-gold" style="width:100%;">إنشاء حساب (رصيد 1,000 نقطة)</button>
         </form>
@@ -602,11 +594,11 @@
         <form id="extAdminLoginForm">
           <div class="input-group">
             <label>اسم الأدمن</label>
-            <input id="extAdminUser" class="input" type="text" placeholder="dr black" required />
+            <input id="extAdminUser" class="input" type="text" placeholder="اكتب اسم الأدمن" required />
           </div>
           <div class="input-group">
             <label>كلمة المرور</label>
-            <input id="extAdminPass" class="input" type="password" placeholder="black" required />
+            <input id="extAdminPass" class="input" type="password" placeholder="أدخل كلمة مرور لوحة الأدمن" required />
           </div>
           <button type="submit" class="btn btn-gold" style="width:100%; margin-bottom:8px;">دخول لوحة الأدمن</button>
           <button type="button" id="extAdminBackBtn" class="btn btn-ghost" style="width:100%;">رجوع</button>
@@ -626,7 +618,7 @@
   <main id="appSection" class="container hidden">
     <header class="topbar glass">
       <div class="brand">
-        <div class="brand-logo" id="brandLogoText">SO</div>
+        <div class="brand-logo">SO</div>
         <div>
           <h1>SAN ORI BANK & MARKET</h1>
           <span id="welcomeUserText">مرحباً بك</span>
@@ -648,10 +640,10 @@
         <div class="black-card">
           <div class="card-top">
             <div class="chip"></div>
-            <div class="card-tier" id="cardTierBadge">SO BLACK CARD</div>
+            <div class="card-tier">SAN ORI BLACK CARD</div>
           </div>
           <div>
-            <div class="balance-label">الرصيد المتاح</div>
+            <div class="balance-label">الرصيد المتاح للشراء والتحويل</div>
             <div id="cardBalance" class="balance-amount">1,000 PTS</div>
           </div>
           <div class="card-bottom">
@@ -673,24 +665,27 @@
           </div>
           <form id="transferForm">
             <div class="input-group">
-              <label>رقم حساب المستلم (IBAN)</label>
-              <input id="targetIban" class="input" type="text" placeholder="مثال: SO-2041" required />
+              <label>رمز البنك / رقم حساب المستلم (مثال: SO-2041 أو SO)</label>
+              <div style="display:grid; grid-template-columns: 110px 1fr; gap:8px;">
+                <input id="transferBankPrefix" class="input" type="text" value="SO" placeholder="SO" />
+                <input id="targetIban" class="input" type="text" placeholder="مثال: SO-2041 أو 2041" required />
+              </div>
             </div>
             <div class="input-group">
-              <label>قيمة النقاط</label>
-              <input id="transferAmount" class="input" type="number" min="1" required />
+              <label>قيمة النقاط المراد تحويلها</label>
+              <input id="transferAmount" class="input" type="number" min="1" placeholder="أدخل المبلغ" required />
             </div>
             <div class="input-group">
-              <label>ملاحظة (اختياري)</label>
+              <label>ملاحظة / سبب التحويل (اختياري)</label>
               <input id="transferNote" class="input" type="text" placeholder="مثال: صفقة معدات خفيفة" />
             </div>
-            <button type="submit" class="btn btn-gold" style="width:100%;">إرسال التحويل</button>
+            <button type="submit" class="btn btn-gold" style="width:100%;">إرسال التحويل الآن</button>
           </form>
         </div>
       </div>
 
       <div class="section-card glass">
-        <div class="section-title"><span>سجل العمليات</span></div>
+        <div class="section-title"><span>سجل العمليات وكشف الحساب</span></div>
         <div id="txList" class="tx-list"></div>
       </div>
     </section>
@@ -713,7 +708,7 @@
     </section>
 
     <section id="adminView" class="hidden">
-      <div class="section-card glass" style="max-width: 900px; margin: 0 auto;">
+      <div class="section-card glass" style="max-width: 920px; margin: 0 auto;">
         <div id="inAppAdminLoginBox">
           <div class="section-title"><span>دخول لوحة الأدمن</span></div>
           <form id="inAppAdminLoginForm">
@@ -789,18 +784,20 @@
       window.__t = setTimeout(() => el.classList.remove('show'), 2600);
     }
 
-    function cleanCode(val) {
-      const c = String(val || '').trim().toUpperCase().replace(/[^A-Z0-9\u0600-\u06FF]/g, '');
-      return c || 'SO';
-    }
-
-    function makeIban(code) {
-      const prefix = cleanCode(code);
+    function makeIban() {
       let iban;
       do {
-        iban = prefix + '-' + Math.floor(1000 + Math.random() * 9000);
+        iban = 'SO-' + Math.floor(1000 + Math.random() * 9000);
       } while (state.users.some(u => String(u.iban || '').toUpperCase() === iban));
       return iban;
+    }
+
+    function normalizeTransferTarget(prefixRaw, targetRaw) {
+      const cleanTarget = String(targetRaw || '').trim().toUpperCase();
+      const cleanPrefix = String(prefixRaw || 'SO').trim().toUpperCase().replace(/[^A-Z0-9\u0600-\u06FF]/g, '') || 'SO';
+      if (cleanTarget.includes('-')) return cleanTarget;
+      if (/^\d+$/.test(cleanTarget)) return `${cleanPrefix}-${cleanTarget}`;
+      return cleanTarget;
     }
 
     function getCurrentUser() {
@@ -972,10 +969,7 @@
       authSec.classList.add('hidden');
       appSec.classList.remove('hidden');
 
-      const code = cleanCode(user.bankCode || (user.iban && user.iban.split('-')[0]) || 'SO');
-      document.getElementById('brandLogoText').textContent = code.slice(0, 3);
-      document.getElementById('cardTierBadge').textContent = `${code} BLACK CARD`;
-      document.getElementById('welcomeUserText').textContent = `${user.username} • رمز البنك: ${code}`;
+      document.getElementById('welcomeUserText').textContent = `الحساب النشط: ${user.username}`;
       document.getElementById('cardHolder').textContent = user.username;
       document.getElementById('cardIban').textContent = user.iban;
       document.getElementById('cardBalance').textContent = `${Number(user.balance || 0).toLocaleString()} PTS`;
@@ -988,7 +982,7 @@
               <div class="${t.type === 'in' ? 'tx-plus' : 'tx-minus'}">${t.type === 'in' ? '+' : '-'}${Number(t.amount).toLocaleString()} PTS</div>
             </div>
           `).join('')
-        : `<div class="tx-sub">لا توجد عمليات بعد.</div>`;
+        : `<div class="tx-sub">لا توجد عمليات مسجلة حتى الآن.</div>`;
 
       const rem = cuffRemaining(user);
       document.getElementById('shopGrid').innerHTML = SHOP_ITEMS.map(item => {
@@ -999,7 +993,7 @@
               <span class="item-cat ${item.dailyLimit ? 'daily' : ''}">${item.cat}</span>
               <div class="item-name">${item.name}</div>
               <div class="item-desc">${item.desc}</div>
-              ${item.dailyLimit ? `<div class="item-limit">${locked ? `متاح بعد: ${formatCooldown(rem)}` : 'مرة واحدة كل 24 ساعة'}</div>` : ''}
+              ${item.dailyLimit ? `<div class="item-limit">${locked ? `متاح مجدداً بعد: ${formatCooldown(rem)}` : 'متاح اليوم (مرة واحدة كل 24 ساعة)'}</div>` : ''}
             </div>
             <div class="item-footer">
               <span class="item-price">${item.price.toLocaleString()} PTS</span>
@@ -1067,20 +1061,18 @@
     document.getElementById('registerForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const username = document.getElementById('regUsername').value.trim();
-      const bankCode = cleanCode(document.getElementById('regBankCode').value);
       const password = document.getElementById('regPassword').value;
       if (!username || !password) return;
 
       if (state.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
-        toast('الاسم مستخدم بالفعل.');
+        toast('اسم اللاعب مستخدم بالفعل، اختر اسماً آخر.');
         return;
       }
 
       const now = new Date().toLocaleString('ar-EG');
-      const iban = makeIban(bankCode);
+      const iban = makeIban();
       state.users.push({
         username,
-        bankCode,
         password,
         iban,
         balance: INITIAL_BALANCE,
@@ -1088,36 +1080,27 @@
         lastLoginAt: now,
         inventory: [],
         lastHandcuffBoughtAt: null,
-        transactions: [{ id: Date.now(), type: 'in', title: 'رصيد افتتاحي', meta: `رمز البنك: ${bankCode} • ${iban}`, amount: INITIAL_BALANCE, date: now }]
+        transactions: [{ id: Date.now(), type: 'in', title: 'رصيد افتتاحي للحساب الجديد', meta: 'منحة بداية السيرفر', amount: INITIAL_BALANCE, date: now }]
       });
       state.sessionUser = username;
       inspectedUser = username;
       saveState();
       e.target.reset();
-      document.getElementById('regBankCode').value = 'SO';
-      toast(`تم إنشاء الحساب (${iban}) برصيد 1,000 نقطة`);
+      toast('تم إنشاء حسابك برصيد 1,000 نقطة!');
       render();
     });
 
     document.getElementById('loginForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const idVal = document.getElementById('loginUsername').value.trim();
-      const codeVal = document.getElementById('loginBankCode').value.trim();
-      const passVal = document.getElementById('loginPassword').value;
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
 
-      const user = state.users.find(u => {
-        if (u.password !== passVal) return false;
-        const okUser = u.username.toLowerCase() === idVal.toLowerCase() || String(u.iban || '').toLowerCase() === idVal.toLowerCase();
-        if (!okUser) return false;
-        if (codeVal) {
-          const c = cleanCode(codeVal);
-          return String(u.iban || '').toUpperCase().startsWith(c + '-') || cleanCode(u.bankCode) === c;
-        }
-        return true;
-      });
+      const user = state.users.find(
+        u => u.username.toLowerCase() === username.toLowerCase() && u.password === password
+      );
 
       if (!user) {
-        toast('بيانات الدخول أو رمز البنك غير صحيحة.');
+        toast('اسم اللاعب أو كلمة المرور غير صحيحة.');
         return;
       }
 
@@ -1127,7 +1110,7 @@
       inspectedUser = user.username;
       saveState();
       e.target.reset();
-      toast('أهلاً بك يا ' + user.username);
+      toast('أهلاً بك مجدداً يا ' + user.username);
       render();
     });
 
@@ -1154,10 +1137,10 @@
         adminUnlocked = true;
         standaloneMode = 'panel';
         e.target.reset();
-        toast('تم فتح لوحة الأدمن');
+        toast('تم فتح لوحة الأدمن بنجاح.');
         render();
       } else {
-        toast('بيانات الأدمن غير صحيحة.');
+        toast('اسم الأدمن أو كلمة المرور غير صحيحة.');
       }
     });
 
@@ -1168,10 +1151,10 @@
       if (u === ADMIN_USER && p === ADMIN_PASS) {
         adminUnlocked = true;
         e.target.reset();
-        toast('تم فتح لوحة الأدمن');
+        toast('تم فتح لوحة الأدمن بنجاح.');
         render();
       } else {
-        toast('بيانات الأدمن غير صحيحة.');
+        toast('اسم الأدمن أو كلمة المرور غير صحيحة.');
       }
     });
 
@@ -1199,7 +1182,7 @@
       const user = getCurrentUser();
       if (user) {
         navigator.clipboard?.writeText(user.iban);
-        toast('تم نسخ ' + user.iban);
+        toast('تم نسخ رقم الحساب: ' + user.iban);
       }
     });
 
@@ -1207,18 +1190,19 @@
       e.preventDefault();
       const user = getCurrentUser();
       if (!user) return;
-      const targetIban = document.getElementById('targetIban').value.trim().toUpperCase();
+      const prefix = document.getElementById('transferBankPrefix').value;
+      const targetIban = normalizeTransferTarget(prefix, document.getElementById('targetIban').value);
       const amount = Number(document.getElementById('transferAmount').value);
-      const note = document.getElementById('transferNote').value.trim() || 'تحويل نقاط';
+      const note = document.getElementById('transferNote').value.trim() || 'تحويل نقاط رول بلاي';
 
       if (!Number.isFinite(amount) || amount <= 0 || user.balance < amount) {
-        toast('تحقق من المبلغ أو الرصيد.');
+        toast('رصيدك غير كافٍ أو القيمة غير صحيحة.');
         return;
       }
 
       const rec = state.users.find(u => String(u.iban || '').toUpperCase() === targetIban);
       if (!rec || rec.username === user.username) {
-        toast('رقم الحساب غير صحيح.');
+        toast('لم يتم العثور على حساب بهذا الرقم.');
         return;
       }
 
@@ -1229,7 +1213,8 @@
       rec.transactions.unshift({ id: Date.now() + 2, type: 'in', title: `استلام من ${user.username} (${user.iban})`, meta: note, amount, date: now });
       saveState();
       e.target.reset();
-      toast('تم التحويل بنجاح');
+      document.getElementById('transferBankPrefix').value = 'SO';
+      toast(`تم تحويل ${amount.toLocaleString()} نقطة بنجاح.`);
       render();
     });
 
