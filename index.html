@@ -690,8 +690,12 @@
 
         <form id="loginForm" onsubmit="handleLogin(event)">
           <div class="input-group">
-            <label>اسم اللاعب (Username)</label>
-            <input id="loginUsername" class="input" type="text" placeholder="اكتب اسمك اللي سجلت بيه" required />
+            <label>اسم اللاعب أو رقم الحساب</label>
+            <input id="loginUsername" class="input" type="text" placeholder="اكتب اسمك أو رقم حسابك (مثال: SO-5149)" required />
+          </div>
+          <div class="input-group">
+            <label>رمز البنك (اختياري — مثال: SO)</label>
+            <input id="loginBankCode" class="input" type="text" placeholder="مثال: SO" autocapitalize="characters" />
           </div>
           <div class="input-group">
             <label>كلمة المرور (Password)</label>
@@ -704,6 +708,10 @@
           <div class="input-group">
             <label>اسم اللاعب الجديد (Username)</label>
             <input id="regUsername" class="input" type="text" placeholder="اختر اسمك في الرول بلاي" required />
+          </div>
+          <div class="input-group">
+            <label>رمز البنك / بادئة الحساب (مثال: SO)</label>
+            <input id="regBankCode" class="input" type="text" value="SO" placeholder="اكتب رمز البنك مثل: SO" autocapitalize="characters" required />
           </div>
           <div class="input-group">
             <label>كلمة المرور (Password)</label>
@@ -753,9 +761,9 @@
   <main id="appSection" class="container hidden">
     <header class="topbar glass">
       <div class="brand">
-        <div class="brand-logo">SO</div>
+        <div class="brand-logo" id="brandLogoText">SO</div>
         <div>
-          <h1>SAN ORI BANK & MARKET</h1>
+          <h1 id="brandHeaderTitle">SAN ORI BANK & MARKET</h1>
           <span id="welcomeUserText">مرحباً بك</span>
         </div>
       </div>
@@ -776,7 +784,7 @@
         <div class="black-card">
           <div class="card-top">
             <div class="chip"></div>
-            <div class="card-tier">SAN ORI BLACK CARD</div>
+            <div class="card-tier" id="cardTierBadge">SAN ORI BLACK CARD</div>
           </div>
 
           <div class="balance-box">
@@ -1003,11 +1011,28 @@
       }, 2800);
     }
 
-    function generateIban() {
+    function sanitizeBankCode(rawCode) {
+      const cleaned = String(rawCode || '')
+        .trim()
+        .toUpperCase()
+        .replace(/[^A-Z0-9\u0600-\u06FF]/g, '');
+      return cleaned || 'SO';
+    }
+
+    function getUserBankCode(user) {
+      if (user && user.bankCode) return sanitizeBankCode(user.bankCode);
+      if (user && user.iban && user.iban.includes('-')) {
+        return sanitizeBankCode(user.iban.split('-')[0]);
+      }
+      return 'SO';
+    }
+
+    function generateIban(bankCodeInput = 'SO') {
+      const prefix = sanitizeBankCode(bankCodeInput);
       let code;
       do {
-        code = 'SO-' + Math.floor(1000 + Math.random() * 9000);
-      } while (state.users.some(u => u.iban === code));
+        code = `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
+      } while (state.users.some(u => String(u.iban || '').toUpperCase() === code));
       return code;
     }
 
@@ -1111,7 +1136,7 @@
           </div>
           <div class="inspector-grid">
             <div class="stat-pill">
-              <span>رقم الحساب (IBAN)</span>
+              <span>رقم الحساب / رمز البنك</span>
               <strong>${selectedUser.iban}</strong>
             </div>
             <div class="stat-pill">
@@ -1277,6 +1302,7 @@
     function handleRegister(e) {
       e.preventDefault();
       const username = document.getElementById('regUsername').value.trim();
+      const bankCode = sanitizeBankCode(document.getElementById('regBankCode').value);
       const password = document.getElementById('regPassword').value;
 
       if (!username || !password) return;
@@ -1286,10 +1312,12 @@
       }
 
       const timestampNow = new Date().toLocaleString('ar-EG');
+      const newIban = generateIban(bankCode);
       const newUser = {
         username,
+        bankCode,
         password,
-        iban: generateIban(),
+        iban: newIban,
         balance: INITIAL_BALANCE,
         createdAt: timestampNow,
         lastLoginAt: timestampNow,
@@ -1300,7 +1328,7 @@
             id: Date.now(),
             type: 'in',
             title: 'رصيد افتتاحي للحساب الجديد',
-            meta: 'منحة بداية السيرفر',
+            meta: `رمز البنك: ${bankCode} • رقم الحساب: ${newIban}`,
             amount: INITIAL_BALANCE,
             date: timestampNow
           }
@@ -1313,21 +1341,34 @@
       standaloneAdminMode = 'none';
       saveState(state);
       e.target.reset();
-      showToast('تم إنشاء حسابك برصيد 1,000 نقطة!');
+      document.getElementById('regBankCode').value = 'SO';
+      showToast(`تم إنشاء حسابك (${newIban}) برصيد 1,000 نقطة!`);
       renderApp();
     }
 
     function handleLogin(e) {
       e.preventDefault();
-      const username = document.getElementById('loginUsername').value.trim();
+      const identifier = document.getElementById('loginUsername').value.trim();
+      const bankCodeInput = document.getElementById('loginBankCode').value.trim();
       const password = document.getElementById('loginPassword').value;
 
-      const user = state.users.find(
-        u => u.username.toLowerCase() === username.toLowerCase() && u.password === password
-      );
+      const user = state.users.find(u => {
+        if (u.password !== password) return false;
+        const matchesUserOrIban =
+          u.username.toLowerCase() === identifier.toLowerCase() ||
+          String(u.iban || '').toLowerCase() === identifier.toLowerCase();
+        if (!matchesUserOrIban) return false;
+
+        if (bankCodeInput) {
+          const cleanCode = sanitizeBankCode(bankCodeInput);
+          const userCode = getUserBankCode(u);
+          return userCode === cleanCode || String(u.iban || '').toUpperCase().startsWith(cleanCode + '-');
+        }
+        return true;
+      });
 
       if (!user) {
-        showToast('اسم اللاعب أو كلمة المرور غير صحيحة.');
+        showToast('بيانات الدخول أو رمز البنك غير صحيحة.');
         return;
       }
 
@@ -1335,13 +1376,16 @@
       if (!user.createdAt) {
         user.createdAt = user.lastLoginAt;
       }
+      if (!user.bankCode) {
+        user.bankCode = getUserBankCode(user);
+      }
 
       state.sessionUser = user.username;
       inspectedUsername = user.username;
       standaloneAdminMode = 'none';
       saveState(state);
       e.target.reset();
-      showToast('أهلاً بك مجدداً يا ' + user.username);
+      showToast('أهلاً بك مجدداً يا ' + user.username + ' (' + user.iban + ')');
       renderApp();
     }
 
@@ -1395,7 +1439,7 @@
         return;
       }
 
-      const recipient = state.users.find(u => u.iban.toUpperCase() === targetIban);
+      const recipient = state.users.find(u => String(u.iban || '').toUpperCase() === targetIban);
       if (!recipient) {
         showToast('لم يتم العثور على حساب بهذا الرقم.');
         return;
@@ -1493,7 +1537,10 @@
       authSec.classList.add('hidden');
       appSec.classList.remove('hidden');
 
-      document.getElementById('welcomeUserText').textContent = `الحساب النشط: ${user.username}`;
+      const activeBankCode = getUserBankCode(user);
+      document.getElementById('brandLogoText').textContent = activeBankCode.slice(0, 3);
+      document.getElementById('cardTierBadge').textContent = `${activeBankCode} BLACK CARD`;
+      document.getElementById('welcomeUserText').textContent = `الحساب النشط: ${user.username} • رمز البنك: ${activeBankCode}`;
       document.getElementById('cardHolder').textContent = user.username;
       document.getElementById('cardIban').textContent = user.iban;
       document.getElementById('cardBalance').textContent = `${user.balance.toLocaleString()} PTS`;
@@ -1515,55 +1562,4 @@
         `).join('');
       }
 
-      const cuffRem = getHandcuffRemaining(user);
-      const shopGrid = document.getElementById('shopGrid');
-      shopGrid.innerHTML = SHOP_ITEMS.map(item => {
-        const isLocked = item.dailyLimit && cuffRem > 0;
-        return `
-          <div class="item-card">
-            <div>
-              <span class="item-cat ${item.dailyLimit ? 'daily' : ''}">${item.cat}</span>
-              <div class="item-name">${item.name}</div>
-              <div class="item-desc">${item.desc}</div>
-              ${item.dailyLimit ? `<div class="item-limit">${isLocked ? `متاح مجدداً بعد: ${formatCooldown(cuffRem)}` : 'متاح اليوم (مرة واحدة كل 24 ساعة)'}</div>` : ''}
-            </div>
-            <div class="item-footer">
-              <span class="item-price">${item.price.toLocaleString()} PTS</span>
-              <button class="btn btn-gold" ${isLocked ? 'disabled' : ''} onclick="buyItem('${item.id}')">${isLocked ? 'مقيد اليوم' : 'شراء'}</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      const invGrid = document.getElementById('invGrid');
-      if (!user.inventory.length) {
-        invGrid.innerHTML = `<div class="tx-sub">حقيبتك فارغة حالياً. توجه إلى متجر المعدات لشراء أسلحة أو معدات مسموحة.</div>`;
-      } else {
-        invGrid.innerHTML = user.inventory.map(entry => `
-          <div class="item-card">
-            <div>
-              <span class="item-cat">${entry.cat}</span>
-              <div class="item-name">${entry.name}</div>
-              <div class="item-desc">${entry.desc}</div>
-            </div>
-            <div class="item-footer">
-              <span class="tx-sub">تم الشراء: ${entry.boughtAt}</span>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      renderAdminGate();
-    }
-
-    setInterval(() => {
-      const user = getCurrentUser();
-      if (user && getHandcuffRemaining(user) > 0 && !document.getElementById('shopView').classList.contains('hidden')) {
-        renderApp();
-      }
-    }, 1000);
-
-    renderApp();
-  </script>
-</body>
-</html>
+      const c
