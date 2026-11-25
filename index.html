@@ -10,8 +10,7 @@
   <style>
     :root {
       --bg-dark: #07080a;
-      --bg-card: rgba(18, 20, 26, 0.85);
-      --bg-elevated: rgba(28, 31, 40, 0.9);
+      --bg-card: rgba(18, 20, 26, 0.88);
       --gold: #d4af37;
       --gold-bright: #f5d061;
       --gold-dim: rgba(212, 175, 55, 0.16);
@@ -20,7 +19,7 @@
       --emerald: #10b981;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --border: rgba(212, 175, 55, 0.22);
+      --border: rgba(212, 175, 55, 0.24);
       --border-soft: rgba(255, 255, 255, 0.08);
       --shadow-gold: 0 12px 35px rgba(212, 175, 55, 0.14);
     }
@@ -88,10 +87,6 @@
       box-shadow: var(--shadow-gold);
     }
 
-    .btn-gold:hover:not(:disabled) {
-      box-shadow: 0 14px 36px rgba(245, 208, 97, 0.28);
-    }
-
     .btn-crimson {
       background: linear-gradient(135deg, #fb7185, var(--crimson));
       color: #fff;
@@ -102,11 +97,6 @@
       background: rgba(255, 255, 255, 0.05);
       color: var(--text-main);
       border: 1px solid var(--border-soft);
-    }
-
-    .btn-ghost:hover:not(:disabled) {
-      border-color: var(--border);
-      background: rgba(212, 175, 55, 0.08);
     }
 
     .input-group {
@@ -130,7 +120,6 @@
       color: var(--text-main);
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s ease;
     }
 
     .input:focus, select:focus {
@@ -149,13 +138,10 @@
       width: 100%;
       max-width: 440px;
       padding: 32px 26px;
-      position: relative;
-      overflow: hidden;
-      transition: max-width 0.2s ease;
     }
 
     .auth-box.wide {
-      max-width: 920px;
+      max-width: 900px;
     }
 
     .auth-badge {
@@ -167,12 +153,11 @@
       color: var(--gold-bright);
       font-size: 0.78rem;
       font-weight: 800;
-      letter-spacing: 0.5px;
       margin-bottom: 10px;
     }
 
     .auth-title {
-      font-size: 1.75rem;
+      font-size: 1.7rem;
       font-weight: 900;
       background: linear-gradient(135deg, #fff, var(--gold-bright));
       -webkit-background-clip: text;
@@ -183,7 +168,7 @@
     .auth-sub {
       color: var(--text-muted);
       font-size: 0.9rem;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .auth-tabs {
@@ -194,7 +179,7 @@
       padding: 5px;
       border-radius: 14px;
       border: 1px solid var(--border-soft);
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .auth-tab {
@@ -205,7 +190,6 @@
       color: var(--text-muted);
       font-weight: 700;
       cursor: pointer;
-      transition: 0.2s ease;
     }
 
     .auth-tab.active {
@@ -217,126 +201,6 @@
       margin-top: 14px;
       padding-top: 14px;
       border-top: 1px solid var(--border-soft);
-      display: flex;
-      justify-content: center;
-    }
-
-    .admin-layout {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-      gap: 18px;
-      margin-top: 10px;
-    }
-
-    .admin-subcard {
-      background: rgba(9, 11, 15, 0.72);
-      border: 1px solid var(--border-soft);
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .admin-subcard-title {
-      font-size: 0.98rem;
-      font-weight: 800;
-      color: var(--gold-bright);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .accounts-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 290px;
-      overflow-y: auto;
-    }
-
-    .account-row {
-      background: rgba(18, 20, 26, 0.9);
-      border: 1px solid var(--border-soft);
-      border-radius: 12px;
-      padding: 10px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      cursor: pointer;
-      transition: border-color 0.2s ease, background 0.2s ease;
-    }
-
-    .account-row:hover, .account-row.active {
-      border-color: var(--gold);
-      background: rgba(212, 175, 55, 0.08);
-    }
-
-    .account-name {
-      font-weight: 800;
-      font-size: 0.9rem;
-    }
-
-    .account-meta {
-      font-size: 0.76rem;
-      color: var(--text-muted);
-    }
-
-    .account-bal {
-      font-weight: 900;
-      color: var(--gold-bright);
-      font-size: 0.88rem;
-      white-space: nowrap;
-    }
-
-    .inspector-box {
-      margin-top: 18px;
-      background: rgba(9, 11, 15, 0.82);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-    }
-
-    .inspector-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .stat-pill {
-      background: rgba(18, 20, 26, 0.95);
-      border: 1px solid var(--border-soft);
-      border-radius: 12px;
-      padding: 10px 12px;
-    }
-
-    .stat-pill span {
-      display: block;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-    }
-
-    .stat-pill strong {
-      font-size: 0.92rem;
-      color: var(--text-main);
-    }
-
-    .inv-mini-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .inv-chip {
-      background: var(--gold-dim);
-      border: 1px solid var(--border);
-      color: var(--gold-bright);
-      border-radius: 10px;
-      padding: 6px 10px;
-      font-size: 0.8rem;
-      font-weight: 700;
     }
 
     .topbar {
@@ -364,7 +228,7 @@
       display: grid;
       place-items: center;
       font-weight: 900;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
     }
 
     .brand h1 {
@@ -394,7 +258,6 @@
       font-weight: 700;
       font-size: 0.88rem;
       cursor: pointer;
-      transition: 0.2s ease;
     }
 
     .nav-btn.active, .nav-btn:hover {
@@ -405,7 +268,7 @@
 
     .grid-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 20px;
       margin-bottom: 22px;
     }
@@ -413,18 +276,14 @@
     .black-card {
       background:
         radial-gradient(circle at 85% 15%, rgba(245, 208, 97, 0.28), transparent 45%),
-        radial-gradient(circle at 15% 85%, rgba(212, 175, 55, 0.16), transparent 50%),
         linear-gradient(135deg, #16181f 0%, #0a0b0e 65%, #1c1709 100%);
       border: 1px solid rgba(245, 208, 97, 0.45);
       border-radius: 22px;
       padding: 24px;
-      min-height: 225px;
+      min-height: 220px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), 0 0 25px rgba(212, 175, 55, 0.12);
     }
 
     .card-top {
@@ -438,7 +297,6 @@
       height: 32px;
       border-radius: 7px;
       background: linear-gradient(135deg, #f7df8b, #b6891d);
-      border: 1px solid rgba(255, 255, 255, 0.35);
     }
 
     .card-tier {
@@ -451,20 +309,16 @@
       border: 1px solid var(--border);
     }
 
-    .balance-box {
-      margin: 14px 0;
-    }
-
     .balance-label {
       font-size: 0.82rem;
       color: var(--text-muted);
     }
 
     .balance-amount {
-      font-size: 2.1rem;
+      font-size: 2.05rem;
       font-weight: 900;
       color: var(--gold-bright);
-      letter-spacing: 0.5px;
+      margin: 10px 0;
     }
 
     .card-bottom {
@@ -526,7 +380,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-height: 360px;
+      max-height: 340px;
       overflow-y: auto;
     }
 
@@ -563,7 +417,7 @@
 
     .shop-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 16px;
     }
 
@@ -576,12 +430,6 @@
       flex-direction: column;
       justify-content: space-between;
       gap: 14px;
-      transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-
-    .item-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--border);
     }
 
     .item-cat {
@@ -634,6 +482,31 @@
       font-size: 1rem;
     }
 
+    .admin-box {
+      background: rgba(9, 11, 15, 0.75);
+      border: 1px solid var(--border-soft);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .acc-item {
+      background: rgba(18, 20, 26, 0.92);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+
+    .acc-item.active {
+      border-color: var(--gold);
+    }
+
     .toast {
       position: fixed;
       bottom: 22px;
@@ -646,9 +519,8 @@
       border-radius: 14px;
       font-weight: 700;
       font-size: 0.9rem;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.65);
       opacity: 0;
-      transition: 0.3s ease;
+      transition: 0.25s ease;
       z-index: 9999;
       text-align: center;
       max-width: 92vw;
@@ -663,7 +535,7 @@
       text-align: center;
       color: var(--text-muted);
       font-size: 0.78rem;
-      margin: 28px auto 14px;
+      margin: 24px auto 14px;
       max-width: 780px;
       padding: 0 12px;
     }
@@ -680,76 +552,73 @@
       <div id="externalAuthContainer">
         <div class="auth-badge">SAN ORI ROLEPLAY • SIMULATION BANK</div>
         <h1 class="auth-title">بنك وسوق سان أوري</h1>
-        <p class="auth-sub">سجّل دخولك أو أنشئ حسابك الجديد للبدء برصيد افتتاحي <strong>1,000</strong> نقطة داخل الرول بلاي.</p>
+        <p class="auth-sub">سجّل دخولك أو أنشئ حسابك الجديد برصيد افتتاحي <strong>1,000</strong> نقطة.</p>
 
         <div class="auth-tabs">
-          <button type="button" id="tabLogin" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
-          <button type="button" id="tabRegister" class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب</button>
+          <button type="button" id="tabLogin" class="auth-tab active">تسجيل الدخول</button>
+          <button type="button" id="tabRegister" class="auth-tab">إنشاء حساب</button>
         </div>
 
-        <form id="loginForm" onsubmit="handleLogin(event)">
+        <form id="loginForm">
           <div class="input-group">
             <label>اسم اللاعب أو رقم الحساب</label>
-            <input id="loginUsername" class="input" type="text" placeholder="اكتب اسمك أو رقم حسابك (مثال: SO-5149)" required />
+            <input id="loginUsername" class="input" type="text" placeholder="مثال: SO-5149 أو اسمك" required />
           </div>
           <div class="input-group">
             <label>رمز البنك (اختياري — مثال: SO)</label>
-            <input id="loginBankCode" class="input" type="text" placeholder="مثال: SO" autocapitalize="characters" />
+            <input id="loginBankCode" class="input" type="text" placeholder="مثال: SO" />
           </div>
           <div class="input-group">
-            <label>كلمة المرور (Password)</label>
+            <label>كلمة المرور</label>
             <input id="loginPassword" class="input" type="password" placeholder="••••••••" required />
           </div>
           <button type="submit" class="btn btn-gold" style="width:100%;">دخول إلى الحساب</button>
         </form>
 
-        <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+        <form id="registerForm" class="hidden">
           <div class="input-group">
-            <label>اسم اللاعب الجديد (Username)</label>
-            <input id="regUsername" class="input" type="text" placeholder="اختر اسمك في الرول بلاي" required />
+            <label>اسم اللاعب الجديد</label>
+            <input id="regUsername" class="input" type="text" placeholder="اكتب اسمك في الرول بلاي" required />
           </div>
           <div class="input-group">
             <label>رمز البنك / بادئة الحساب (مثال: SO)</label>
-            <input id="regBankCode" class="input" type="text" value="SO" placeholder="اكتب رمز البنك مثل: SO" autocapitalize="characters" required />
+            <input id="regBankCode" class="input" type="text" value="SO" required />
           </div>
           <div class="input-group">
-            <label>كلمة المرور (Password)</label>
-            <input id="regPassword" class="input" type="password" placeholder="أنشئ كلمة مرور قوية" required />
+            <label>كلمة المرور</label>
+            <input id="regPassword" class="input" type="password" placeholder="أنشئ كلمة مرور" required />
           </div>
           <button type="submit" class="btn btn-gold" style="width:100%;">إنشاء حساب (رصيد 1,000 نقطة)</button>
         </form>
 
         <div class="admin-gate-bar">
-          <button type="button" id="openAdminBtn" class="btn btn-ghost" style="width:100%;" onclick="openStandaloneAdminLogin()">لوحة الأدمن</button>
+          <button type="button" id="openAdminBtn" class="btn btn-ghost" style="width:100%;">لوحة الأدمن</button>
         </div>
       </div>
 
       <div id="standaloneAdminLoginBox" class="hidden">
         <div class="auth-badge">ADMIN ACCESS • SAN ORI</div>
         <h2 class="auth-title" style="font-size:1.45rem;">دخول لوحة الأدمن</h2>
-        <p class="auth-sub">أدخل اسم الأدمن وكلمة المرور للوصول إلى إدارة أرصدة الحسابات.</p>
-        <form onsubmit="handleStandaloneAdminLogin(event)">
+        <form id="extAdminLoginForm">
           <div class="input-group">
             <label>اسم الأدمن</label>
-            <input id="extAdminUser" class="input" type="text" placeholder="اكتب اسم الأدمن" autocomplete="off" autocapitalize="off" required />
+            <input id="extAdminUser" class="input" type="text" placeholder="dr black" required />
           </div>
           <div class="input-group">
             <label>كلمة المرور</label>
-            <input id="extAdminPass" class="input" type="password" placeholder="أدخل كلمة مرور لوحة الأدمن" autocomplete="off" autocapitalize="off" required />
+            <input id="extAdminPass" class="input" type="password" placeholder="black" required />
           </div>
           <button type="submit" class="btn btn-gold" style="width:100%; margin-bottom:8px;">دخول لوحة الأدمن</button>
-          <button type="button" class="btn btn-ghost" style="width:100%;" onclick="closeStandaloneAdmin()">رجوع لتسجيل الدخول</button>
+          <button type="button" id="extAdminBackBtn" class="btn btn-ghost" style="width:100%;">رجوع</button>
         </form>
       </div>
 
       <div id="standaloneAdminPanelBox" class="hidden">
-        <div class="auth-badge">ADMIN CONTROL • SAN ORI</div>
-        <div class="section-title" style="margin-bottom:6px;">
-          <h2 class="auth-title" style="font-size:1.45rem; margin-bottom:0;">لوحة الأدمن وسجل الحسابات</h2>
-          <button type="button" class="btn btn-ghost" style="padding:7px 12px; font-size:0.82rem;" onclick="closeStandaloneAdmin()">خروج من لوحة الأدمن</button>
+        <div class="section-title">
+          <h2 class="auth-title" style="font-size:1.4rem; margin:0;">لوحة الأدمن وسجل الحسابات</h2>
+          <button type="button" id="extAdminCloseBtn" class="btn btn-ghost" style="padding:7px 12px; font-size:0.82rem;">خروج</button>
         </div>
-        <p class="auth-sub" style="margin-bottom:12px;">استعرض كل الحسابات المفتوحة في البنك وافتح أي حساب لمعرفة آخر دخول وأدواته وفلوسه وتعديله.</p>
-        <div id="extAdminWorkspace"></div>
+        <div id="extAdminContent"></div>
       </div>
     </div>
   </section>
@@ -759,19 +628,19 @@
       <div class="brand">
         <div class="brand-logo" id="brandLogoText">SO</div>
         <div>
-          <h1 id="brandHeaderTitle">SAN ORI BANK & MARKET</h1>
+          <h1>SAN ORI BANK & MARKET</h1>
           <span id="welcomeUserText">مرحباً بك</span>
         </div>
       </div>
 
       <nav class="nav-tabs">
-        <button type="button" class="nav-btn active" data-view="bankView" onclick="switchView('bankView', this)">البنك والتحويلات</button>
-        <button type="button" class="nav-btn" data-view="shopView" onclick="switchView('shopView', this)">متجر المعدات</button>
-        <button type="button" class="nav-btn" data-view="invView" onclick="switchView('invView', this)">الحقيبة</button>
-        <button type="button" class="nav-btn" data-view="adminView" onclick="switchView('adminView', this)">إدارة الأرصدة</button>
+        <button type="button" class="nav-btn active" data-view="bankView">البنك والتحويلات</button>
+        <button type="button" class="nav-btn" data-view="shopView">متجر المعدات</button>
+        <button type="button" class="nav-btn" data-view="invView">الحقيبة</button>
+        <button type="button" class="nav-btn" data-view="adminView">إدارة الأرصدة</button>
       </nav>
 
-      <button type="button" class="btn btn-ghost" onclick="logout()">خروج</button>
+      <button type="button" id="logoutBtn" class="btn btn-ghost">خروج</button>
     </header>
 
     <section id="bankView">
@@ -779,14 +648,12 @@
         <div class="black-card">
           <div class="card-top">
             <div class="chip"></div>
-            <div class="card-tier" id="cardTierBadge">SAN ORI BLACK CARD</div>
+            <div class="card-tier" id="cardTierBadge">SO BLACK CARD</div>
           </div>
-
-          <div class="balance-box">
-            <div class="balance-label">الرصيد المتاح للشراء والتحويل</div>
+          <div>
+            <div class="balance-label">الرصيد المتاح</div>
             <div id="cardBalance" class="balance-amount">1,000 PTS</div>
           </div>
-
           <div class="card-bottom">
             <div>
               <div class="balance-label">صاحب الحساب</div>
@@ -794,7 +661,7 @@
             </div>
             <div class="iban-box">
               <span id="cardIban">SO-0000</span>
-              <button type="button" class="copy-mini" onclick="copyIban()">نسخ</button>
+              <button type="button" id="copyIbanBtn" class="copy-mini">نسخ</button>
             </div>
           </div>
         </div>
@@ -804,28 +671,26 @@
             <span>تحويل نقاط فوري</span>
             <span class="tag">معدات سان أوري فقط</span>
           </div>
-          <form onsubmit="handleTransfer(event)">
+          <form id="transferForm">
             <div class="input-group">
               <label>رقم حساب المستلم (IBAN)</label>
               <input id="targetIban" class="input" type="text" placeholder="مثال: SO-2041" required />
             </div>
             <div class="input-group">
-              <label>قيمة النقاط المراد تحويلها</label>
-              <input id="transferAmount" class="input" type="number" min="1" placeholder="أدخل المبلغ" required />
+              <label>قيمة النقاط</label>
+              <input id="transferAmount" class="input" type="number" min="1" required />
             </div>
             <div class="input-group">
-              <label>ملاحظة / سبب التحويل (اختياري)</label>
+              <label>ملاحظة (اختياري)</label>
               <input id="transferNote" class="input" type="text" placeholder="مثال: صفقة معدات خفيفة" />
             </div>
-            <button type="submit" class="btn btn-gold" style="width:100%;">إرسال التحويل الآن</button>
+            <button type="submit" class="btn btn-gold" style="width:100%;">إرسال التحويل</button>
           </form>
         </div>
       </div>
 
       <div class="section-card glass">
-        <div class="section-title">
-          <span>سجل العمليات وكشف الحساب</span>
-        </div>
+        <div class="section-title"><span>سجل العمليات</span></div>
         <div id="txList" class="tx-list"></div>
       </div>
     </section>
@@ -842,86 +707,34 @@
 
     <section id="invView" class="hidden">
       <div class="section-card glass">
-        <div class="section-title">
-          <span>حقيبتك ومعداتك المشتراة</span>
-        </div>
+        <div class="section-title"><span>حقيبتك ومعداتك المشتراة</span></div>
         <div id="invGrid" class="shop-grid"></div>
       </div>
     </section>
 
     <section id="adminView" class="hidden">
-      <div class="section-card glass" style="max-width: 960px; margin: 0 auto;">
-        <div id="adminLoginBox" style="max-width: 560px; margin: 0 auto;">
-          <div class="section-title">
-            <span>تسجيل دخول لوحة الأدمن</span>
-            <span class="tag">محمي بالاسم وكلمة المرور</span>
-          </div>
-          <p class="auth-sub" style="margin-bottom: 16px;">أدخل اسم الأدمن وكلمة المرور للوصول إلى أدوات تعديل أرصدة اللاعبين.</p>
-          <form onsubmit="handleAdminLogin(event)">
+      <div class="section-card glass" style="max-width: 900px; margin: 0 auto;">
+        <div id="inAppAdminLoginBox">
+          <div class="section-title"><span>دخول لوحة الأدمن</span></div>
+          <form id="inAppAdminLoginForm">
             <div class="input-group">
               <label>اسم الأدمن</label>
-              <input id="adminUsernameInput" class="input" type="text" placeholder="اكتب اسم الأدمن" autocomplete="off" autocapitalize="off" required />
+              <input id="inAppAdminUser" class="input" type="text" required />
             </div>
             <div class="input-group">
               <label>كلمة المرور</label>
-              <input id="adminPasswordInput" class="input" type="password" placeholder="أدخل كلمة مرور لوحة الأدمن" autocomplete="off" autocapitalize="off" required />
+              <input id="inAppAdminPass" class="input" type="password" required />
             </div>
             <button type="submit" class="btn btn-gold" style="width:100%;">فتح لوحة الأدمن</button>
           </form>
         </div>
-
-        <div id="adminPanelBox" class="hidden">
-          <div class="section-title">
-            <span>لوحة الأدمن وسجل الحسابات</span>
-            <button type="button" class="btn btn-ghost" style="padding: 6px 12px; font-size: 0.82rem;" onclick="lockAdminPanel()">قفل اللوحة</button>
-          </div>
-          <div id="inAppAdminWorkspace"></div>
-        </div>
+        <div id="inAppAdminContent" class="hidden"></div>
       </div>
     </section>
   </main>
 
-  <template id="adminWorkspaceTemplate">
-    <div class="admin-layout">
-      <div class="admin-subcard">
-        <div class="admin-subcard-title">
-          <span>الحسابات المفتوحة في البنك</span>
-          <span class="account-meta" data-role="accountsCount">0 حساب</span>
-        </div>
-        <div class="accounts-list" data-role="accountsList"></div>
-      </div>
-
-      <div class="admin-subcard">
-        <div class="admin-subcard-title">
-          <span>تعديل رصيد حساب لاعب</span>
-        </div>
-        <form data-role="adjustForm">
-          <div class="input-group">
-            <label>اختر الحساب</label>
-            <select data-role="userSelect"></select>
-          </div>
-          <div class="input-group">
-            <label>نوع العملية</label>
-            <select data-role="actionSelect">
-              <option value="add">إضافة نقاط (+)</option>
-              <option value="sub">خصم نقاط (-)</option>
-              <option value="set">تعيين رصيد محدد (=)</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label>قيمة النقاط</label>
-            <input class="input" type="number" min="0" data-role="amountInput" required />
-          </div>
-          <button type="submit" class="btn btn-crimson" style="width:100%;">تطبيق التعديل</button>
-        </form>
-      </div>
-    </div>
-
-    <div class="inspector-box" data-role="accountInspector"></div>
-  </template>
-
   <footer class="footer-note">
-    تنويه: هذا الموقع نظام محاكاة وبنك نقاط وهمي مخصص لأغراض الرول بلاي (San Ori) لشراء المعدات والأسلحة الخفيفة المسموحة فقط، ولا يرتبط بأي معاملات مالية حقيقية.
+    تنويه: هذا الموقع نظام محاكاة وبنك نقاط وهمي مخصص لأغراض الرول بلاي (San Ori) لشراء المعدات والأسلحة الخفيفة المسموحة فقط.
   </footer>
 
   <div id="toast" class="toast"></div>
@@ -930,23 +743,8 @@
     const INITIAL_BALANCE = 1000;
     const STORAGE_KEY = 'san_ori_bank_v1';
     const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
-    const ADMIN_CREDENTIALS = {
-      username: 'dr black',
-      password: 'black'
-    };
-
-    function verifyAdminCredentials(usernameInput, passwordInput) {
-      const cleanUser = String(usernameInput || '').trim().toLowerCase();
-      const cleanPass = String(passwordInput || '').trim().toLowerCase();
-      return (
-        cleanUser === ADMIN_CREDENTIALS.username &&
-        cleanPass === ADMIN_CREDENTIALS.password
-      );
-    }
-
-    let adminUnlocked = false;
-    let standaloneAdminMode = 'none';
-    let inspectedUsername = null;
+    const ADMIN_USER = 'dr black';
+    const ADMIN_PASS = 'black';
 
     const SHOP_ITEMS = [
       { id: 'knife', cat: 'قتال عن قرب', name: 'سكين', desc: 'سلاح أبيض خفيف للاشتباك القريب في شوارع سان أوري.', price: 150 },
@@ -955,453 +753,54 @@
       { id: 'glock_17', cat: 'سلاح خفيف', name: 'جلوك 17', desc: 'مسدس خفيف عملي وسريع الاستخدام في الرول بلاي.', price: 700 },
       { id: 'm19', cat: 'سلاح خفيف', name: 'M19', desc: 'مسدس خفيف بدقة وثبات جيدين.', price: 800 },
       { id: 'deagle_44', cat: 'سلاح خفيف', name: 'ديجل 44', desc: 'مسدس خفيف عالي الضرر للمواقف الحاسمة.', price: 950 },
-      {
-        id: 'handcuffs',
-        cat: 'معدات الضبط',
-        name: 'كلبشات',
-        desc: 'معدات ضبط — مسموح بشرائها مرة واحدة فقط كل 24 ساعة.',
-        price: 1000,
-        dailyLimit: true
-      },
+      { id: 'handcuffs', cat: 'معدات الضبط', name: 'كلبشات', desc: 'معدات ضبط — مسموح بشرائها مرة واحدة فقط كل 24 ساعة.', price: 1000, dailyLimit: true },
       { id: 'mac_11', cat: 'سلاح خفيف', name: 'MAC-11', desc: 'رشاش خفيف سريع الطلقات مناسب للتحركات الخفيفة.', price: 1100 },
       { id: 'axe', cat: 'قتال عن قرب', name: 'الفأس', desc: 'فأس قتال عن قرب بضرر مرتفع.', price: 1200 },
       { id: 'medical', cat: 'معدات دعم', name: 'الطب', desc: 'إمدادات طبية وعلاج لاستعادة الصحة في الرول بلاي.', price: 2000 }
     ];
 
+    let adminUnlocked = false;
+    let standaloneMode = 'none';
+    let inspectedUser = null;
+
     function loadState() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw);
-          return {
-            users: Array.isArray(parsed.users) ? parsed.users : [],
-            sessionUser: parsed.sessionUser || null
-          };
-        } catch (e) {}
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        return {
+          users: Array.isArray(parsed.users) ? parsed.users : [],
+          sessionUser: parsed.sessionUser || null
+        };
+      } catch (e) {
+        return { users: [], sessionUser: null };
       }
-      return {
-        users: [],
-        sessionUser: null
-      };
     }
 
-    function saveState(nextState) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
     let state = loadState();
 
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      if (!toast) return;
-      toast.textContent = msg;
-      toast.classList.add('show');
-      clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2800);
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(window.__t);
+      window.__t = setTimeout(() => el.classList.remove('show'), 2600);
     }
 
-    function sanitizeBankCode(rawCode) {
-      const cleaned = String(rawCode || '')
-        .trim()
-        .toUpperCase()
-        .replace(/[^A-Z0-9\u0600-\u06FF]/g, '');
-      return cleaned || 'SO';
+    function cleanCode(val) {
+      const c = String(val || '').trim().toUpperCase().replace(/[^A-Z0-9\u0600-\u06FF]/g, '');
+      return c || 'SO';
     }
 
-    function getUserBankCode(user) {
-      if (user && user.bankCode) return sanitizeBankCode(user.bankCode);
-      if (user && user.iban && user.iban.includes('-')) {
-        return sanitizeBankCode(user.iban.split('-')[0]);
-      }
-      return 'SO';
-    }
-
-    function generateIban(bankCodeInput = 'SO') {
-      const prefix = sanitizeBankCode(bankCodeInput);
-      let code;
+    function makeIban(code) {
+      const prefix = cleanCode(code);
+      let iban;
       do {
-        code = `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
-      } while (state.users.some(u => String(u.iban || '').toUpperCase() === code));
-      return code;
-    }
-
-    function formatCooldown(ms) {
-      const totalSec = Math.max(0, Math.floor(ms / 1000));
-      const h = Math.floor(totalSec / 3600);
-      const m = Math.floor((totalSec % 3600) / 60);
-      const s = totalSec % 60;
-      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    }
-
-    function getHandcuffRemaining(user) {
-      if (!user || !user.lastHandcuffBoughtAt) return 0;
-      const elapsed = Date.now() - Number(user.lastHandcuffBoughtAt);
-      return Math.max(0, DAILY_COOLDOWN_MS - elapsed);
-    }
-
-    function selectInspectedAccount(username) {
-      inspectedUsername = username || null;
-      renderAdminWorkspaces();
-    }
-
-    function mountAdminWorkspace(targetContainerId) {
-      const container = document.getElementById(targetContainerId);
-      const tpl = document.getElementById('adminWorkspaceTemplate');
-      if (!container || !tpl) return;
-
-      container.innerHTML = '';
-      const clone = tpl.content.cloneNode(true);
-
-      const countEl = clone.querySelector('[data-role="accountsCount"]');
-      const listEl = clone.querySelector('[data-role="accountsList"]');
-      const selectEl = clone.querySelector('[data-role="userSelect"]');
-      const actionEl = clone.querySelector('[data-role="actionSelect"]');
-      const amountEl = clone.querySelector('[data-role="amountInput"]');
-      const formEl = clone.querySelector('[data-role="adjustForm"]');
-      const inspectorEl = clone.querySelector('[data-role="accountInspector"]');
-
-      if (countEl) {
-        countEl.textContent = `${state.users.length} حساب`;
-      }
-
-      if (!state.users.length) {
-        if (listEl) listEl.innerHTML = `<div class="account-meta">لا توجد حسابات مسجلة في البنك حتى الآن.</div>`;
-        if (selectEl) selectEl.innerHTML = `<option value="">لا توجد حسابات مسجلة بعد</option>`;
-        if (inspectorEl) inspectorEl.innerHTML = `<div class="account-meta">لا توجد بيانات حساب لعرضها حالياً.</div>`;
-      } else {
-        if (!inspectedUsername || !state.users.some(u => u.username === inspectedUsername)) {
-          inspectedUsername = state.users[0].username;
-        }
-
-        if (selectEl) {
-          selectEl.innerHTML = state.users
-            .map(u => `<option value="${u.username}">${u.username} (${u.iban}) — ${Number(u.balance || 0).toLocaleString()} PTS</option>`)
-            .join('');
-          selectEl.value = inspectedUsername;
-
-          selectEl.addEventListener('change', (e) => {
-            inspectedUsername = e.target.value;
-            renderAdminWorkspaces();
-          });
-        }
-
-        if (listEl) {
-          listEl.innerHTML = state.users.map(u => {
-            const isSelected = u.username === inspectedUsername;
-            const lastLoginText = u.lastLoginAt || 'غير مسجل بعد';
-            const itemsCount = Array.isArray(u.inventory) ? u.inventory.length : 0;
-            const safeName = String(u.username || '').replace(/'/g, "\\'");
-            return `
-              <div class="account-row ${isSelected ? 'active' : ''}" onclick="selectInspectedAccount('${safeName}')">
-                <div>
-                  <div class="account-name">${u.username} <span class="account-meta">(${u.iban})</span></div>
-                  <div class="account-meta">آخر دخول: ${lastLoginText} • الأدوات: ${itemsCount}</div>
-                </div>
-                <div class="account-bal">${Number(u.balance || 0).toLocaleString()} PTS</div>
-              </div>
-            `;
-          }).join('');
-        }
-
-        if (inspectorEl) {
-          const selectedUser = state.users.find(u => u.username === inspectedUsername) || state.users[0];
-          const userInv = Array.isArray(selectedUser.inventory) ? selectedUser.inventory : [];
-          const userTx = Array.isArray(selectedUser.transactions) ? selectedUser.transactions : [];
-
-          const invHtml = userInv.length
-            ? userInv.map(entry => `<span class="inv-chip">${entry.name} (${entry.boughtAt || 'مقتنى'})</span>`).join('')
-            : `<span class="account-meta">لا توجد أدوات أو معدات في حقيبة هذا الحساب حالياً.</span>`;
-
-          const txHtml = userTx.length
-            ? userTx.slice(0, 6).map(tx => `
-                <div class="tx-item">
-                  <div>
-                    <div class="tx-title">${tx.title}</div>
-                    <div class="tx-sub">${tx.meta} • ${tx.date}</div>
-                  </div>
-                  <div class="${tx.type === 'in' ? 'tx-plus' : 'tx-minus'}">
-                    ${tx.type === 'in' ? '+' : '-'}${Number(tx.amount).toLocaleString()} PTS
-                  </div>
-                </div>
-              `).join('')
-            : `<div class="account-meta">لا توجد عمليات مسجلة لهذا الحساب.</div>`;
-
-          inspectorEl.innerHTML = `
-            <div class="section-title" style="margin-bottom:10px;">
-              <span>تفاصيل الحساب المفتوح: ${selectedUser.username}</span>
-              <span class="account-bal">${Number(selectedUser.balance || 0).toLocaleString()} PTS</span>
-            </div>
-            <div class="inspector-grid">
-              <div class="stat-pill">
-                <span>رقم الحساب / رمز البنك</span>
-                <strong>${selectedUser.iban}</strong>
-              </div>
-              <div class="stat-pill">
-                <span>الرصيد الحالي (الفلوس)</span>
-                <strong>${Number(selectedUser.balance || 0).toLocaleString()} PTS</strong>
-              </div>
-              <div class="stat-pill">
-                <span>آخر تسجيل دخول</span>
-                <strong>${selectedUser.lastLoginAt || 'غير مسجل بعد'}</strong>
-              </div>
-              <div class="stat-pill">
-                <span>تاريخ فتح الحساب</span>
-                <strong>${selectedUser.createdAt || 'غير مسجل'}</strong>
-              </div>
-            </div>
-            <div style="margin-bottom:6px; font-size:0.86rem; font-weight:700; color:var(--gold-bright);">الأدوات والمعدات الموجودة معاه (${userInv.length}):</div>
-            <div class="inv-mini-list">${invHtml}</div>
-            <div style="margin-bottom:8px; font-size:0.86rem; font-weight:700; color:var(--gold-bright);">آخر العمليات المالية:</div>
-            <div class="tx-list" style="max-height:200px;">${txHtml}</div>
-          `;
-        }
-      }
-
-      if (formEl) {
-        formEl.addEventListener('submit', (e) => {
-          e.preventDefault();
-          if (!adminUnlocked) {
-            showToast('يجب تسجيل دخول الأدمن أولاً.');
-            renderAdminGate();
-            return;
-          }
-
-          const targetName = selectEl ? selectEl.value : '';
-          const action = actionEl ? actionEl.value : 'add';
-          const amount = Number(amountEl ? amountEl.value : 0);
-
-          const target = state.users.find(u => u.username === targetName);
-          if (!target) {
-            showToast('لا يوجد حساب محدد لتعديل رصيده.');
-            return;
-          }
-          if (!Number.isFinite(amount) || amount < 0) return;
-
-          const before = Number(target.balance || 0);
-          if (action === 'add') target.balance = before + amount;
-          if (action === 'sub') target.balance = Math.max(0, before - amount);
-          if (action === 'set') target.balance = amount;
-
-          const diff = target.balance - before;
-          if (diff !== 0) {
-            target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
-            target.transactions.unshift({
-              id: Date.now(),
-              type: diff >= 0 ? 'in' : 'out',
-              title: 'تعديل رصيد من الإدارة',
-              meta: `الرصيد الجديد: ${target.balance.toLocaleString()} PTS`,
-              amount: Math.abs(diff),
-              date: new Date().toLocaleString('ar-EG')
-            });
-          }
-
-          inspectedUsername = target.username;
-          saveState(state);
-          if (amountEl) amountEl.value = '';
-          showToast('تم تحديث رصيد ' + target.username);
-          renderApp();
-        });
-      }
-
-      container.appendChild(clone);
-    }
-
-    function renderAdminWorkspaces() {
-      mountAdminWorkspace('extAdminWorkspace');
-      mountAdminWorkspace('inAppAdminWorkspace');
-    }
-
-    function renderStandaloneAdmin() {
-      const authBoxCard = document.getElementById('authBox');
-      const authBox = document.getElementById('externalAuthContainer');
-      const loginBox = document.getElementById('standaloneAdminLoginBox');
-      const panelBox = document.getElementById('standaloneAdminPanelBox');
-      if (!authBox || !loginBox || !panelBox) return;
-
-      authBox.classList.toggle('hidden', standaloneAdminMode !== 'none');
-      loginBox.classList.toggle('hidden', standaloneAdminMode !== 'login');
-      panelBox.classList.toggle('hidden', standaloneAdminMode !== 'panel');
-      if (authBoxCard) {
-        authBoxCard.classList.toggle('wide', standaloneAdminMode === 'panel');
-      }
-      if (standaloneAdminMode === 'panel') {
-        renderAdminWorkspaces();
-      }
-    }
-
-    function openStandaloneAdminLogin() {
-      standaloneAdminMode = adminUnlocked ? 'panel' : 'login';
-      renderStandaloneAdmin();
-    }
-
-    function closeStandaloneAdmin() {
-      standaloneAdminMode = 'none';
-      renderStandaloneAdmin();
-    }
-
-    function handleStandaloneAdminLogin(e) {
-      e.preventDefault();
-      const inputUser = document.getElementById('extAdminUser')?.value || '';
-      const inputPass = document.getElementById('extAdminPass')?.value || '';
-
-      if (verifyAdminCredentials(inputUser, inputPass)) {
-        adminUnlocked = true;
-        standaloneAdminMode = 'panel';
-        e.target.reset();
-        renderStandaloneAdmin();
-        showToast('تم فتح لوحة الأدمن بنجاح.');
-      } else {
-        showToast('اسم الأدمن أو كلمة المرور غير صحيحة.');
-      }
-    }
-
-    function renderAdminGate() {
-      const loginBox = document.getElementById('adminLoginBox');
-      const panelBox = document.getElementById('adminPanelBox');
-      if (!loginBox || !panelBox) return;
-      loginBox.classList.toggle('hidden', adminUnlocked);
-      panelBox.classList.toggle('hidden', !adminUnlocked);
-      if (adminUnlocked) {
-        renderAdminWorkspaces();
-      }
-    }
-
-    function handleAdminLogin(e) {
-      e.preventDefault();
-      const inputUser = document.getElementById('adminUsernameInput')?.value || '';
-      const inputPass = document.getElementById('adminPasswordInput')?.value || '';
-
-      if (verifyAdminCredentials(inputUser, inputPass)) {
-        adminUnlocked = true;
-        e.target.reset();
-        renderAdminGate();
-        showToast('تم فتح لوحة الأدمن بنجاح.');
-      } else {
-        showToast('اسم الأدمن أو كلمة المرور غير صحيحة.');
-      }
-    }
-
-    function lockAdminPanel() {
-      adminUnlocked = false;
-      if (standaloneAdminMode === 'panel') {
-        standaloneAdminMode = 'login';
-        renderStandaloneAdmin();
-      }
-      renderAdminGate();
-      showToast('تم قفل لوحة الأدمن.');
-    }
-
-    function switchAuthTab(tab) {
-      const isLogin = tab === 'login';
-      const tabLogin = document.getElementById('tabLogin');
-      const tabRegister = document.getElementById('tabRegister');
-      const loginForm = document.getElementById('loginForm');
-      const registerForm = document.getElementById('registerForm');
-      if (tabLogin) tabLogin.classList.toggle('active', isLogin);
-      if (tabRegister) tabRegister.classList.toggle('active', !isLogin);
-      if (loginForm) loginForm.classList.toggle('hidden', !isLogin);
-      if (registerForm) registerForm.classList.toggle('hidden', isLogin);
-    }
-
-    function handleRegister(e) {
-      e.preventDefault();
-      const username = (document.getElementById('regUsername')?.value || '').trim();
-      const bankCode = sanitizeBankCode(document.getElementById('regBankCode')?.value || 'SO');
-      const password = document.getElementById('regPassword')?.value || '';
-
-      if (!username || !password) return;
-      if (state.users.some(u => String(u.username || '').toLowerCase() === username.toLowerCase())) {
-        showToast('اسم اللاعب مستخدم بالفعل، اختر اسماً آخر.');
-        return;
-      }
-
-      const timestampNow = new Date().toLocaleString('ar-EG');
-      const newIban = generateIban(bankCode);
-      const newUser = {
-        username,
-        bankCode,
-        password,
-        iban: newIban,
-        balance: INITIAL_BALANCE,
-        createdAt: timestampNow,
-        lastLoginAt: timestampNow,
-        inventory: [],
-        lastHandcuffBoughtAt: null,
-        transactions: [
-          {
-            id: Date.now(),
-            type: 'in',
-            title: 'رصيد افتتاحي للحساب الجديد',
-            meta: `رمز البنك: ${bankCode} • رقم الحساب: ${newIban}`,
-            amount: INITIAL_BALANCE,
-            date: timestampNow
-          }
-        ]
-      };
-
-      state.users.push(newUser);
-      state.sessionUser = newUser.username;
-      inspectedUsername = newUser.username;
-      standaloneAdminMode = 'none';
-      saveState(state);
-      e.target.reset();
-      const regCodeEl = document.getElementById('regBankCode');
-      if (regCodeEl) regCodeEl.value = 'SO';
-      showToast(`تم إنشاء حسابك (${newIban}) برصيد 1,000 نقطة!`);
-      renderApp();
-    }
-
-    function handleLogin(e) {
-      e.preventDefault();
-      const identifier = (document.getElementById('loginUsername')?.value || '').trim();
-      const bankCodeInput = (document.getElementById('loginBankCode')?.value || '').trim();
-      const password = document.getElementById('loginPassword')?.value || '';
-
-      const user = state.users.find(u => {
-        if (u.password !== password) return false;
-        const matchesUserOrIban =
-          String(u.username || '').toLowerCase() === identifier.toLowerCase() ||
-          String(u.iban || '').toLowerCase() === identifier.toLowerCase();
-        if (!matchesUserOrIban) return false;
-
-        if (bankCodeInput) {
-          const cleanCode = sanitizeBankCode(bankCodeInput);
-          const userCode = getUserBankCode(u);
-          return userCode === cleanCode || String(u.iban || '').toUpperCase().startsWith(cleanCode + '-');
-        }
-        return true;
-      });
-
-      if (!user) {
-        showToast('بيانات الدخول أو رمز البنك غير صحيحة.');
-        return;
-      }
-
-      user.lastLoginAt = new Date().toLocaleString('ar-EG');
-      if (!user.createdAt) {
-        user.createdAt = user.lastLoginAt;
-      }
-      if (!user.bankCode) {
-        user.bankCode = getUserBankCode(user);
-      }
-
-      state.sessionUser = user.username;
-      inspectedUsername = user.username;
-      standaloneAdminMode = 'none';
-      saveState(state);
-      e.target.reset();
-      showToast('أهلاً بك مجدداً يا ' + user.username + ' (' + user.iban + ')');
-      renderApp();
-    }
-
-    function logout() {
-      adminUnlocked = false;
-      standaloneAdminMode = 'none';
-      state.sessionUser = null;
-      saveState(state);
-      renderApp();
+        iban = prefix + '-' + Math.floor(1000 + Math.random() * 9000);
+      } while (state.users.some(u => String(u.iban || '').toUpperCase() === iban));
+      return iban;
     }
 
     function getCurrentUser() {
@@ -1409,150 +808,439 @@
       return state.users.find(u => u.username === state.sessionUser) || null;
     }
 
-    function switchView(viewId, btn) {
-      ['bankView', 'shopView', 'invView', 'adminView'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.toggle('hidden', id !== viewId);
+    function formatCooldown(ms) {
+      const sec = Math.max(0, Math.floor(ms / 1000));
+      const h = String(Math.floor(sec / 3600)).padStart(2, '0');
+      const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+
+    function cuffRemaining(user) {
+      if (!user || !user.lastHandcuffBoughtAt) return 0;
+      return Math.max(0, DAILY_COOLDOWN_MS - (Date.now() - Number(user.lastHandcuffBoughtAt)));
+    }
+
+    function buildAdminHtml(targetId) {
+      const box = document.getElementById(targetId);
+      if (!box) return;
+
+      if (!state.users.length) {
+        box.innerHTML = `<div class="admin-box"><div class="tx-sub">لا توجد حسابات مسجلة بعد.</div></div>`;
+        return;
+      }
+
+      if (!inspectedUser || !state.users.some(u => u.username === inspectedUser)) {
+        inspectedUser = state.users[0].username;
+      }
+
+      const acc = state.users.find(u => u.username === inspectedUser) || state.users[0];
+      const inv = Array.isArray(acc.inventory) ? acc.inventory : [];
+      const txs = Array.isArray(acc.transactions) ? acc.transactions : [];
+
+      const listHtml = state.users.map(u => `
+        <div class="acc-item ${u.username === acc.username ? 'active' : ''}" data-acc="${encodeURIComponent(u.username)}">
+          <div>
+            <div class="tx-title">${u.username} (${u.iban})</div>
+            <div class="tx-sub">آخر دخول: ${u.lastLoginAt || 'غير مسجل'} • أدوات: ${(u.inventory || []).length}</div>
+          </div>
+          <div class="tx-plus">${Number(u.balance || 0).toLocaleString()} PTS</div>
+        </div>
+      `).join('');
+
+      const optsHtml = state.users.map(u =>
+        `<option value="${u.username}" ${u.username === acc.username ? 'selected' : ''}>${u.username} (${u.iban})</option>`
+      ).join('');
+
+      const invHtml = inv.length
+        ? inv.map(i => `<span class="item-cat" style="margin:0 0 6px 6px;">${i.name}</span>`).join('')
+        : `<span class="tx-sub">لا توجد أدوات مع هذا الحساب.</span>`;
+
+      const txHtml = txs.slice(0, 5).map(t => `
+        <div class="tx-item">
+          <div><div class="tx-title">${t.title}</div><div class="tx-sub">${t.date}</div></div>
+          <div class="${t.type === 'in' ? 'tx-plus' : 'tx-minus'}">${t.type === 'in' ? '+' : '-'}${Number(t.amount).toLocaleString()} PTS</div>
+        </div>
+      `).join('') || `<div class="tx-sub">لا توجد عمليات.</div>`;
+
+      box.innerHTML = `
+        <div class="grid-2" style="margin-bottom:14px;">
+          <div class="admin-box" style="margin:0;">
+            <div class="section-title"><span>الحسابات المفتوحة (${state.users.length})</span></div>
+            <div style="max-height:240px; overflow-y:auto;">${listHtml}</div>
+          </div>
+          <div class="admin-box" style="margin:0;">
+            <div class="section-title"><span>تعديل رصيد حساب</span></div>
+            <form class="adminAdjustForm">
+              <div class="input-group">
+                <label>اختر الحساب</label>
+                <select class="adjUser">${optsHtml}</select>
+              </div>
+              <div class="input-group">
+                <label>العملية</label>
+                <select class="adjAction">
+                  <option value="add">إضافة نقاط (+)</option>
+                  <option value="sub">خصم نقاط (-)</option>
+                  <option value="set">تعيين رصيد (=)</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label>القيمة</label>
+                <input class="input adjAmount" type="number" min="0" required />
+              </div>
+              <button type="submit" class="btn btn-crimson" style="width:100%;">تطبيق التعديل</button>
+            </form>
+          </div>
+        </div>
+        <div class="admin-box" style="margin:0;">
+          <div class="section-title">
+            <span>تفاصيل الحساب: ${acc.username}</span>
+            <span class="tx-plus">${Number(acc.balance || 0).toLocaleString()} PTS</span>
+          </div>
+          <div class="tx-sub" style="margin-bottom:8px;">
+            رقم الحساب: <strong>${acc.iban}</strong> • آخر تسجيل دخول: <strong>${acc.lastLoginAt || 'غير مسجل'}</strong> • فتح الحساب: <strong>${acc.createdAt || 'غير مسجل'}</strong>
+          </div>
+          <div style="margin-bottom:10px;">${invHtml}</div>
+          <div class="tx-list" style="max-height:170px;">${txHtml}</div>
+        </div>
+      `;
+
+      box.querySelectorAll('.acc-item').forEach(el => {
+        el.addEventListener('click', () => {
+          inspectedUser = decodeURIComponent(el.getAttribute('data-acc'));
+          render();
+        });
       });
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      if (viewId === 'adminView') {
-        renderAdminGate();
+
+      const adjForm = box.querySelector('.adminAdjustForm');
+      if (adjForm) {
+        adjForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const uName = adjForm.querySelector('.adjUser').value;
+          const act = adjForm.querySelector('.adjAction').value;
+          const val = Number(adjForm.querySelector('.adjAmount').value);
+          const target = state.users.find(u => u.username === uName);
+          if (!target || !Number.isFinite(val) || val < 0) return;
+
+          const before = Number(target.balance || 0);
+          if (act === 'add') target.balance = before + val;
+          if (act === 'sub') target.balance = Math.max(0, before - val);
+          if (act === 'set') target.balance = val;
+
+          const diff = target.balance - before;
+          if (diff !== 0) {
+            target.transactions = target.transactions || [];
+            target.transactions.unshift({
+              id: Date.now(),
+              type: diff > 0 ? 'in' : 'out',
+              title: 'تعديل رصيد من الأدمن',
+              meta: `الرصيد الجديد: ${target.balance.toLocaleString()} PTS`,
+              amount: Math.abs(diff),
+              date: new Date().toLocaleString('ar-EG')
+            });
+          }
+
+          inspectedUser = target.username;
+          saveState();
+          toast('تم تحديث رصيد ' + target.username);
+          render();
+        });
       }
     }
 
-    function copyIban() {
+    function render() {
       const user = getCurrentUser();
-      if (!user) return;
-      navigator.clipboard?.writeText(user.iban);
-      showToast('تم نسخ رقم الحساب: ' + user.iban);
+      const authSec = document.getElementById('authSection');
+      const appSec = document.getElementById('appSection');
+      const authBox = document.getElementById('authBox');
+
+      if (!user) {
+        authSec.classList.remove('hidden');
+        appSec.classList.add('hidden');
+
+        document.getElementById('externalAuthContainer').classList.toggle('hidden', standaloneMode !== 'none');
+        document.getElementById('standaloneAdminLoginBox').classList.toggle('hidden', standaloneMode !== 'login');
+        document.getElementById('standaloneAdminPanelBox').classList.toggle('hidden', standaloneMode !== 'panel');
+        authBox.classList.toggle('wide', standaloneMode === 'panel');
+
+        if (standaloneMode === 'panel') {
+          buildAdminHtml('extAdminContent');
+        }
+        return;
+      }
+
+      authSec.classList.add('hidden');
+      appSec.classList.remove('hidden');
+
+      const code = cleanCode(user.bankCode || (user.iban && user.iban.split('-')[0]) || 'SO');
+      document.getElementById('brandLogoText').textContent = code.slice(0, 3);
+      document.getElementById('cardTierBadge').textContent = `${code} BLACK CARD`;
+      document.getElementById('welcomeUserText').textContent = `${user.username} • رمز البنك: ${code}`;
+      document.getElementById('cardHolder').textContent = user.username;
+      document.getElementById('cardIban').textContent = user.iban;
+      document.getElementById('cardBalance').textContent = `${Number(user.balance || 0).toLocaleString()} PTS`;
+
+      const txs = user.transactions || [];
+      document.getElementById('txList').innerHTML = txs.length
+        ? txs.map(t => `
+            <div class="tx-item">
+              <div><div class="tx-title">${t.title}</div><div class="tx-sub">${t.meta || ''} • ${t.date}</div></div>
+              <div class="${t.type === 'in' ? 'tx-plus' : 'tx-minus'}">${t.type === 'in' ? '+' : '-'}${Number(t.amount).toLocaleString()} PTS</div>
+            </div>
+          `).join('')
+        : `<div class="tx-sub">لا توجد عمليات بعد.</div>`;
+
+      const rem = cuffRemaining(user);
+      document.getElementById('shopGrid').innerHTML = SHOP_ITEMS.map(item => {
+        const locked = item.dailyLimit && rem > 0;
+        return `
+          <div class="item-card">
+            <div>
+              <span class="item-cat ${item.dailyLimit ? 'daily' : ''}">${item.cat}</span>
+              <div class="item-name">${item.name}</div>
+              <div class="item-desc">${item.desc}</div>
+              ${item.dailyLimit ? `<div class="item-limit">${locked ? `متاح بعد: ${formatCooldown(rem)}` : 'مرة واحدة كل 24 ساعة'}</div>` : ''}
+            </div>
+            <div class="item-footer">
+              <span class="item-price">${item.price.toLocaleString()} PTS</span>
+              <button type="button" class="btn btn-gold" ${locked ? 'disabled' : ''} data-buy="${item.id}">${locked ? 'مقيد اليوم' : 'شراء'}</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('[data-buy]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const item = SHOP_ITEMS.find(i => i.id === btn.getAttribute('data-buy'));
+          if (!item) return;
+          if (item.dailyLimit && cuffRemaining(user) > 0) {
+            toast('مسموح بالكلبشات مرة واحدة كل 24 ساعة.');
+            return;
+          }
+          if (user.balance < item.price) {
+            toast('رصيدك غير كافٍ.');
+            return;
+          }
+          const now = new Date().toLocaleString('ar-EG');
+          user.balance -= item.price;
+          if (item.dailyLimit) user.lastHandcuffBoughtAt = Date.now();
+          user.inventory = user.inventory || [];
+          user.inventory.unshift({ ...item, boughtAt: now });
+          user.transactions.unshift({ id: Date.now(), type: 'out', title: `شراء: ${item.name}`, meta: item.cat, amount: item.price, date: now });
+          saveState();
+          toast('تم شراء ' + item.name);
+          render();
+        });
+      });
+
+      const inv = user.inventory || [];
+      document.getElementById('invGrid').innerHTML = inv.length
+        ? inv.map(i => `
+            <div class="item-card">
+              <div><span class="item-cat">${i.cat}</span><div class="item-name">${i.name}</div><div class="item-desc">${i.desc}</div></div>
+              <div class="item-footer"><span class="tx-sub">${i.boughtAt || ''}</span></div>
+            </div>
+          `).join('')
+        : `<div class="tx-sub">حقيبتك فارغة حالياً.</div>`;
+
+      document.getElementById('inAppAdminLoginBox').classList.toggle('hidden', adminUnlocked);
+      document.getElementById('inAppAdminContent').classList.toggle('hidden', !adminUnlocked);
+      if (adminUnlocked) {
+        buildAdminHtml('inAppAdminContent');
+      }
     }
 
-    function handleTransfer(e) {
+    document.getElementById('tabLogin').addEventListener('click', () => {
+      document.getElementById('tabLogin').classList.add('active');
+      document.getElementById('tabRegister').classList.remove('active');
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('registerForm').classList.add('hidden');
+    });
+
+    document.getElementById('tabRegister').addEventListener('click', () => {
+      document.getElementById('tabRegister').classList.add('active');
+      document.getElementById('tabLogin').classList.remove('active');
+      document.getElementById('registerForm').classList.remove('hidden');
+      document.getElementById('loginForm').classList.add('hidden');
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('regUsername').value.trim();
+      const bankCode = cleanCode(document.getElementById('regBankCode').value);
+      const password = document.getElementById('regPassword').value;
+      if (!username || !password) return;
+
+      if (state.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+        toast('الاسم مستخدم بالفعل.');
+        return;
+      }
+
+      const now = new Date().toLocaleString('ar-EG');
+      const iban = makeIban(bankCode);
+      state.users.push({
+        username,
+        bankCode,
+        password,
+        iban,
+        balance: INITIAL_BALANCE,
+        createdAt: now,
+        lastLoginAt: now,
+        inventory: [],
+        lastHandcuffBoughtAt: null,
+        transactions: [{ id: Date.now(), type: 'in', title: 'رصيد افتتاحي', meta: `رمز البنك: ${bankCode} • ${iban}`, amount: INITIAL_BALANCE, date: now }]
+      });
+      state.sessionUser = username;
+      inspectedUser = username;
+      saveState();
+      e.target.reset();
+      document.getElementById('regBankCode').value = 'SO';
+      toast(`تم إنشاء الحساب (${iban}) برصيد 1,000 نقطة`);
+      render();
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const idVal = document.getElementById('loginUsername').value.trim();
+      const codeVal = document.getElementById('loginBankCode').value.trim();
+      const passVal = document.getElementById('loginPassword').value;
+
+      const user = state.users.find(u => {
+        if (u.password !== passVal) return false;
+        const okUser = u.username.toLowerCase() === idVal.toLowerCase() || String(u.iban || '').toLowerCase() === idVal.toLowerCase();
+        if (!okUser) return false;
+        if (codeVal) {
+          const c = cleanCode(codeVal);
+          return String(u.iban || '').toUpperCase().startsWith(c + '-') || cleanCode(u.bankCode) === c;
+        }
+        return true;
+      });
+
+      if (!user) {
+        toast('بيانات الدخول أو رمز البنك غير صحيحة.');
+        return;
+      }
+
+      user.lastLoginAt = new Date().toLocaleString('ar-EG');
+      if (!user.createdAt) user.createdAt = user.lastLoginAt;
+      state.sessionUser = user.username;
+      inspectedUser = user.username;
+      saveState();
+      e.target.reset();
+      toast('أهلاً بك يا ' + user.username);
+      render();
+    });
+
+    document.getElementById('openAdminBtn').addEventListener('click', () => {
+      standaloneMode = adminUnlocked ? 'panel' : 'login';
+      render();
+    });
+
+    document.getElementById('extAdminBackBtn').addEventListener('click', () => {
+      standaloneMode = 'none';
+      render();
+    });
+
+    document.getElementById('extAdminCloseBtn').addEventListener('click', () => {
+      standaloneMode = 'none';
+      render();
+    });
+
+    document.getElementById('extAdminLoginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const u = document.getElementById('extAdminUser').value.trim().toLowerCase();
+      const p = document.getElementById('extAdminPass').value.trim().toLowerCase();
+      if (u === ADMIN_USER && p === ADMIN_PASS) {
+        adminUnlocked = true;
+        standaloneMode = 'panel';
+        e.target.reset();
+        toast('تم فتح لوحة الأدمن');
+        render();
+      } else {
+        toast('بيانات الأدمن غير صحيحة.');
+      }
+    });
+
+    document.getElementById('inAppAdminLoginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const u = document.getElementById('inAppAdminUser').value.trim().toLowerCase();
+      const p = document.getElementById('inAppAdminPass').value.trim().toLowerCase();
+      if (u === ADMIN_USER && p === ADMIN_PASS) {
+        adminUnlocked = true;
+        e.target.reset();
+        toast('تم فتح لوحة الأدمن');
+        render();
+      } else {
+        toast('بيانات الأدمن غير صحيحة.');
+      }
+    });
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const view = btn.getAttribute('data-view');
+        ['bankView', 'shopView', 'invView', 'adminView'].forEach(v => {
+          document.getElementById(v).classList.toggle('hidden', v !== view);
+        });
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+      });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      adminUnlocked = false;
+      standaloneMode = 'none';
+      state.sessionUser = null;
+      saveState();
+      render();
+    });
+
+    document.getElementById('copyIbanBtn').addEventListener('click', () => {
+      const user = getCurrentUser();
+      if (user) {
+        navigator.clipboard?.writeText(user.iban);
+        toast('تم نسخ ' + user.iban);
+      }
+    });
+
+    document.getElementById('transferForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const user = getCurrentUser();
       if (!user) return;
+      const targetIban = document.getElementById('targetIban').value.trim().toUpperCase();
+      const amount = Number(document.getElementById('transferAmount').value);
+      const note = document.getElementById('transferNote').value.trim() || 'تحويل نقاط';
 
-      const targetIban = (document.getElementById('targetIban')?.value || '').trim().toUpperCase();
-      const amount = Number(document.getElementById('transferAmount')?.value || 0);
-      const note = (document.getElementById('transferNote')?.value || '').trim() || 'تحويل نقاط رول بلاي';
-
-      if (!Number.isFinite(amount) || amount <= 0) {
-        showToast('أدخل قيمة صحيحة أكبر من صفر.');
+      if (!Number.isFinite(amount) || amount <= 0 || user.balance < amount) {
+        toast('تحقق من المبلغ أو الرصيد.');
         return;
       }
 
-      if (user.balance < amount) {
-        showToast('رصيدك غير كافٍ لإتمام هذا التحويل.');
-        return;
-      }
-
-      const recipient = state.users.find(u => String(u.iban || '').toUpperCase() === targetIban);
-      if (!recipient) {
-        showToast('لم يتم العثور على حساب بهذا الرقم.');
-        return;
-      }
-
-      if (recipient.username === user.username) {
-        showToast('لا يمكنك التحويل إلى حسابك نفسه.');
+      const rec = state.users.find(u => String(u.iban || '').toUpperCase() === targetIban);
+      if (!rec || rec.username === user.username) {
+        toast('رقم الحساب غير صحيح.');
         return;
       }
 
       const now = new Date().toLocaleString('ar-EG');
       user.balance -= amount;
-      recipient.balance += amount;
-
-      user.transactions.unshift({
-        id: Date.now() + 1,
-        type: 'out',
-        title: `تحويل إلى ${recipient.username} (${recipient.iban})`,
-        meta: note,
-        amount,
-        date: now
-      });
-
-      recipient.transactions.unshift({
-        id: Date.now() + 2,
-        type: 'in',
-        title: `استلام من ${user.username} (${user.iban})`,
-        meta: note,
-        amount,
-        date: now
-      });
-
-      saveState(state);
+      rec.balance += amount;
+      user.transactions.unshift({ id: Date.now() + 1, type: 'out', title: `تحويل إلى ${rec.username} (${rec.iban})`, meta: note, amount, date: now });
+      rec.transactions.unshift({ id: Date.now() + 2, type: 'in', title: `استلام من ${user.username} (${user.iban})`, meta: note, amount, date: now });
+      saveState();
       e.target.reset();
-      showToast(`تم تحويل ${amount.toLocaleString()} نقطة بنجاح.`);
-      renderApp();
-    }
+      toast('تم التحويل بنجاح');
+      render();
+    });
 
-    function buyItem(itemId) {
+    setInterval(() => {
       const user = getCurrentUser();
-      if (!user) return;
-
-      const item = SHOP_ITEMS.find(i => i.id === itemId);
-      if (!item) return;
-
-      if (item.dailyLimit) {
-        const rem = getHandcuffRemaining(user);
-        if (rem > 0) {
-          showToast(`مسموح بشراء الكلبشات مرة واحدة كل 24 ساعة — المتبقي ${formatCooldown(rem)}`);
-          return;
-        }
+      if (user && cuffRemaining(user) > 0 && !document.getElementById('shopView').classList.contains('hidden')) {
+        render();
       }
+    }, 1000);
 
-      if (user.balance < item.price) {
-        showToast('رصيدك لا يكفي لشراء ' + item.name);
-        return;
-      }
-
-      user.balance -= item.price;
-      if (item.dailyLimit) {
-        user.lastHandcuffBoughtAt = Date.now();
-      }
-
-      user.inventory.unshift({
-        ...item,
-        boughtAt: new Date().toLocaleString('ar-EG')
-      });
-
-      user.transactions.unshift({
-        id: Date.now(),
-        type: 'out',
-        title: `شراء: ${item.name}`,
-        meta: item.cat,
-        amount: item.price,
-        date: new Date().toLocaleString('ar-EG')
-      });
-
-      saveState(state);
-      showToast(`تم شراء ${item.name} وإضافته لحقيبتك.`);
-      renderApp();
-    }
-
-    function renderApp() {
-      const user = getCurrentUser();
-      const authSec = document.getElementById('authSection');
-      const appSec = document.getElementById('appSection');
-
-      if (!user) {
-        if (authSec) authSec.classList.remove('hidden');
-        if (appSec) appSec.classList.add('hidden');
-        renderStandaloneAdmin();
-        return;
-      }
-
-      if (authSec) authSec.classList.add('hidden');
-      if (appSec) appSec.classList.remove('hidden');
-
-      const activeBankCode = getUserBankCode(user);
-      const logoEl = document.getElementById('brandLogoText');
-      const tierEl = document.getElementById('cardTierBadge');
-      const welcomeEl = document.getElementById('welcomeUserText');
-      const holderEl = document.getElementById('cardHolder');
-      const ibanEl = document.getElementById('cardIban');
-      const balEl = document.getElementById('cardBalance');
-
-      if (logoEl) logoEl.textContent = activeBankCode.slice(0, 3);
-      if (tierEl) tierEl.textContent = `${activeBankCode} BLACK CARD`;
-      if (welcomeEl) welcomeEl.textContent = `الحساب النشط: ${user.username} • رمز 
+    render();
+  </script>
+</body>
+</html>
