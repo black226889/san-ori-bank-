@@ -208,6 +208,14 @@
       color: #090a0d;
     }
 
+    .admin-gate-bar {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-soft);
+      display: flex;
+      justify-content: center;
+    }
+
     .topbar {
       display: flex;
       flex-wrap: wrap;
@@ -544,41 +552,93 @@
 </head>
 <body>
 
-  <!-- بوابة إنشاء الحساب وتسجيل الدخول -->
+  <!-- بوابة إنشاء الحساب وتسجيل الدخول (مع ظهور لوحة الأدمن بره) -->
   <section id="authSection" class="auth-wrapper">
     <div class="auth-box glass">
-      <div class="auth-badge">SAN ORI ROLEPLAY • SIMULATION BANK</div>
-      <h1 class="auth-title">بنك وسوق سان أوري</h1>
-      <p class="auth-sub">سجّل دخولك أو أنشئ حسابك الجديد للبدء برصيد افتتاحي <strong>1,000</strong> نقطة داخل الرول بلاي.</p>
+      <div id="externalAuthContainer">
+        <div class="auth-badge">SAN ORI ROLEPLAY • SIMULATION BANK</div>
+        <h1 class="auth-title">بنك وسوق سان أوري</h1>
+        <p class="auth-sub">سجّل دخولك أو أنشئ حسابك الجديد للبدء برصيد افتتاحي <strong>1,000</strong> نقطة داخل الرول بلاي.</p>
 
-      <div class="auth-tabs">
-        <button id="tabLogin" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
-        <button id="tabRegister" class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب</button>
+        <div class="auth-tabs">
+          <button id="tabLogin" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+          <button id="tabRegister" class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب</button>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="input-group">
+            <label>اسم اللاعب (Username)</label>
+            <input id="loginUsername" class="input" type="text" placeholder="اكتب اسمك اللي سجلت بيه" required />
+          </div>
+          <div class="input-group">
+            <label>كلمة المرور (Password)</label>
+            <input id="loginPassword" class="input" type="password" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-gold" style="width:100%;">دخول إلى الحساب</button>
+        </form>
+
+        <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+          <div class="input-group">
+            <label>اسم اللاعب الجديد (Username)</label>
+            <input id="regUsername" class="input" type="text" placeholder="اختر اسمك في الرول بلاي" required />
+          </div>
+          <div class="input-group">
+            <label>كلمة المرور (Password)</label>
+            <input id="regPassword" class="input" type="password" placeholder="أنشئ كلمة مرور قوية" required />
+          </div>
+          <button type="submit" class="btn btn-gold" style="width:100%;">إنشاء حساب (رصيد 1,000 نقطة)</button>
+        </form>
+
+        <div class="admin-gate-bar">
+          <button type="button" class="btn btn-ghost" style="width:100%;" onclick="openStandaloneAdminLogin()">لوحة الأدمن</button>
+        </div>
       </div>
 
-      <form id="loginForm" onsubmit="handleLogin(event)">
-        <div class="input-group">
-          <label>اسم اللاعب (Username)</label>
-          <input id="loginUsername" class="input" type="text" placeholder="اكتب اسمك اللي سجلت بيه" required />
-        </div>
-        <div class="input-group">
-          <label>كلمة المرور (Password)</label>
-          <input id="loginPassword" class="input" type="password" placeholder="••••••••" required />
-        </div>
-        <button type="submit" class="btn btn-gold" style="width:100%;">دخول إلى الحساب</button>
-      </form>
+      <!-- دخول الأدمن من الخارج -->
+      <div id="standaloneAdminLoginBox" class="hidden">
+        <div class="auth-badge">ADMIN ACCESS • SAN ORI</div>
+        <h2 class="auth-title" style="font-size:1.45rem;">دخول لوحة الأدمن</h2>
+        <p class="auth-sub">أدخل اسم الأدمن وكلمة المرور للوصول إلى إدارة أرصدة الحسابات.</p>
+        <form onsubmit="handleStandaloneAdminLogin(event)">
+          <div class="input-group">
+            <label>اسم الأدمن</label>
+            <input id="extAdminUser" class="input" type="text" placeholder="اكتب اسم الأدمن" required />
+          </div>
+          <div class="input-group">
+            <label>كلمة المرور</label>
+            <input id="extAdminPass" class="input" type="password" placeholder="أدخل كلمة مرور لوحة الأدمن" required />
+          </div>
+          <button type="submit" class="btn btn-gold" style="width:100%; margin-bottom:8px;">دخول لوحة الأدمن</button>
+          <button type="button" class="btn btn-ghost" style="width:100%;" onclick="closeStandaloneAdmin()">رجوع لتسجيل الدخول</button>
+        </form>
+      </div>
 
-      <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
-        <div class="input-group">
-          <label>اسم اللاعب الجديد (Username)</label>
-          <input id="regUsername" class="input" type="text" placeholder="اختر اسمك في الرول بلاي" required />
-        </div>
-        <div class="input-group">
-          <label>كلمة المرور (Password)</label>
-          <input id="regPassword" class="input" type="password" placeholder="أنشئ كلمة مرور قوية" required />
-        </div>
-        <button type="submit" class="btn btn-gold" style="width:100%;">إنشاء حساب (رصيد 1,000 نقطة)</button>
-      </form>
+      <!-- إدارة الأرصدة من الخارج بعد التحقق -->
+      <div id="standaloneAdminPanelBox" class="hidden">
+        <div class="auth-badge">ADMIN CONTROL • SAN ORI</div>
+        <h2 class="auth-title" style="font-size:1.45rem;">إدارة أرصدة اللاعبين</h2>
+        <p class="auth-sub">تعديل رصيد أي حساب مسجل على المتصفح مباشرة.</p>
+        <form onsubmit="handleAdminAdjust(event, true)">
+          <div class="input-group">
+            <label>اختر الحساب</label>
+            <select id="extAdminUserSelect"></select>
+          </div>
+          <div class="input-group">
+            <label>نوع العملية</label>
+            <select id="extAdminAction">
+              <option value="add">إضافة نقاط (+)</option>
+              <option value="sub">خصم نقاط (-)</option>
+              <option value="set">تعيين رصيد محدد (=)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>قيمة النقاط</label>
+            <input id="extAdminAmount" class="input" type="number" min="0" required />
+          </div>
+          <button type="submit" class="btn btn-crimson" style="width:100%; margin-bottom:8px;">تطبيق التعديل</button>
+          <button type="button" class="btn btn-ghost" style="width:100%;" onclick="closeStandaloneAdmin()">خروج من لوحة الأدمن</button>
+        </form>
+      </div>
     </div>
   </section>
 
@@ -708,7 +768,7 @@
             <span>تعديل رصيد حساب لاعب</span>
             <button type="button" class="btn btn-ghost" style="padding: 6px 12px; font-size: 0.82rem;" onclick="lockAdminPanel()">قفل اللوحة</button>
           </div>
-          <form onsubmit="handleAdminAdjust(event)">
+          <form onsubmit="handleAdminAdjust(event, false)">
             <div class="input-group">
               <label>اختر الحساب</label>
               <select id="adminUserSelect"></select>
@@ -748,6 +808,7 @@
     };
 
     let adminUnlocked = false;
+    let standaloneAdminMode = 'none'; // 'none' | 'login' | 'panel'
 
     // قائمة الأسلحة الخفيفة والمعدات المسموحة في سان أوري (بدون قلاع أو دروع أو MP5 أو P90)
     const SHOP_ITEMS = [
@@ -825,6 +886,58 @@
       return Math.max(0, DAILY_COOLDOWN_MS - elapsed);
     }
 
+    function populateAdminSelects() {
+      const optionsHtml = state.users.length
+        ? state.users
+            .map(u => `<option value="${u.username}">${u.username} (${u.iban}) — ${u.balance.toLocaleString()} PTS</option>`)
+            .join('')
+        : `<option value="">لا توجد حسابات مسجلة بعد</option>`;
+
+      const adminSelect = document.getElementById('adminUserSelect');
+      const extAdminSelect = document.getElementById('extAdminUserSelect');
+      if (adminSelect) adminSelect.innerHTML = optionsHtml;
+      if (extAdminSelect) extAdminSelect.innerHTML = optionsHtml;
+    }
+
+    function renderStandaloneAdmin() {
+      const authBox = document.getElementById('externalAuthContainer');
+      const loginBox = document.getElementById('standaloneAdminLoginBox');
+      const panelBox = document.getElementById('standaloneAdminPanelBox');
+      if (!authBox || !loginBox || !panelBox) return;
+
+      authBox.classList.toggle('hidden', standaloneAdminMode !== 'none');
+      loginBox.classList.toggle('hidden', standaloneAdminMode !== 'login');
+      panelBox.classList.toggle('hidden', standaloneAdminMode !== 'panel');
+    }
+
+    function openStandaloneAdminLogin() {
+      standaloneAdminMode = adminUnlocked ? 'panel' : 'login';
+      populateAdminSelects();
+      renderStandaloneAdmin();
+    }
+
+    function closeStandaloneAdmin() {
+      standaloneAdminMode = 'none';
+      renderStandaloneAdmin();
+    }
+
+    function handleStandaloneAdminLogin(e) {
+      e.preventDefault();
+      const inputUser = document.getElementById('extAdminUser').value.trim();
+      const inputPass = document.getElementById('extAdminPass').value;
+
+      if (inputUser === ADMIN_CREDENTIALS.username && inputPass === ADMIN_CREDENTIALS.password) {
+        adminUnlocked = true;
+        standaloneAdminMode = 'panel';
+        e.target.reset();
+        populateAdminSelects();
+        renderStandaloneAdmin();
+        showToast('تم فتح لوحة الأدمن بنجاح.');
+      } else {
+        showToast('اسم الأدمن أو كلمة المرور غير صحيحة.');
+      }
+    }
+
     function renderAdminGate() {
       const loginBox = document.getElementById('adminLoginBox');
       const panelBox = document.getElementById('adminPanelBox');
@@ -850,6 +963,10 @@
 
     function lockAdminPanel() {
       adminUnlocked = false;
+      if (standaloneAdminMode === 'panel') {
+        standaloneAdminMode = 'login';
+        renderStandaloneAdmin();
+      }
       renderAdminGate();
       showToast('تم قفل لوحة الأدمن.');
     }
@@ -894,6 +1011,7 @@
 
       state.users.push(newUser);
       state.sessionUser = newUser.username;
+      standaloneAdminMode = 'none';
       saveState(state);
       e.target.reset();
       showToast('تم إنشاء حسابك برصيد 1,000 نقطة!');
@@ -915,6 +1033,7 @@
       }
 
       state.sessionUser = user.username;
+      standaloneAdminMode = 'none';
       saveState(state);
       e.target.reset();
       showToast('أهلاً بك مجدداً يا ' + user.username);
@@ -923,6 +1042,7 @@
 
     function logout() {
       adminUnlocked = false;
+      standaloneAdminMode = 'none';
       state.sessionUser = null;
       saveState(state);
       renderApp();
@@ -1053,7 +1173,7 @@
       renderApp();
     }
 
-    function handleAdminAdjust(e) {
+    function handleAdminAdjust(e, isStandalone = false) {
       e.preventDefault();
       if (!adminUnlocked) {
         showToast('يجب تسجيل دخول الأدمن أولاً.');
@@ -1061,12 +1181,16 @@
         return;
       }
 
-      const targetName = document.getElementById('adminUserSelect').value;
-      const action = document.getElementById('adminAction').value;
-      const amount = Number(document.getElementById('adminAmount').value);
+      const targetName = document.getElementById(isStandalone ? 'extAdminUserSelect' : 'adminUserSelect').value;
+      const action = document.getElementById(isStandalone ? 'extAdminAction' : 'adminAction').value;
+      const amount = Number(document.getElementById(isStandalone ? 'extAdminAmount' : 'adminAmount').value);
 
       const target = state.users.find(u => u.username === targetName);
-      if (!target || !Number.isFinite(amount) || amount < 0) return;
+      if (!target) {
+        showToast('لا يوجد حساب محدد لتعديل رصيده.');
+        return;
+      }
+      if (!Number.isFinite(amount) || amount < 0) return;
 
       const before = target.balance;
       if (action === 'add') target.balance += amount;
@@ -1096,9 +1220,12 @@
       const authSec = document.getElementById('authSection');
       const appSec = document.getElementById('appSection');
 
+      populateAdminSelects();
+
       if (!user) {
         authSec.classList.remove('hidden');
         appSec.classList.add('hidden');
+        renderStandaloneAdmin();
         return;
       }
 
@@ -1164,11 +1291,6 @@
           </div>
         `).join('');
       }
-
-      const adminSelect = document.getElementById('adminUserSelect');
-      adminSelect.innerHTML = state.users
-        .map(u => `<option value="${u.username}">${u.username} (${u.iban}) — ${u.balance.toLocaleString()} PTS</option>`)
-        .join('');
 
       renderAdminGate();
     }
