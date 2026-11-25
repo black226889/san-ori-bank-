@@ -803,9 +803,16 @@
     const STORAGE_KEY = 'san_ori_bank_v1';
     const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const ADMIN_CREDENTIALS = {
-      username: '𝐷𝑟. 𝐵𝐿𝐴𝐶𝐾',
-      password: 'mohamed226889'
+      username: 'Dr. black',
+      password: 'black'
     };
+
+    function verifyAdminCredentials(usernameInput, passwordInput) {
+      return (
+        usernameInput.trim().toLowerCase() === ADMIN_CREDENTIALS.username.toLowerCase() &&
+        passwordInput === ADMIN_CREDENTIALS.password
+      );
+    }
 
     let adminUnlocked = false;
     let standaloneAdminMode = 'none'; // 'none' | 'login' | 'panel'
@@ -923,10 +930,10 @@
 
     function handleStandaloneAdminLogin(e) {
       e.preventDefault();
-      const inputUser = document.getElementById('extAdminUser').value.trim();
+      const inputUser = document.getElementById('extAdminUser').value;
       const inputPass = document.getElementById('extAdminPass').value;
 
-      if (inputUser === ADMIN_CREDENTIALS.username && inputPass === ADMIN_CREDENTIALS.password) {
+      if (verifyAdminCredentials(inputUser, inputPass)) {
         adminUnlocked = true;
         standaloneAdminMode = 'panel';
         e.target.reset();
@@ -948,10 +955,10 @@
 
     function handleAdminLogin(e) {
       e.preventDefault();
-      const inputUser = document.getElementById('adminUsernameInput').value.trim();
+      const inputUser = document.getElementById('adminUsernameInput').value;
       const inputPass = document.getElementById('adminPasswordInput').value;
 
-      if (inputUser === ADMIN_CREDENTIALS.username && inputPass === ADMIN_CREDENTIALS.password) {
+      if (verifyAdminCredentials(inputUser, inputPass)) {
         adminUnlocked = true;
         e.target.reset();
         renderAdminGate();
