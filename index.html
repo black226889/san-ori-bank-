@@ -602,11 +602,11 @@
         <form onsubmit="handleStandaloneAdminLogin(event)">
           <div class="input-group">
             <label>اسم الأدمن</label>
-            <input id="extAdminUser" class="input" type="text" placeholder="اكتب اسم الأدمن" required />
+            <input id="extAdminUser" class="input" type="text" placeholder="اكتب اسم الأدمن" autocomplete="off" autocapitalize="off" required />
           </div>
           <div class="input-group">
             <label>كلمة المرور</label>
-            <input id="extAdminPass" class="input" type="password" placeholder="أدخل كلمة مرور لوحة الأدمن" required />
+            <input id="extAdminPass" class="input" type="password" placeholder="أدخل كلمة مرور لوحة الأدمن" autocomplete="off" autocapitalize="off" required />
           </div>
           <button type="submit" class="btn btn-gold" style="width:100%; margin-bottom:8px;">دخول لوحة الأدمن</button>
           <button type="button" class="btn btn-ghost" style="width:100%;" onclick="closeStandaloneAdmin()">رجوع لتسجيل الدخول</button>
@@ -753,11 +753,11 @@
           <form onsubmit="handleAdminLogin(event)">
             <div class="input-group">
               <label>اسم الأدمن</label>
-              <input id="adminUsernameInput" class="input" type="text" placeholder="اكتب اسم الأدمن" required />
+              <input id="adminUsernameInput" class="input" type="text" placeholder="اكتب اسم الأدمن" autocomplete="off" autocapitalize="off" required />
             </div>
             <div class="input-group">
               <label>كلمة المرور</label>
-              <input id="adminPasswordInput" class="input" type="password" placeholder="أدخل كلمة مرور لوحة الأدمن" required />
+              <input id="adminPasswordInput" class="input" type="password" placeholder="أدخل كلمة مرور لوحة الأدمن" autocomplete="off" autocapitalize="off" required />
             </div>
             <button type="submit" class="btn btn-gold" style="width:100%;">فتح لوحة الأدمن</button>
           </form>
@@ -803,14 +803,16 @@
     const STORAGE_KEY = 'san_ori_bank_v1';
     const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const ADMIN_CREDENTIALS = {
-      username: 'Dr. black',
+      username: 'dr black',
       password: 'black'
     };
 
     function verifyAdminCredentials(usernameInput, passwordInput) {
+      const cleanUser = String(usernameInput || '').trim().toLowerCase();
+      const cleanPass = String(passwordInput || '').trim().toLowerCase();
       return (
-        usernameInput.trim().toLowerCase() === ADMIN_CREDENTIALS.username.toLowerCase() &&
-        passwordInput === ADMIN_CREDENTIALS.password
+        cleanUser === ADMIN_CREDENTIALS.username &&
+        cleanPass === ADMIN_CREDENTIALS.password
       );
     }
 
