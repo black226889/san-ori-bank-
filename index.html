@@ -740,6 +740,7 @@
     const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const ADMIN_USER = 'dr black';
     const ADMIN_PASS = 'black';
+    const FIREBASE_DB_URL = 'https://san-ori-bank-default-rtdb.firebaseio.com';
 
     const SHOP_ITEMS = [
       { id: 'knife', cat: 'قتال عن قرب', name: 'سكين', desc: 'سلاح أبيض خفيف للاشتباك القريب في شوارع سان أوري.', price: 150 },
@@ -758,7 +759,11 @@
     let standaloneMode = 'none';
     let inspectedUser = null;
 
-    function loadState() {
+    function hasCloudDb() {
+      return typeof FIREBASE_DB_URL === 'string' && FIREBASE_DB_URL.startsWith('https://') && !FIREBASE_DB_URL.includes('ضع_رابط_قاعدة_البيانات_هنا');
+    }
+
+    function loadLocal() {
       try {
         const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
         return {
@@ -770,15 +775,48 @@
       }
     }
 
-    function saveState() {
+    function saveLocal() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
-    let state = loadState();
+    let state = loadLocal();
+
+    async function cloudGetUsers() {
+      if (!hasCloudDb()) return state.users;
+      const baseUrl = FIREBASE_DB_URL.replace(/\/+$/, '');
+      const res = await fetch(`${baseUrl}/san_ori_bank/users.json`);
+      if (!res.ok) throw new Error('تعذر جلب البيانات من السحابة.');
+      const data = await res.json();
+      if (!data) return [];
+      return Array.isArray(data) ? data.filter(Boolean) : Object.values(data).filter(Boolean);
+    }
+
+    async function cloudSaveUsers(usersList) {
+      state.users = usersList;
+      saveLocal();
+      if (!hasCloudDb()) return;
+      const baseUrl = FIREBASE_DB_URL.replace(/\/+$/, '');
+      const res = await fetch(`${baseUrl}/san_ori_bank/users.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(usersList)
+      });
+      if (!res.ok) throw new Error('تعذر حفظ البيانات في السحابة.');
+    }
+
+    async function syncFromCloud() {
+      if (!hasCloudDb()) return;
+      try {
+        const cloudUsers = await cloudGetUsers();
+        state.users = cloudUsers;
+        saveLocal();
+        render();
+      } catch (e) {}
+    }
 
     window.addEventListener('storage', (e) => {
       if (e.key === STORAGE_KEY) {
-        state = loadState();
+        state = loadLocal();
         render();
       }
     });
@@ -791,11 +829,11 @@
       window.__t = setTimeout(() => el.classList.remove('show'), 2600);
     }
 
-    function makeIban() {
+    function makeIban(usersList) {
       let iban;
       do {
         iban = 'SO-' + Math.floor(1000 + Math.random() * 9000);
-      } while (state.users.some(u => String(u.iban || '').toUpperCase() === iban));
+      } while (usersList.some(u => String(u.iban || '').toUpperCase() === iban));
       return iban;
     }
 
@@ -829,8 +867,12 @@
       const box = document.getElementById(targetId);
       if (!box) return;
 
+      const cloudNote = hasCloudDb()
+        ? `<span class="tag" style="background:rgba(16,185,129,0.16);color:#6ee7b7;border-color:rgba(16,185,129,0.35);">متصل بالسحابة (كل الأجهزة)</span>`
+        : `<span class="tag">وضع محلي فقط</span>`;
+
       if (!state.users.length) {
-        box.innerHTML = `<div class="admin-box"><div class="tx-sub">لا توجد حسابات مسجلة في هذا المتصفح بعد.</div></div>`;
+        box.innerHTML = `<div class="admin-box"><div class="tx-sub">لا توجد حسابات مسجلة بعد. ${cloudNote}</div></div>`;
         return;
       }
 
@@ -868,6 +910,7 @@
       `).join('') || `<div class="tx-sub">لا توجد عمليات.</div>`;
 
       box.innerHTML = `
+        <div style="margin-bottom:12px;">${cloudNote}</div>
         <div class="grid-2" style="margin-bottom:14px;">
           <div class="admin-box" style="margin:0;">
             <div class="section-title"><span>الحسابات المسجلة (${state.users.length})</span></div>
@@ -918,34 +961,37 @@
 
       const adjForm = box.querySelector('.adminAdjustForm');
       if (adjForm) {
-        adjForm.addEventListener('submit', (e) => {
+        adjForm.addEventListener('submit', async (e) => {
           e.preventDefault();
           const uName = adjForm.querySelector('.adjUser').value;
           const act = adjForm.querySelector('.adjAction').value;
           const val = Number(adjForm.querySelector('.adjAmount').value);
-          const target = state.users.find(u => u.username === uName);
-          if (!target || !Number.isFinite(val) || val < 0) return;
+          if (!Number.isFinite(val) || val < 0) return;
+
+          const latestUsers = await cloudGetUsers().catch(() => state.users);
+          const target = latestUsers.find(u => u.username === uName);
+          if (!target) return;
 
           const before = Number(target.balance || 0);
           if (act === 'add') target.balance = before + val;
           if (act === 'sub') target.balance = Math.max(0, before - val);
           if (act === 'set') target.balance = val;
 
-          const diff = target.balance - before;
+          const diff = Number(target.balance || 0) - before;
           if (diff !== 0) {
-            target.transactions = target.transactions || [];
+            target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
             target.transactions.unshift({
               id: Date.now(),
               type: diff > 0 ? 'in' : 'out',
               title: 'تعديل رصيد من الأدمن',
-              meta: `الرصيد الجديد: ${target.balance.toLocaleString()} PTS`,
+              meta: `الرصيد الجديد: ${Number(target.balance || 0).toLocaleString()} PTS`,
               amount: Math.abs(diff),
               date: new Date().toLocaleString('ar-EG')
             });
           }
 
+          await cloudSaveUsers(latestUsers);
           inspectedUser = target.username;
-          saveState();
           toast('تم تحديث رصيد ' + target.username);
           render();
         });
@@ -1011,24 +1057,42 @@
       }).join('');
 
       document.querySelectorAll('[data-buy]').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
           const item = SHOP_ITEMS.find(i => i.id === btn.getAttribute('data-buy'));
           if (!item) return;
-          if (item.dailyLimit && cuffRemaining(user) > 0) {
+
+          const latestUsers = await cloudGetUsers().catch(() => state.users);
+          const current = latestUsers.find(u => u.username === user.username) || user;
+
+          if (item.dailyLimit && cuffRemaining(current) > 0) {
             toast('مسموح بالكلبشات مرة واحدة كل 24 ساعة.');
             return;
           }
-          if (user.balance < item.price) {
+          if (Number(current.balance || 0) < item.price) {
             toast('رصيدك غير كافٍ.');
             return;
           }
+
           const now = new Date().toLocaleString('ar-EG');
-          user.balance -= item.price;
-          if (item.dailyLimit) user.lastHandcuffBoughtAt = Date.now();
-          user.inventory = user.inventory || [];
-          user.inventory.unshift({ ...item, boughtAt: now });
-          user.transactions.unshift({ id: Date.now(), type: 'out', title: `شراء: ${item.name}`, meta: item.cat, amount: item.price, date: now });
-          saveState();
+          current.balance = Number(current.balance || 0) - item.price;
+          if (item.dailyLimit) current.lastHandcuffBoughtAt = Date.now();
+          current.inventory = Array.isArray(current.inventory) ? current.inventory : [];
+          current.inventory.unshift({ ...item, boughtAt: now });
+          current.transactions = Array.isArray(current.transactions) ? current.transactions : [];
+          current.transactions.unshift({
+            id: Date.now(),
+            type: 'out',
+            title: `شراء: ${item.name}`,
+            meta: item.cat,
+            amount: item.price,
+            date: now
+          });
+
+          if (!latestUsers.some(u => u.username === current.username)) {
+            latestUsers.push(current);
+          }
+
+          await cloudSaveUsers(latestUsers);
           toast('تم شراء ' + item.name);
           render();
         });
@@ -1065,20 +1129,21 @@
       document.getElementById('loginForm').classList.add('hidden');
     });
 
-    document.getElementById('registerForm').addEventListener('submit', (e) => {
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const username = document.getElementById('regUsername').value.trim();
       const password = document.getElementById('regPassword').value;
       if (!username || !password) return;
 
-      if (state.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+      const latestUsers = await cloudGetUsers().catch(() => state.users);
+      if (latestUsers.some(u => String(u.username || '').toLowerCase() === username.toLowerCase())) {
         toast('اسم اللاعب مستخدم بالفعل، اختر اسماً آخر.');
         return;
       }
 
       const now = new Date().toLocaleString('ar-EG');
-      const iban = makeIban();
-      state.users.push({
+      const iban = makeIban(latestUsers);
+      latestUsers.push({
         username,
         password,
         iban,
@@ -1089,21 +1154,23 @@
         lastHandcuffBoughtAt: null,
         transactions: [{ id: Date.now(), type: 'in', title: 'رصيد افتتاحي للحساب الجديد', meta: 'منحة بداية السيرفر', amount: INITIAL_BALANCE, date: now }]
       });
+
       state.sessionUser = username;
       inspectedUser = username;
-      saveState();
+      await cloudSaveUsers(latestUsers);
       e.target.reset();
       toast('تم إنشاء حسابك برصيد 1,000 نقطة!');
       render();
     });
 
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const username = document.getElementById('loginUsername').value.trim();
       const password = document.getElementById('loginPassword').value;
 
-      const user = state.users.find(
-        u => u.username.toLowerCase() === username.toLowerCase() && u.password === password
+      const latestUsers = await cloudGetUsers().catch(() => state.users);
+      const user = latestUsers.find(
+        u => String(u.username || '').toLowerCase() === username.toLowerCase() && u.password === password
       );
 
       if (!user) {
@@ -1115,14 +1182,17 @@
       if (!user.createdAt) user.createdAt = user.lastLoginAt;
       state.sessionUser = user.username;
       inspectedUser = user.username;
-      saveState();
+      await cloudSaveUsers(latestUsers);
       e.target.reset();
       toast('أهلاً بك مجدداً يا ' + user.username);
       render();
     });
 
-    document.getElementById('openAdminBtn').addEventListener('click', () => {
+    document.getElementById('openAdminBtn').addEventListener('click', async () => {
       standaloneMode = adminUnlocked ? 'panel' : 'login';
+      if (adminUnlocked) {
+        await syncFromCloud();
+      }
       render();
     });
 
@@ -1136,7 +1206,7 @@
       render();
     });
 
-    document.getElementById('extAdminLoginForm').addEventListener('submit', (e) => {
+    document.getElementById('extAdminLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const u = document.getElementById('extAdminUser').value.trim().toLowerCase();
       const p = document.getElementById('extAdminPass').value.trim().toLowerCase();
@@ -1144,6 +1214,7 @@
         adminUnlocked = true;
         standaloneMode = 'panel';
         e.target.reset();
+        await syncFromCloud();
         toast('تم فتح لوحة الأدمن بنجاح.');
         render();
       } else {
@@ -1151,13 +1222,14 @@
       }
     });
 
-    document.getElementById('inAppAdminLoginForm').addEventListener('submit', (e) => {
+    document.getElementById('inAppAdminLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const u = document.getElementById('inAppAdminUser').value.trim().toLowerCase();
       const p = document.getElementById('inAppAdminPass').value.trim().toLowerCase();
       if (u === ADMIN_USER && p === ADMIN_PASS) {
         adminUnlocked = true;
         e.target.reset();
+        await syncFromCloud();
         toast('تم فتح لوحة الأدمن بنجاح.');
         render();
       } else {
@@ -1166,13 +1238,14 @@
     });
 
     document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const view = btn.getAttribute('data-view');
         ['bankView', 'shopView', 'invView', 'adminView'].forEach(v => {
           document.getElementById(v).classList.toggle('hidden', v !== view);
         });
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        await syncFromCloud();
         render();
       });
     });
@@ -1181,7 +1254,7 @@
       adminUnlocked = false;
       standaloneMode = 'none';
       state.sessionUser = null;
-      saveState();
+      saveLocal();
       render();
     });
 
@@ -1193,7 +1266,7 @@
       }
     });
 
-    document.getElementById('transferForm').addEventListener('submit', (e) => {
+    document.getElementById('transferForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const user = getCurrentUser();
       if (!user) return;
@@ -1207,31 +1280,40 @@
         return;
       }
 
-      const rec = state.users.find(u => String(u.iban || '').toUpperCase() === targetIban);
-      if (!rec || rec.username === user.username) {
+      const latestUsers = await cloudGetUsers().catch(() => state.users);
+      const sender = latestUsers.find(u => u.username === user.username) || user;
+      const rec = latestUsers.find(u => String(u.iban || '').toUpperCase() === targetIban);
+
+      if (!rec || rec.username === sender.username) {
         toast('لم يتم العثور على حساب بهذا الرقم.');
         return;
       }
 
       const now = new Date().toLocaleString('ar-EG');
-      user.balance -= amount;
-      rec.balance += amount;
-      user.transactions.unshift({ id: Date.now() + 1, type: 'out', title: `تحويل إلى ${rec.username} (${rec.iban})`, meta: note, amount, date: now });
-      rec.transactions.unshift({ id: Date.now() + 2, type: 'in', title: `استلام من ${user.username} (${user.iban})`, meta: note, amount, date: now });
-      saveState();
+      sender.balance = Number(sender.balance || 0) - amount;
+      rec.balance = Number(rec.balance || 0) + amount;
+      sender.transactions = Array.isArray(sender.transactions) ? sender.transactions : [];
+      rec.transactions = Array.isArray(rec.transactions) ? rec.transactions : [];
+
+      sender.transactions.unshift({ id: Date.now() + 1, type: 'out', title: `تحويل إلى ${rec.username} (${rec.iban})`, meta: note, amount, date: now });
+      rec.transactions.unshift({ id: Date.now() + 2, type: 'in', title: `استلام من ${sender.username} (${sender.iban})`, meta: note, amount, date: now });
+
+      await cloudSaveUsers(latestUsers);
       e.target.reset();
       document.getElementById('transferBankPrefix').value = 'SO';
       toast(`تم تحويل ${amount.toLocaleString()} نقطة بنجاح.`);
       render();
     });
 
-    setInterval(() => {
-      const user = getCurrentUser();
-      if (user && cuffRemaining(user) > 0 && !document.getElementById('shopView').classList.contains('hidden')) {
+    setInterval(async () => {
+      if (hasCloudDb()) {
+        await syncFromCloud();
+      } else if (getCurrentUser() && cuffRemaining(getCurrentUser()) > 0 && !document.getElementById('shopView').classList.contains('hidden')) {
         render();
       }
-    }, 1000);
+    }, 4000);
 
+    syncFromCloud();
     render();
   </script>
 </body>
