@@ -379,6 +379,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .section-title span.tag {
@@ -680,31 +681,53 @@
       </div>
     </section>
 
-    <!-- قسم إدارة الأرصدة -->
+    <!-- قسم إدارة الأرصدة (لوحة الأدمن المحمية) -->
     <section id="adminView" class="hidden">
       <div class="section-card glass" style="max-width: 560px; margin: 0 auto;">
-        <div class="section-title">
-          <span>تعديل رصيد حساب لاعب</span>
+        <div id="adminLoginBox">
+          <div class="section-title">
+            <span>تسجيل دخول لوحة الأدمن</span>
+            <span class="tag">محمي بالاسم وكلمة المرور</span>
+          </div>
+          <p class="auth-sub" style="margin-bottom: 16px;">أدخل اسم الأدمن وكلمة المرور للوصول إلى أدوات تعديل أرصدة اللاعبين.</p>
+          <form onsubmit="handleAdminLogin(event)">
+            <div class="input-group">
+              <label>اسم الأدمن</label>
+              <input id="adminUsernameInput" class="input" type="text" placeholder="اكتب اسم الأدمن" required />
+            </div>
+            <div class="input-group">
+              <label>كلمة المرور</label>
+              <input id="adminPasswordInput" class="input" type="password" placeholder="أدخل كلمة مرور لوحة الأدمن" required />
+            </div>
+            <button type="submit" class="btn btn-gold" style="width:100%;">فتح لوحة الأدمن</button>
+          </form>
         </div>
-        <form onsubmit="handleAdminAdjust(event)">
-          <div class="input-group">
-            <label>اختر الحساب</label>
-            <select id="adminUserSelect"></select>
+
+        <div id="adminPanelBox" class="hidden">
+          <div class="section-title">
+            <span>تعديل رصيد حساب لاعب</span>
+            <button type="button" class="btn btn-ghost" style="padding: 6px 12px; font-size: 0.82rem;" onclick="lockAdminPanel()">قفل اللوحة</button>
           </div>
-          <div class="input-group">
-            <label>نوع العملية</label>
-            <select id="adminAction">
-              <option value="add">إضافة نقاط (+)</option>
-              <option value="sub">خصم نقاط (-)</option>
-              <option value="set">تعيين رصيد محدد (=)</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label>قيمة النقاط</label>
-            <input id="adminAmount" class="input" type="number" min="0" required />
-          </div>
-          <button type="submit" class="btn btn-crimson" style="width:100%;">تطبيق التعديل</button>
-        </form>
+          <form onsubmit="handleAdminAdjust(event)">
+            <div class="input-group">
+              <label>اختر الحساب</label>
+              <select id="adminUserSelect"></select>
+            </div>
+            <div class="input-group">
+              <label>نوع العملية</label>
+              <select id="adminAction">
+                <option value="add">إضافة نقاط (+)</option>
+                <option value="sub">خصم نقاط (-)</option>
+                <option value="set">تعيين رصيد محدد (=)</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>قيمة النقاط</label>
+              <input id="adminAmount" class="input" type="number" min="0" required />
+            </div>
+            <button type="submit" class="btn btn-crimson" style="width:100%;">تطبيق التعديل</button>
+          </form>
+        </div>
       </div>
     </section>
   </main>
@@ -719,6 +742,12 @@
     const INITIAL_BALANCE = 1000;
     const STORAGE_KEY = 'san_ori_bank_v1';
     const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+    const ADMIN_CREDENTIALS = {
+      username: '𝐷𝑟. 𝐵𝐿𝐴𝐶𝐾',
+      password: 'mohamed226889'
+    };
+
+    let adminUnlocked = false;
 
     // قائمة الأسلحة الخفيفة والمعدات المسموحة في سان أوري (بدون قلاع أو دروع أو MP5 أو P90)
     const SHOP_ITEMS = [
@@ -796,6 +825,35 @@
       return Math.max(0, DAILY_COOLDOWN_MS - elapsed);
     }
 
+    function renderAdminGate() {
+      const loginBox = document.getElementById('adminLoginBox');
+      const panelBox = document.getElementById('adminPanelBox');
+      if (!loginBox || !panelBox) return;
+      loginBox.classList.toggle('hidden', adminUnlocked);
+      panelBox.classList.toggle('hidden', !adminUnlocked);
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const inputUser = document.getElementById('adminUsernameInput').value.trim();
+      const inputPass = document.getElementById('adminPasswordInput').value;
+
+      if (inputUser === ADMIN_CREDENTIALS.username && inputPass === ADMIN_CREDENTIALS.password) {
+        adminUnlocked = true;
+        e.target.reset();
+        renderAdminGate();
+        showToast('تم فتح لوحة الأدمن بنجاح.');
+      } else {
+        showToast('اسم الأدمن أو كلمة المرور غير صحيحة.');
+      }
+    }
+
+    function lockAdminPanel() {
+      adminUnlocked = false;
+      renderAdminGate();
+      showToast('تم قفل لوحة الأدمن.');
+    }
+
     function switchAuthTab(tab) {
       const isLogin = tab === 'login';
       document.getElementById('tabLogin').classList.toggle('active', isLogin);
@@ -864,6 +922,7 @@
     }
 
     function logout() {
+      adminUnlocked = false;
       state.sessionUser = null;
       saveState(state);
       renderApp();
@@ -880,6 +939,9 @@
       });
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
+      if (viewId === 'adminView') {
+        renderAdminGate();
+      }
     }
 
     function copyIban() {
@@ -993,6 +1055,12 @@
 
     function handleAdminAdjust(e) {
       e.preventDefault();
+      if (!adminUnlocked) {
+        showToast('يجب تسجيل دخول الأدمن أولاً.');
+        renderAdminGate();
+        return;
+      }
+
       const targetName = document.getElementById('adminUserSelect').value;
       const action = document.getElementById('adminAction').value;
       const amount = Number(document.getElementById('adminAmount').value);
@@ -1101,6 +1169,8 @@
       adminSelect.innerHTML = state.users
         .map(u => `<option value="${u.username}">${u.username} (${u.iban}) — ${u.balance.toLocaleString()} PTS</option>`)
         .join('');
+
+      renderAdminGate();
     }
 
     setInterval(() => {
