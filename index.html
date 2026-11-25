@@ -675,7 +675,6 @@
 </head>
 <body>
 
-  <!-- بوابة إنشاء الحساب وتسجيل الدخول (مع ظهور لوحة الأدمن بره) -->
   <section id="authSection" class="auth-wrapper">
     <div id="authBox" class="auth-box glass">
       <div id="externalAuthContainer">
@@ -684,8 +683,8 @@
         <p class="auth-sub">سجّل دخولك أو أنشئ حسابك الجديد للبدء برصيد افتتاحي <strong>1,000</strong> نقطة داخل الرول بلاي.</p>
 
         <div class="auth-tabs">
-          <button id="tabLogin" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
-          <button id="tabRegister" class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب</button>
+          <button type="button" id="tabLogin" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+          <button type="button" id="tabRegister" class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب</button>
         </div>
 
         <form id="loginForm" onsubmit="handleLogin(event)">
@@ -725,7 +724,6 @@
         </div>
       </div>
 
-      <!-- دخول الأدمن من الخارج -->
       <div id="standaloneAdminLoginBox" class="hidden">
         <div class="auth-badge">ADMIN ACCESS • SAN ORI</div>
         <h2 class="auth-title" style="font-size:1.45rem;">دخول لوحة الأدمن</h2>
@@ -744,7 +742,6 @@
         </form>
       </div>
 
-      <!-- إدارة الأرصدة ومتابعة الحسابات من الخارج بعد التحقق -->
       <div id="standaloneAdminPanelBox" class="hidden">
         <div class="auth-badge">ADMIN CONTROL • SAN ORI</div>
         <div class="section-title" style="margin-bottom:6px;">
@@ -757,7 +754,6 @@
     </div>
   </section>
 
-  <!-- المنصة الرئيسية بعد تسجيل الدخول -->
   <main id="appSection" class="container hidden">
     <header class="topbar glass">
       <div class="brand">
@@ -769,16 +765,15 @@
       </div>
 
       <nav class="nav-tabs">
-        <button class="nav-btn active" data-view="bankView" onclick="switchView('bankView', this)">البنك والتحويلات</button>
-        <button class="nav-btn" data-view="shopView" onclick="switchView('shopView', this)">متجر المعدات</button>
-        <button class="nav-btn" data-view="invView" onclick="switchView('invView', this)">الحقيبة</button>
-        <button class="nav-btn" data-view="adminView" onclick="switchView('adminView', this)">إدارة الأرصدة</button>
+        <button type="button" class="nav-btn active" data-view="bankView" onclick="switchView('bankView', this)">البنك والتحويلات</button>
+        <button type="button" class="nav-btn" data-view="shopView" onclick="switchView('shopView', this)">متجر المعدات</button>
+        <button type="button" class="nav-btn" data-view="invView" onclick="switchView('invView', this)">الحقيبة</button>
+        <button type="button" class="nav-btn" data-view="adminView" onclick="switchView('adminView', this)">إدارة الأرصدة</button>
       </nav>
 
-      <button class="btn btn-ghost" onclick="logout()">خروج</button>
+      <button type="button" class="btn btn-ghost" onclick="logout()">خروج</button>
     </header>
 
-    <!-- قسم البنك والتحويلات -->
     <section id="bankView">
       <div class="grid-2">
         <div class="black-card">
@@ -799,7 +794,7 @@
             </div>
             <div class="iban-box">
               <span id="cardIban">SO-0000</span>
-              <button class="copy-mini" onclick="copyIban()">نسخ</button>
+              <button type="button" class="copy-mini" onclick="copyIban()">نسخ</button>
             </div>
           </div>
         </div>
@@ -835,7 +830,6 @@
       </div>
     </section>
 
-    <!-- قسم متجر المعدات -->
     <section id="shopView" class="hidden">
       <div class="section-card glass">
         <div class="section-title">
@@ -846,7 +840,6 @@
       </div>
     </section>
 
-    <!-- قسم الحقيبة -->
     <section id="invView" class="hidden">
       <div class="section-card glass">
         <div class="section-title">
@@ -856,7 +849,6 @@
       </div>
     </section>
 
-    <!-- قسم إدارة الأرصدة (لوحة الأدمن المحمية) -->
     <section id="adminView" class="hidden">
       <div class="section-card glass" style="max-width: 960px; margin: 0 auto;">
         <div id="adminLoginBox" style="max-width: 560px; margin: 0 auto;">
@@ -889,7 +881,6 @@
     </section>
   </main>
 
-  <!-- قالب مساحة عمل الأدمن الموحّد (يعمل في الخارج وداخل المنصة) -->
   <template id="adminWorkspaceTemplate">
     <div class="admin-layout">
       <div class="admin-subcard">
@@ -954,10 +945,9 @@
     }
 
     let adminUnlocked = false;
-    let standaloneAdminMode = 'none'; // 'none' | 'login' | 'panel'
+    let standaloneAdminMode = 'none';
     let inspectedUsername = null;
 
-    // قائمة الأسلحة الخفيفة والمعدات المسموحة في سان أوري (بدون قلاع أو دروع أو MP5 أو P90)
     const SHOP_ITEMS = [
       { id: 'knife', cat: 'قتال عن قرب', name: 'سكين', desc: 'سلاح أبيض خفيف للاشتباك القريب في شوارع سان أوري.', price: 150 },
       { id: 'battle_axe', cat: 'قتال عن قرب', name: 'فأس المعركة', desc: 'فأس خفيف بضرر مباشر للمواجهات القريبة.', price: 250 },
@@ -995,14 +985,15 @@
       };
     }
 
-    function saveState(state) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    function saveState(nextState) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
     }
 
     let state = loadState();
 
     function showToast(msg) {
       const toast = document.getElementById('toast');
+      if (!toast) return;
       toast.textContent = msg;
       toast.classList.add('show');
       clearTimeout(window.__toastTimer);
@@ -1562,4 +1553,12 @@
         `).join('');
       }
 
-      const c
+      const cuffRem = getHandcuffRemaining(user);
+      const shopGrid = document.getElementById('shopGrid');
+      shopGrid.innerHTML = SHOP_ITEMS.map(item => {
+        const isLocked = item.dailyLimit && cuffRem > 0;
+        return `
+          <div class="item-card">
+            <div>
+              <span class="item-cat ${item.dailyLimit ? 'daily' : ''}">${item.cat}</span>
+              <div class="item-name">${item
