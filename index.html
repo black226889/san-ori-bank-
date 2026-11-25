@@ -665,7 +665,7 @@
           </div>
           <form id="transferForm">
             <div class="input-group">
-              <label>رمز البنك / رقم حساب المستلم (مثال: SO-2041 أو SO)</label>
+              <label>رمز البنك / رقم حساب المستلم (مثال: SO-2041)</label>
               <div style="display:grid; grid-template-columns: 110px 1fr; gap:8px;">
                 <input id="transferBankPrefix" class="input" type="text" value="SO" placeholder="SO" />
                 <input id="targetIban" class="input" type="text" placeholder="مثال: SO-2041 أو 2041" required />
@@ -776,6 +776,13 @@
 
     let state = loadState();
 
+    window.addEventListener('storage', (e) => {
+      if (e.key === STORAGE_KEY) {
+        state = loadState();
+        render();
+      }
+    });
+
     function toast(msg) {
       const el = document.getElementById('toast');
       el.textContent = msg;
@@ -823,7 +830,7 @@
       if (!box) return;
 
       if (!state.users.length) {
-        box.innerHTML = `<div class="admin-box"><div class="tx-sub">لا توجد حسابات مسجلة بعد.</div></div>`;
+        box.innerHTML = `<div class="admin-box"><div class="tx-sub">لا توجد حسابات مسجلة في هذا المتصفح بعد.</div></div>`;
         return;
       }
 
@@ -853,7 +860,7 @@
         ? inv.map(i => `<span class="item-cat" style="margin:0 0 6px 6px;">${i.name}</span>`).join('')
         : `<span class="tx-sub">لا توجد أدوات مع هذا الحساب.</span>`;
 
-      const txHtml = txs.slice(0, 5).map(t => `
+      const txHtml = txs.slice(0, 6).map(t => `
         <div class="tx-item">
           <div><div class="tx-title">${t.title}</div><div class="tx-sub">${t.date}</div></div>
           <div class="${t.type === 'in' ? 'tx-plus' : 'tx-minus'}">${t.type === 'in' ? '+' : '-'}${Number(t.amount).toLocaleString()} PTS</div>
@@ -863,7 +870,7 @@
       box.innerHTML = `
         <div class="grid-2" style="margin-bottom:14px;">
           <div class="admin-box" style="margin:0;">
-            <div class="section-title"><span>الحسابات المفتوحة (${state.users.length})</span></div>
+            <div class="section-title"><span>الحسابات المسجلة (${state.users.length})</span></div>
             <div style="max-height:240px; overflow-y:auto;">${listHtml}</div>
           </div>
           <div class="admin-box" style="margin:0;">
