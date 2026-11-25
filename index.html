@@ -720,7 +720,7 @@
         </form>
 
         <div class="admin-gate-bar">
-          <button type="button" class="btn btn-ghost" style="width:100%;" onclick="openStandaloneAdminLogin()">لوحة الأدمن</button>
+          <button type="button" id="openAdminBtn" class="btn btn-ghost" style="width:100%;" onclick="openStandaloneAdminLogin()">لوحة الأدمن</button>
         </div>
       </div>
 
@@ -1062,137 +1062,148 @@
       const formEl = clone.querySelector('[data-role="adjustForm"]');
       const inspectorEl = clone.querySelector('[data-role="accountInspector"]');
 
-      countEl.textContent = `${state.users.length} حساب`;
+      if (countEl) {
+        countEl.textContent = `${state.users.length} حساب`;
+      }
 
       if (!state.users.length) {
-        listEl.innerHTML = `<div class="account-meta">لا توجد حسابات مسجلة في البنك حتى الآن.</div>`;
-        selectEl.innerHTML = `<option value="">لا توجد حسابات مسجلة بعد</option>`;
-        inspectorEl.innerHTML = `<div class="account-meta">لا توجد بيانات حساب لعرضها حالياً.</div>`;
+        if (listEl) listEl.innerHTML = `<div class="account-meta">لا توجد حسابات مسجلة في البنك حتى الآن.</div>`;
+        if (selectEl) selectEl.innerHTML = `<option value="">لا توجد حسابات مسجلة بعد</option>`;
+        if (inspectorEl) inspectorEl.innerHTML = `<div class="account-meta">لا توجد بيانات حساب لعرضها حالياً.</div>`;
       } else {
         if (!inspectedUsername || !state.users.some(u => u.username === inspectedUsername)) {
           inspectedUsername = state.users[0].username;
         }
 
-        selectEl.innerHTML = state.users
-          .map(u => `<option value="${u.username}">${u.username} (${u.iban}) — ${Number(u.balance || 0).toLocaleString()} PTS</option>`)
-          .join('');
-        selectEl.value = inspectedUsername;
+        if (selectEl) {
+          selectEl.innerHTML = state.users
+            .map(u => `<option value="${u.username}">${u.username} (${u.iban}) — ${Number(u.balance || 0).toLocaleString()} PTS</option>`)
+            .join('');
+          selectEl.value = inspectedUsername;
 
-        selectEl.addEventListener('change', (e) => {
-          inspectedUsername = e.target.value;
-          renderAdminWorkspaces();
-        });
-
-        listEl.innerHTML = state.users.map(u => {
-          const isSelected = u.username === inspectedUsername;
-          const lastLoginText = u.lastLoginAt || 'غير مسجل بعد';
-          const itemsCount = Array.isArray(u.inventory) ? u.inventory.length : 0;
-          return `
-            <div class="account-row ${isSelected ? 'active' : ''}" onclick="selectInspectedAccount('${u.username.replace(/'/g, "\\'")}')">
-              <div>
-                <div class="account-name">${u.username} <span class="account-meta">(${u.iban})</span></div>
-                <div class="account-meta">آخر دخول: ${lastLoginText} • الأدوات: ${itemsCount}</div>
-              </div>
-              <div class="account-bal">${Number(u.balance || 0).toLocaleString()} PTS</div>
-            </div>
-          `;
-        }).join('');
-
-        const selectedUser = state.users.find(u => u.username === inspectedUsername) || state.users[0];
-        const userInv = Array.isArray(selectedUser.inventory) ? selectedUser.inventory : [];
-        const userTx = Array.isArray(selectedUser.transactions) ? selectedUser.transactions : [];
-
-        const invHtml = userInv.length
-          ? userInv.map(entry => `<span class="inv-chip">${entry.name} (${entry.boughtAt || 'مقتنى'})</span>`).join('')
-          : `<span class="account-meta">لا توجد أدوات أو معدات في حقيبة هذا الحساب حالياً.</span>`;
-
-        const txHtml = userTx.length
-          ? userTx.slice(0, 6).map(tx => `
-              <div class="tx-item">
-                <div>
-                  <div class="tx-title">${tx.title}</div>
-                  <div class="tx-sub">${tx.meta} • ${tx.date}</div>
-                </div>
-                <div class="${tx.type === 'in' ? 'tx-plus' : 'tx-minus'}">
-                  ${tx.type === 'in' ? '+' : '-'}${Number(tx.amount).toLocaleString()} PTS
-                </div>
-              </div>
-            `).join('')
-          : `<div class="account-meta">لا توجد عمليات مسجلة لهذا الحساب.</div>`;
-
-        inspectorEl.innerHTML = `
-          <div class="section-title" style="margin-bottom:10px;">
-            <span>تفاصيل الحساب المفتوح: ${selectedUser.username}</span>
-            <span class="account-bal">${Number(selectedUser.balance || 0).toLocaleString()} PTS</span>
-          </div>
-          <div class="inspector-grid">
-            <div class="stat-pill">
-              <span>رقم الحساب / رمز البنك</span>
-              <strong>${selectedUser.iban}</strong>
-            </div>
-            <div class="stat-pill">
-              <span>الرصيد الحالي (الفلوس)</span>
-              <strong>${Number(selectedUser.balance || 0).toLocaleString()} PTS</strong>
-            </div>
-            <div class="stat-pill">
-              <span>آخر تسجيل دخول</span>
-              <strong>${selectedUser.lastLoginAt || 'غير مسجل بعد'}</strong>
-            </div>
-            <div class="stat-pill">
-              <span>تاريخ فتح الحساب</span>
-              <strong>${selectedUser.createdAt || 'غير مسجل'}</strong>
-            </div>
-          </div>
-          <div style="margin-bottom:6px; font-size:0.86rem; font-weight:700; color:var(--gold-bright);">الأدوات والمعدات الموجودة معاه (${userInv.length}):</div>
-          <div class="inv-mini-list">${invHtml}</div>
-          <div style="margin-bottom:8px; font-size:0.86rem; font-weight:700; color:var(--gold-bright);">آخر العمليات المالية:</div>
-          <div class="tx-list" style="max-height:200px;">${txHtml}</div>
-        `;
-      }
-
-      formEl.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (!adminUnlocked) {
-          showToast('يجب تسجيل دخول الأدمن أولاً.');
-          renderAdminGate();
-          return;
-        }
-
-        const targetName = selectEl.value;
-        const action = actionEl.value;
-        const amount = Number(amountEl.value);
-
-        const target = state.users.find(u => u.username === targetName);
-        if (!target) {
-          showToast('لا يوجد حساب محدد لتعديل رصيده.');
-          return;
-        }
-        if (!Number.isFinite(amount) || amount < 0) return;
-
-        const before = target.balance;
-        if (action === 'add') target.balance += amount;
-        if (action === 'sub') target.balance = Math.max(0, target.balance - amount);
-        if (action === 'set') target.balance = amount;
-
-        const diff = target.balance - before;
-        if (diff !== 0) {
-          target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
-          target.transactions.unshift({
-            id: Date.now(),
-            type: diff >= 0 ? 'in' : 'out',
-            title: 'تعديل رصيد من الإدارة',
-            meta: `الرصيد الجديد: ${target.balance.toLocaleString()} PTS`,
-            amount: Math.abs(diff),
-            date: new Date().toLocaleString('ar-EG')
+          selectEl.addEventListener('change', (e) => {
+            inspectedUsername = e.target.value;
+            renderAdminWorkspaces();
           });
         }
 
-        inspectedUsername = target.username;
-        saveState(state);
-        amountEl.value = '';
-        showToast('تم تحديث رصيد ' + target.username);
-        renderApp();
-      });
+        if (listEl) {
+          listEl.innerHTML = state.users.map(u => {
+            const isSelected = u.username === inspectedUsername;
+            const lastLoginText = u.lastLoginAt || 'غير مسجل بعد';
+            const itemsCount = Array.isArray(u.inventory) ? u.inventory.length : 0;
+            const safeName = String(u.username || '').replace(/'/g, "\\'");
+            return `
+              <div class="account-row ${isSelected ? 'active' : ''}" onclick="selectInspectedAccount('${safeName}')">
+                <div>
+                  <div class="account-name">${u.username} <span class="account-meta">(${u.iban})</span></div>
+                  <div class="account-meta">آخر دخول: ${lastLoginText} • الأدوات: ${itemsCount}</div>
+                </div>
+                <div class="account-bal">${Number(u.balance || 0).toLocaleString()} PTS</div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        if (inspectorEl) {
+          const selectedUser = state.users.find(u => u.username === inspectedUsername) || state.users[0];
+          const userInv = Array.isArray(selectedUser.inventory) ? selectedUser.inventory : [];
+          const userTx = Array.isArray(selectedUser.transactions) ? selectedUser.transactions : [];
+
+          const invHtml = userInv.length
+            ? userInv.map(entry => `<span class="inv-chip">${entry.name} (${entry.boughtAt || 'مقتنى'})</span>`).join('')
+            : `<span class="account-meta">لا توجد أدوات أو معدات في حقيبة هذا الحساب حالياً.</span>`;
+
+          const txHtml = userTx.length
+            ? userTx.slice(0, 6).map(tx => `
+                <div class="tx-item">
+                  <div>
+                    <div class="tx-title">${tx.title}</div>
+                    <div class="tx-sub">${tx.meta} • ${tx.date}</div>
+                  </div>
+                  <div class="${tx.type === 'in' ? 'tx-plus' : 'tx-minus'}">
+                    ${tx.type === 'in' ? '+' : '-'}${Number(tx.amount).toLocaleString()} PTS
+                  </div>
+                </div>
+              `).join('')
+            : `<div class="account-meta">لا توجد عمليات مسجلة لهذا الحساب.</div>`;
+
+          inspectorEl.innerHTML = `
+            <div class="section-title" style="margin-bottom:10px;">
+              <span>تفاصيل الحساب المفتوح: ${selectedUser.username}</span>
+              <span class="account-bal">${Number(selectedUser.balance || 0).toLocaleString()} PTS</span>
+            </div>
+            <div class="inspector-grid">
+              <div class="stat-pill">
+                <span>رقم الحساب / رمز البنك</span>
+                <strong>${selectedUser.iban}</strong>
+              </div>
+              <div class="stat-pill">
+                <span>الرصيد الحالي (الفلوس)</span>
+                <strong>${Number(selectedUser.balance || 0).toLocaleString()} PTS</strong>
+              </div>
+              <div class="stat-pill">
+                <span>آخر تسجيل دخول</span>
+                <strong>${selectedUser.lastLoginAt || 'غير مسجل بعد'}</strong>
+              </div>
+              <div class="stat-pill">
+                <span>تاريخ فتح الحساب</span>
+                <strong>${selectedUser.createdAt || 'غير مسجل'}</strong>
+              </div>
+            </div>
+            <div style="margin-bottom:6px; font-size:0.86rem; font-weight:700; color:var(--gold-bright);">الأدوات والمعدات الموجودة معاه (${userInv.length}):</div>
+            <div class="inv-mini-list">${invHtml}</div>
+            <div style="margin-bottom:8px; font-size:0.86rem; font-weight:700; color:var(--gold-bright);">آخر العمليات المالية:</div>
+            <div class="tx-list" style="max-height:200px;">${txHtml}</div>
+          `;
+        }
+      }
+
+      if (formEl) {
+        formEl.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (!adminUnlocked) {
+            showToast('يجب تسجيل دخول الأدمن أولاً.');
+            renderAdminGate();
+            return;
+          }
+
+          const targetName = selectEl ? selectEl.value : '';
+          const action = actionEl ? actionEl.value : 'add';
+          const amount = Number(amountEl ? amountEl.value : 0);
+
+          const target = state.users.find(u => u.username === targetName);
+          if (!target) {
+            showToast('لا يوجد حساب محدد لتعديل رصيده.');
+            return;
+          }
+          if (!Number.isFinite(amount) || amount < 0) return;
+
+          const before = Number(target.balance || 0);
+          if (action === 'add') target.balance = before + amount;
+          if (action === 'sub') target.balance = Math.max(0, before - amount);
+          if (action === 'set') target.balance = amount;
+
+          const diff = target.balance - before;
+          if (diff !== 0) {
+            target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
+            target.transactions.unshift({
+              id: Date.now(),
+              type: diff >= 0 ? 'in' : 'out',
+              title: 'تعديل رصيد من الإدارة',
+              meta: `الرصيد الجديد: ${target.balance.toLocaleString()} PTS`,
+              amount: Math.abs(diff),
+              date: new Date().toLocaleString('ar-EG')
+            });
+          }
+
+          inspectedUsername = target.username;
+          saveState(state);
+          if (amountEl) amountEl.value = '';
+          showToast('تم تحديث رصيد ' + target.username);
+          renderApp();
+        });
+      }
 
       container.appendChild(clone);
     }
@@ -1232,8 +1243,8 @@
 
     function handleStandaloneAdminLogin(e) {
       e.preventDefault();
-      const inputUser = document.getElementById('extAdminUser').value;
-      const inputPass = document.getElementById('extAdminPass').value;
+      const inputUser = document.getElementById('extAdminUser')?.value || '';
+      const inputPass = document.getElementById('extAdminPass')?.value || '';
 
       if (verifyAdminCredentials(inputUser, inputPass)) {
         adminUnlocked = true;
@@ -1259,8 +1270,8 @@
 
     function handleAdminLogin(e) {
       e.preventDefault();
-      const inputUser = document.getElementById('adminUsernameInput').value;
-      const inputPass = document.getElementById('adminPasswordInput').value;
+      const inputUser = document.getElementById('adminUsernameInput')?.value || '';
+      const inputPass = document.getElementById('adminPasswordInput')?.value || '';
 
       if (verifyAdminCredentials(inputUser, inputPass)) {
         adminUnlocked = true;
@@ -1284,20 +1295,24 @@
 
     function switchAuthTab(tab) {
       const isLogin = tab === 'login';
-      document.getElementById('tabLogin').classList.toggle('active', isLogin);
-      document.getElementById('tabRegister').classList.toggle('active', !isLogin);
-      document.getElementById('loginForm').classList.toggle('hidden', !isLogin);
-      document.getElementById('registerForm').classList.toggle('hidden', isLogin);
+      const tabLogin = document.getElementById('tabLogin');
+      const tabRegister = document.getElementById('tabRegister');
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      if (tabLogin) tabLogin.classList.toggle('active', isLogin);
+      if (tabRegister) tabRegister.classList.toggle('active', !isLogin);
+      if (loginForm) loginForm.classList.toggle('hidden', !isLogin);
+      if (registerForm) registerForm.classList.toggle('hidden', isLogin);
     }
 
     function handleRegister(e) {
       e.preventDefault();
-      const username = document.getElementById('regUsername').value.trim();
-      const bankCode = sanitizeBankCode(document.getElementById('regBankCode').value);
-      const password = document.getElementById('regPassword').value;
+      const username = (document.getElementById('regUsername')?.value || '').trim();
+      const bankCode = sanitizeBankCode(document.getElementById('regBankCode')?.value || 'SO');
+      const password = document.getElementById('regPassword')?.value || '';
 
       if (!username || !password) return;
-      if (state.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+      if (state.users.some(u => String(u.username || '').toLowerCase() === username.toLowerCase())) {
         showToast('اسم اللاعب مستخدم بالفعل، اختر اسماً آخر.');
         return;
       }
@@ -1332,21 +1347,22 @@
       standaloneAdminMode = 'none';
       saveState(state);
       e.target.reset();
-      document.getElementById('regBankCode').value = 'SO';
+      const regCodeEl = document.getElementById('regBankCode');
+      if (regCodeEl) regCodeEl.value = 'SO';
       showToast(`تم إنشاء حسابك (${newIban}) برصيد 1,000 نقطة!`);
       renderApp();
     }
 
     function handleLogin(e) {
       e.preventDefault();
-      const identifier = document.getElementById('loginUsername').value.trim();
-      const bankCodeInput = document.getElementById('loginBankCode').value.trim();
-      const password = document.getElementById('loginPassword').value;
+      const identifier = (document.getElementById('loginUsername')?.value || '').trim();
+      const bankCodeInput = (document.getElementById('loginBankCode')?.value || '').trim();
+      const password = document.getElementById('loginPassword')?.value || '';
 
       const user = state.users.find(u => {
         if (u.password !== password) return false;
         const matchesUserOrIban =
-          u.username.toLowerCase() === identifier.toLowerCase() ||
+          String(u.username || '').toLowerCase() === identifier.toLowerCase() ||
           String(u.iban || '').toLowerCase() === identifier.toLowerCase();
         if (!matchesUserOrIban) return false;
 
@@ -1395,7 +1411,8 @@
 
     function switchView(viewId, btn) {
       ['bankView', 'shopView', 'invView', 'adminView'].forEach(id => {
-        document.getElementById(id).classList.toggle('hidden', id !== viewId);
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('hidden', id !== viewId);
       });
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
@@ -1416,9 +1433,9 @@
       const user = getCurrentUser();
       if (!user) return;
 
-      const targetIban = document.getElementById('targetIban').value.trim().toUpperCase();
-      const amount = Number(document.getElementById('transferAmount').value);
-      const note = document.getElementById('transferNote').value.trim() || 'تحويل نقاط رول بلاي';
+      const targetIban = (document.getElementById('targetIban')?.value || '').trim().toUpperCase();
+      const amount = Number(document.getElementById('transferAmount')?.value || 0);
+      const note = (document.getElementById('transferNote')?.value || '').trim() || 'تحويل نقاط رول بلاي';
 
       if (!Number.isFinite(amount) || amount <= 0) {
         showToast('أدخل قيمة صحيحة أكبر من صفر.');
@@ -1519,46 +1536,23 @@
       const appSec = document.getElementById('appSection');
 
       if (!user) {
-        authSec.classList.remove('hidden');
-        appSec.classList.add('hidden');
+        if (authSec) authSec.classList.remove('hidden');
+        if (appSec) appSec.classList.add('hidden');
         renderStandaloneAdmin();
         return;
       }
 
-      authSec.classList.add('hidden');
-      appSec.classList.remove('hidden');
+      if (authSec) authSec.classList.add('hidden');
+      if (appSec) appSec.classList.remove('hidden');
 
       const activeBankCode = getUserBankCode(user);
-      document.getElementById('brandLogoText').textContent = activeBankCode.slice(0, 3);
-      document.getElementById('cardTierBadge').textContent = `${activeBankCode} BLACK CARD`;
-      document.getElementById('welcomeUserText').textContent = `الحساب النشط: ${user.username} • رمز البنك: ${activeBankCode}`;
-      document.getElementById('cardHolder').textContent = user.username;
-      document.getElementById('cardIban').textContent = user.iban;
-      document.getElementById('cardBalance').textContent = `${user.balance.toLocaleString()} PTS`;
+      const logoEl = document.getElementById('brandLogoText');
+      const tierEl = document.getElementById('cardTierBadge');
+      const welcomeEl = document.getElementById('welcomeUserText');
+      const holderEl = document.getElementById('cardHolder');
+      const ibanEl = document.getElementById('cardIban');
+      const balEl = document.getElementById('cardBalance');
 
-      const txList = document.getElementById('txList');
-      if (!user.transactions.length) {
-        txList.innerHTML = `<div class="tx-sub">لا توجد عمليات مسجلة حتى الآن.</div>`;
-      } else {
-        txList.innerHTML = user.transactions.map(tx => `
-          <div class="tx-item">
-            <div>
-              <div class="tx-title">${tx.title}</div>
-              <div class="tx-sub">${tx.meta} • ${tx.date}</div>
-            </div>
-            <div class="${tx.type === 'in' ? 'tx-plus' : 'tx-minus'}">
-              ${tx.type === 'in' ? '+' : '-'}${Number(tx.amount).toLocaleString()} PTS
-            </div>
-          </div>
-        `).join('');
-      }
-
-      const cuffRem = getHandcuffRemaining(user);
-      const shopGrid = document.getElementById('shopGrid');
-      shopGrid.innerHTML = SHOP_ITEMS.map(item => {
-        const isLocked = item.dailyLimit && cuffRem > 0;
-        return `
-          <div class="item-card">
-            <div>
-              <span class="item-cat ${item.dailyLimit ? 'daily' : ''}">${item.cat}</span>
-              <div class="item-name">${item
+      if (logoEl) logoEl.textContent = activeBankCode.slice(0, 3);
+      if (tierEl) tierEl.textContent = `${activeBankCode} BLACK CARD`;
+      if (welcomeEl) welcomeEl.textContent = `الحساب النشط: ${user.username} • رمز 
