@@ -3,671 +3,1114 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>بنك ومتجر سان أوري — San Ori Bank & Store</title>
+  <title>SAN ORI ROLEPLAY | بنك السوق السوداء والمعدات</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0b0f17;
-      --panel: #121826;
-      --panel-2: #182032;
-      --border: #253047;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --accent: #38bdf8;
-      --accent-2: #22c55e;
-      --danger: #ef4444;
-      --warn: #f59e0b;
+      --bg-dark: #07080a;
+      --bg-card: rgba(18, 20, 26, 0.85);
+      --bg-elevated: rgba(28, 31, 40, 0.9);
+      --gold: #d4af37;
+      --gold-bright: #f5d061;
+      --gold-dim: rgba(212, 175, 55, 0.16);
+      --crimson: #e11d48;
+      --crimson-dim: rgba(225, 29, 72, 0.16);
+      --emerald: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(212, 175, 55, 0.22);
+      --border-soft: rgba(255, 255, 255, 0.08);
+      --shadow-gold: 0 12px 35px rgba(212, 175, 55, 0.14);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+      font-family: 'Cairo', sans-serif;
     }
 
     body {
-      background: radial-gradient(circle at top, #131d31 0%, var(--bg) 65%);
-      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(212, 175, 55, 0.12), transparent 35%),
+        radial-gradient(circle at 85% 20%, rgba(225, 29, 72, 0.1), transparent 35%),
+        var(--bg-dark);
+      color: var(--text-main);
       min-height: 100vh;
-      padding: 18px;
+      line-height: 1.6;
+      overflow-x: hidden;
     }
 
     .container {
-      max-width: 1120px;
+      max-width: 1180px;
       margin: 0 auto;
+      padding: 20px;
     }
 
-    header {
-      background: var(--panel);
+    .glass {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px 22px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 18px;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
     }
 
-    .brand h1 {
-      font-size: 1.35rem;
-      color: var(--accent);
-      margin-bottom: 4px;
-    }
-
-    .brand p {
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-
-    .wallet-box {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .balance-card {
-      background: var(--panel-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 16px;
-      text-align: center;
-    }
-
-    .balance-card span {
-      display: block;
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-
-    .balance-card strong {
-      font-size: 1.2rem;
-      color: var(--accent-2);
-    }
-
-    .account-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    input, select, button {
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 9px 12px;
-      font-size: 0.9rem;
-      outline: none;
-    }
-
-    input, select {
-      background: var(--panel-2);
-      color: var(--text);
-    }
-
-    button {
-      background: var(--accent);
-      color: #06101a;
-      font-weight: 700;
-      cursor: pointer;
+    .btn {
       border: none;
-      transition: transform 0.12s ease, opacity 0.15s ease;
+      outline: none;
+      cursor: pointer;
+      border-radius: 12px;
+      padding: 11px 18px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    button:hover:not(:disabled) {
-      opacity: 0.92;
-      transform: translateY(-1px);
-    }
-
-    button:disabled {
+    .btn:disabled {
       opacity: 0.45;
       cursor: not-allowed;
     }
 
-    .btn-secondary {
-      background: var(--panel-2);
-      color: var(--text);
-      border: 1px solid var(--border);
+    .btn:active:not(:disabled) {
+      transform: scale(0.97);
     }
 
-    .btn-success {
-      background: var(--accent-2);
-      color: #052e16;
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      color: #090a0d;
+      box-shadow: var(--shadow-gold);
     }
 
-    .tabs {
+    .btn-gold:hover:not(:disabled) {
+      box-shadow: 0 14px 36px rgba(245, 208, 97, 0.28);
+    }
+
+    .btn-crimson {
+      background: linear-gradient(135deg, #fb7185, var(--crimson));
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(225, 29, 72, 0.22);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid var(--border-soft);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      border-color: var(--border);
+      background: rgba(212, 175, 55, 0.08);
+    }
+
+    .input-group {
+      margin-bottom: 14px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .input, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(9, 11, 15, 0.85);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .input:focus, select:focus {
+      border-color: var(--gold);
+    }
+
+    .auth-wrapper {
+      min-height: 92vh;
       display: flex;
-      gap: 8px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
     }
 
-    .tab-btn {
-      background: var(--panel);
-      color: var(--muted);
+    .auth-box {
+      width: 100%;
+      max-width: 440px;
+      padding: 32px 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: var(--gold-dim);
       border: 1px solid var(--border);
-      padding: 10px 16px;
+      color: var(--gold-bright);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
     }
 
-    .tab-btn.active {
-      background: var(--accent);
-      color: #06101a;
-      border-color: var(--accent);
+    .auth-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff, var(--gold-bright));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .auth-sub {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: rgba(9, 11, 15, 0.75);
+      padding: 5px;
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      margin-bottom: 20px;
+    }
+
+    .auth-tab {
+      padding: 9px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .auth-tab.active {
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      color: #090a0d;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 22px;
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold-bright), #8a640b);
+      color: #090a0d;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 1.15rem;
+    }
+
+    .brand h1 {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--gold-bright);
+    }
+
+    .brand span {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      padding: 9px 15px;
+      border-radius: 11px;
+      border: 1px solid var(--border-soft);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .nav-btn.active, .nav-btn:hover {
+      color: #090a0d;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      border-color: transparent;
     }
 
     .grid-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 20px;
+      margin-bottom: 22px;
     }
 
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      margin-bottom: 16px;
-    }
-
-    .panel h2 {
-      font-size: 1.1rem;
-      margin-bottom: 12px;
-      color: var(--accent);
-    }
-
-    .store-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 14px;
-    }
-
-    .item-card {
-      background: var(--panel-2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
+    .black-card {
+      background:
+        radial-gradient(circle at 85% 15%, rgba(245, 208, 97, 0.28), transparent 45%),
+        radial-gradient(circle at 15% 85%, rgba(212, 175, 55, 0.16), transparent 50%),
+        linear-gradient(135deg, #16181f 0%, #0a0b0e 65%, #1c1709 100%);
+      border: 1px solid rgba(245, 208, 97, 0.45);
+      border-radius: 22px;
+      padding: 24px;
+      min-height: 225px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), 0 0 25px rgba(212, 175, 55, 0.12);
     }
 
-    .badge {
-      display: inline-block;
-      font-size: 0.74rem;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.14);
-      color: var(--accent);
-      margin-bottom: 6px;
-    }
-
-    .badge-daily {
-      background: rgba(245, 158, 11, 0.16);
-      color: var(--warn);
-    }
-
-    .item-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .item-desc {
-      font-size: 0.84rem;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-
-    .item-price {
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--accent-2);
-      margin-top: 6px;
-    }
-
-    .cooldown-text {
-      font-size: 0.78rem;
-      color: var(--warn);
-      min-height: 18px;
-    }
-
-    .list-box {
+    .card-top {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 320px;
-      overflow-y: auto;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .list-row {
-      background: var(--panel-2);
+    .chip {
+      width: 44px;
+      height: 32px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, #f7df8b, #b6891d);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .card-tier {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--gold-bright);
+      background: rgba(0, 0, 0, 0.45);
+      padding: 4px 10px;
+      border-radius: 999px;
       border: 1px solid var(--border);
+    }
+
+    .balance-box {
+      margin: 14px 0;
+    }
+
+    .balance-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .balance-amount {
+      font-size: 2.1rem;
+      font-weight: 900;
+      color: var(--gold-bright);
+      letter-spacing: 0.5px;
+    }
+
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .iban-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 6px 12px;
       border-radius: 10px;
-      padding: 10px 12px;
+      border: 1px solid var(--border-soft);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .copy-mini {
+      background: var(--gold-dim);
+      color: var(--gold-bright);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .section-card {
+      padding: 22px;
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      font-size: 0.88rem;
+    }
+
+    .section-title span.tag {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--crimson-dim);
+      color: #fda4af;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+
+    .tx-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .tx-item {
+      background: rgba(9, 11, 15, 0.72);
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tx-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .tx-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .tx-plus {
+      color: var(--emerald);
+      font-weight: 800;
+    }
+
+    .tx-minus {
+      color: #fb7185;
+      font-weight: 800;
+    }
+
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+      gap: 16px;
+    }
+
+    .item-card {
+      background: rgba(11, 13, 18, 0.88);
+      border: 1px solid var(--border-soft);
+      border-radius: 18px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .item-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--border);
+    }
+
+    .item-cat {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--gold-bright);
+      background: var(--gold-dim);
+      padding: 3px 9px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .item-cat.daily {
+      color: #fcd34d;
+      background: rgba(245, 158, 11, 0.16);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .item-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .item-desc {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+    }
+
+    .item-limit {
+      font-size: 0.76rem;
+      color: #fcd34d;
+      margin-top: 6px;
+      font-weight: 700;
+    }
+
+    .item-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .item-price {
+      font-weight: 900;
+      color: var(--gold-bright);
+      font-size: 1rem;
     }
 
     .toast {
       position: fixed;
-      bottom: 18px;
-      left: 18px;
-      right: 18px;
-      max-width: 460px;
-      margin: 0 auto;
-      background: var(--panel-2);
-      border: 1px solid var(--accent);
-      color: var(--text);
-      padding: 12px 16px;
-      border-radius: 12px;
-      text-align: center;
-      font-weight: 600;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #11141c;
+      color: #fff;
+      border: 1px solid var(--gold);
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.65);
       opacity: 0;
-      pointer-events: none;
-      transform: translateY(10px);
-      transition: all 0.2s ease;
-      z-index: 99;
+      transition: 0.3s ease;
+      z-index: 9999;
+      text-align: center;
+      max-width: 92vw;
     }
 
     .toast.show {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      margin: 28px auto 14px;
+      max-width: 780px;
+      padding: 0 12px;
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
+
+  <!-- بوابة إنشاء الحساب وتسجيل الدخول -->
+  <section id="authSection" class="auth-wrapper">
+    <div class="auth-box glass">
+      <div class="auth-badge">SAN ORI ROLEPLAY • SIMULATION BANK</div>
+      <h1 class="auth-title">بنك وسوق سان أوري</h1>
+      <p class="auth-sub">سجّل دخولك أو أنشئ حسابك الجديد للبدء برصيد افتتاحي <strong>1,000</strong> نقطة داخل الرول بلاي.</p>
+
+      <div class="auth-tabs">
+        <button id="tabLogin" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+        <button id="tabRegister" class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب</button>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <label>اسم اللاعب (Username)</label>
+          <input id="loginUsername" class="input" type="text" placeholder="مثال: Dr_BLACK" required />
+        </div>
+        <div class="input-group">
+          <label>كلمة المرور (Password)</label>
+          <input id="loginPassword" class="input" type="password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn btn-gold" style="width:100%;">دخول إلى الحساب</button>
+      </form>
+
+      <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+        <div class="input-group">
+          <label>اسم اللاعب الجديد (Username)</label>
+          <input id="regUsername" class="input" type="text" placeholder="اختر اسمك في الرول بلاي" required />
+        </div>
+        <div class="input-group">
+          <label>كلمة المرور (Password)</label>
+          <input id="regPassword" class="input" type="password" placeholder="أنشئ كلمة مرور قوية" required />
+        </div>
+        <button type="submit" class="btn btn-gold" style="width:100%;">إنشاء حساب (رصيد 1,000 نقطة)</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- المنصة الرئيسية بعد تسجيل الدخول -->
+  <main id="appSection" class="container hidden">
+    <header class="topbar glass">
       <div class="brand">
-        <h1>بنك ومتجر سان أوري — San Ori RP</h1>
-        <p>نظام الرول بلاي والمعدات الخفيفة المسموحة (رصيد البداية: 1,000 نقطة)</p>
-      </div>
-
-      <div class="wallet-box">
-        <div class="balance-card">
-          <span>رصيد الكاش</span>
-          <strong id="cashBalance">1,000</strong>
-        </div>
-        <div class="balance-card">
-          <span>رصيد البنك</span>
-          <strong id="bankBalance">0</strong>
+        <div class="brand-logo">SO</div>
+        <div>
+          <h1>SAN ORI BANK & MARKET</h1>
+          <span id="welcomeUserText">مرحباً بك</span>
         </div>
       </div>
 
-      <div class="account-controls">
-        <input id="accountInput" type="text" placeholder="اسم الحساب (مثال: Dr_BLACK)" />
-        <button id="switchAccountBtn" type="button">دخول / إنشاء</button>
-        <button id="resetAccountBtn" class="btn-secondary" type="button">إعادة ضبط الحساب</button>
-      </div>
+      <nav class="nav-tabs">
+        <button class="nav-btn active" data-view="bankView" onclick="switchView('bankView', this)">البنك والتحويلات</button>
+        <button class="nav-btn" data-view="shopView" onclick="switchView('shopView', this)">متجر المعدات</button>
+        <button class="nav-btn" data-view="invView" onclick="switchView('invView', this)">الحقيبة</button>
+        <button class="nav-btn" data-view="adminView" onclick="switchView('adminView', this)">إدارة الأرصدة</button>
+      </nav>
+
+      <button class="btn btn-ghost" onclick="logout()">خروج</button>
     </header>
 
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="store" type="button">المتجر والمعدات</button>
-      <button class="tab-btn" data-tab="bank" type="button">البنك والتحويلات</button>
-      <button class="tab-btn" data-tab="inventory" type="button">الحقيبة والسجل</button>
-    </div>
-
-    <!-- قسم المتجر -->
-    <section id="tab-store">
-      <div class="panel">
-        <h2>قائمة الأسلحة الخفيفة والمعدات المسموحة في سان أوري</h2>
-        <div id="storeGrid" class="store-grid"></div>
-      </div>
-    </section>
-
-    <!-- قسم البنك -->
-    <section id="tab-bank" class="hidden">
+    <!-- قسم البنك والتحويلات -->
+    <section id="bankView">
       <div class="grid-2">
-        <div class="panel">
-          <h2>إيداع وسحب النقاط</h2>
-          <div style="display:flex; flex-direction:column; gap:10px;">
-            <input id="bankAmountInput" type="number" min="1" placeholder="أدخل المبلغ" />
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button id="depositBtn" class="btn-success" type="button">إيداع في البنك</button>
-              <button id="withdrawBtn" class="btn-secondary" type="button">سحب إلى الكاش</button>
+        <div class="black-card">
+          <div class="card-top">
+            <div class="chip"></div>
+            <div class="card-tier">SAN ORI BLACK CARD</div>
+          </div>
+
+          <div class="balance-box">
+            <div class="balance-label">الرصيد المتاح للشراء والتحويل</div>
+            <div id="cardBalance" class="balance-amount">1,000 PTS</div>
+          </div>
+
+          <div class="card-bottom">
+            <div>
+              <div class="balance-label">صاحب الحساب</div>
+              <strong id="cardHolder">---</strong>
+            </div>
+            <div class="iban-box">
+              <span id="cardIban">SO-0000</span>
+              <button class="copy-mini" onclick="copyIban()">نسخ</button>
             </div>
           </div>
         </div>
 
-        <div class="panel">
-          <h2>تحويل نقاط لحساب آخر</h2>
-          <div style="display:flex; flex-direction:column; gap:10px;">
-            <input id="transferTargetInput" type="text" placeholder="اسم الحساب المستلم" />
-            <input id="transferAmountInput" type="number" min="1" placeholder="قيمة التحويل" />
-            <button id="transferBtn" type="button">إرسال التحويل</button>
+        <div class="section-card glass">
+          <div class="section-title">
+            <span>تحويل نقاط فوري</span>
+            <span class="tag">معدات سان أوري فقط</span>
           </div>
+          <form onsubmit="handleTransfer(event)">
+            <div class="input-group">
+              <label>رقم حساب المستلم (IBAN)</label>
+              <input id="targetIban" class="input" type="text" placeholder="مثال: SO-2041" required />
+            </div>
+            <div class="input-group">
+              <label>قيمة النقاط المراد تحويلها</label>
+              <input id="transferAmount" class="input" type="number" min="1" placeholder="أدخل المبلغ" required />
+            </div>
+            <div class="input-group">
+              <label>ملاحظة / سبب التحويل (اختياري)</label>
+              <input id="transferNote" class="input" type="text" placeholder="مثال: صفقة معدات خفيفة" />
+            </div>
+            <button type="submit" class="btn btn-gold" style="width:100%;">إرسال التحويل الآن</button>
+          </form>
         </div>
+      </div>
+
+      <div class="section-card glass">
+        <div class="section-title">
+          <span>سجل العمليات وكشف الحساب</span>
+        </div>
+        <div id="txList" class="tx-list"></div>
       </div>
     </section>
 
-    <!-- قسم الحقيبة والسجل -->
-    <section id="tab-inventory" class="hidden">
-      <div class="grid-2">
-        <div class="panel">
-          <h2>معداتي المشتراة</h2>
-          <div id="inventoryList" class="list-box"></div>
+    <!-- قسم متجر المعدات -->
+    <section id="shopView" class="hidden">
+      <div class="section-card glass">
+        <div class="section-title">
+          <span>متجر الأسلحة الخفيفة والمعدات المسموحة</span>
+          <span class="tag">خصم فوري من الرصيد</span>
         </div>
-
-        <div class="panel">
-          <h2>سجل العمليات الأخيرة</h2>
-          <div id="historyList" class="list-box"></div>
-        </div>
+        <div id="shopGrid" class="shop-grid"></div>
       </div>
     </section>
-  </div>
+
+    <!-- قسم الحقيبة -->
+    <section id="invView" class="hidden">
+      <div class="section-card glass">
+        <div class="section-title">
+          <span>حقيبتك ومعداتك المشتراة</span>
+        </div>
+        <div id="invGrid" class="shop-grid"></div>
+      </div>
+    </section>
+
+    <!-- قسم إدارة الأرصدة -->
+    <section id="adminView" class="hidden">
+      <div class="section-card glass" style="max-width: 560px; margin: 0 auto;">
+        <div class="section-title">
+          <span>تعديل رصيد حساب لاعب</span>
+        </div>
+        <form onsubmit="handleAdminAdjust(event)">
+          <div class="input-group">
+            <label>اختر الحساب</label>
+            <select id="adminUserSelect"></select>
+          </div>
+          <div class="input-group">
+            <label>نوع العملية</label>
+            <select id="adminAction">
+              <option value="add">إضافة نقاط (+)</option>
+              <option value="sub">خصم نقاط (-)</option>
+              <option value="set">تعيين رصيد محدد (=)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>قيمة النقاط</label>
+            <input id="adminAmount" class="input" type="number" min="0" required />
+          </div>
+          <button type="submit" class="btn btn-crimson" style="width:100%;">تطبيق التعديل</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-note">
+    تنويه: هذا الموقع نظام محاكاة وبنك نقاط وهمي مخصص لأغراض الرول بلاي (San Ori) لشراء المعدات والأسلحة الخفيفة المسموحة فقط، ولا يرتبط بأي معاملات مالية حقيقية.
+  </footer>
 
   <div id="toast" class="toast"></div>
 
   <script>
-    const STORAGE_KEY = "san_ori_bank_system_v1";
-    const INITIAL_CASH = 1000;
-    const DAILY_MS = 24 * 60 * 60 * 1000;
+    const INITIAL_BALANCE = 1000;
+    const STORAGE_KEY = 'san_ori_bank_v1';
+    const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
-    // القائمة المعتمدة من سان أوري (بدون قلاع أو دروع أو MP5 أو P90)
-    const ITEMS = [
-      { id: "knife", name: "سكين", category: "قتال عن قرب", price: 150, desc: "سلاح أبيض خفيف للاشتباك القريب في الشوارع." },
-      { id: "battle_axe", name: "فأس المعركة", category: "قتال عن قرب", price: 250, desc: "فأس خفيف بضرر مباشر للمواجهات القريبة." },
-      { id: "baton", name: "العصا", category: "قتال عن قرب", price: 600, desc: "عصا للسيطرة والاشتباك القريب مع تأثير دفع." },
-      { id: "glock_17", name: "جلوك 17", category: "مسدس خفيف", price: 700, desc: "مسدس خفيف عملي وسريع الاستخدام في الرول بلاي." },
-      { id: "m19", name: "M19", category: "مسدس خفيف", price: 800, desc: "مسدس خفيف بدقة وثبات جيدين." },
-      { id: "deagle_44", name: "ديجل 44", category: "مسدس خفيف", price: 950, desc: "مسدس خفيف عالي الضرر للمواقف الحاسمة." },
+    // قائمة الأسلحة الخفيفة والمعدات المسموحة في سان أوري (بدون قلاع أو دروع أو MP5 أو P90)
+    const SHOP_ITEMS = [
+      { id: 'knife', cat: 'قتال عن قرب', name: 'سكين', desc: 'سلاح أبيض خفيف للاشتباك القريب في شوارع سان أوري.', price: 150 },
+      { id: 'battle_axe', cat: 'قتال عن قرب', name: 'فأس المعركة', desc: 'فأس خفيف بضرر مباشر للمواجهات القريبة.', price: 250 },
+      { id: 'baton', cat: 'قتال عن قرب', name: 'العصا', desc: 'عصا للاشتباك القريب والسيطرة مع تأثير دفع.', price: 600 },
+      { id: 'glock_17', cat: 'سلاح خفيف', name: 'جلوك 17', desc: 'مسدس خفيف عملي وسريع الاستخدام في الرول بلاي.', price: 700 },
+      { id: 'm19', cat: 'سلاح خفيف', name: 'M19', desc: 'مسدس خفيف بدقة وثبات جيدين.', price: 800 },
+      { id: 'deagle_44', cat: 'سلاح خفيف', name: 'ديجل 44', desc: 'مسدس خفيف عالي الضرر للمواقف الحاسمة.', price: 950 },
       {
-        id: "handcuffs",
-        name: "كلبشات",
-        category: "معدات الضبط",
+        id: 'handcuffs',
+        cat: 'معدات الضبط',
+        name: 'كلبشات',
+        desc: 'معدات ضبط — مسموح بشرائها مرة واحدة فقط كل 24 ساعة.',
         price: 1000,
-        dailyLimit: true,
-        desc: "مسموح بشرائها مرة واحدة فقط كل 24 ساعة."
+        dailyLimit: true
       },
-      { id: "mac_11", name: "MAC-11", category: "رشاش خفيف", price: 1100, desc: "سلاح رشاش خفيف سريع الطلقات." },
-      { id: "axe", name: "الفأس", category: "قتال عن قرب", price: 1200, desc: "فأس قتال عن قرب بضرر مرتفع." },
-      { id: "medical", name: "الطب", category: "علاج وصحة", price: 2000, desc: "حقيبة/علاج طبي لاستعادة الصحة في الرول بلاي." }
+      { id: 'mac_11', cat: 'سلاح خفيف', name: 'MAC-11', desc: 'رشاش خفيف سريع الطلقات مناسب للتحركات الخفيفة.', price: 1100 },
+      { id: 'axe', cat: 'قتال عن قرب', name: 'الفأس', desc: 'فأس قتال عن قرب بضرر مرتفع.', price: 1200 },
+      { id: 'medical', cat: 'معدات دعم', name: 'الطب', desc: 'إمدادات طبية وعلاج لاستعادة الصحة في الرول بلاي.', price: 2000 }
     ];
 
-    function createFreshAccount(username) {
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          return {
+            users: Array.isArray(parsed.users) ? parsed.users : [],
+            sessionUser: parsed.sessionUser || null
+          };
+        } catch (e) {}
+      }
       return {
-        username,
-        cash: INITIAL_CASH,
-        bank: 0,
-        inventory: {},
-        lastHandcuffPurchase: null,
-        history: [
-          {
-            text: `تم إنشاء الحساب برصيد ابتدائي ${INITIAL_CASH.toLocaleString()} نقطة`,
-            time: new Date().toLocaleTimeString("ar-EG")
-          }
-        ]
+        users: [],
+        sessionUser: null
       };
     }
 
-    function loadState() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          const def = createFreshAccount("Dr_BLACK");
-          return { activeUser: "Dr_BLACK", accounts: { Dr_BLACK: def } };
-        }
-        const parsed = JSON.parse(raw);
-        if (!parsed.accounts || !parsed.activeUser || !parsed.accounts[parsed.activeUser]) {
-          const def = createFreshAccount("Dr_BLACK");
-          return { activeUser: "Dr_BLACK", accounts: { Dr_BLACK: def } };
-        }
-        return parsed;
-      } catch {
-        const def = createFreshAccount("Dr_BLACK");
-        return { activeUser: "Dr_BLACK", accounts: { Dr_BLACK: def } };
-      }
+    function saveState(state) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
     let state = loadState();
 
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-
-    function getCurrentUser() {
-      return state.accounts[state.activeUser];
-    }
-
-    function addLog(user, text) {
-      user.history.unshift({
-        text,
-        time: new Date().toLocaleTimeString("ar-EG")
-      });
-      if (user.history.length > 40) user.history.pop();
-    }
-
     function showToast(msg) {
-      const toast = document.getElementById("toast");
+      const toast = document.getElementById('toast');
       toast.textContent = msg;
-      toast.classList.add("show");
-      clearTimeout(showToast._timer);
-      showToast._timer = setTimeout(() => toast.classList.remove("show"), 2800);
+      toast.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2800);
     }
 
-    function formatRemaining(ms) {
+    function generateIban() {
+      let code;
+      do {
+        code = 'SO-' + Math.floor(1000 + Math.random() * 9000);
+      } while (state.users.some(u => u.iban === code));
+      return code;
+    }
+
+    function formatCooldown(ms) {
       const totalSec = Math.max(0, Math.floor(ms / 1000));
       const h = Math.floor(totalSec / 3600);
       const m = Math.floor((totalSec % 3600) / 60);
       const s = totalSec % 60;
-      return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }
 
-    function getHandcuffCooldownRemaining(user) {
-      if (!user.lastHandcuffPurchase) return 0;
-      const elapsed = Date.now() - user.lastHandcuffPurchase;
-      return Math.max(0, DAILY_MS - elapsed);
+    function getHandcuffRemaining(user) {
+      if (!user || !user.lastHandcuffBoughtAt) return 0;
+      const elapsed = Date.now() - Number(user.lastHandcuffBoughtAt);
+      return Math.max(0, DAILY_COOLDOWN_MS - elapsed);
+    }
+
+    function switchAuthTab(tab) {
+      const isLogin = tab === 'login';
+      document.getElementById('tabLogin').classList.toggle('active', isLogin);
+      document.getElementById('tabRegister').classList.toggle('active', !isLogin);
+      document.getElementById('loginForm').classList.toggle('hidden', !isLogin);
+      document.getElementById('registerForm').classList.toggle('hidden', isLogin);
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+
+      if (!username || !password) return;
+      if (state.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+        showToast('اسم اللاعب مستخدم بالفعل، اختر اسماً آخر.');
+        return;
+      }
+
+      const newUser = {
+        username,
+        password,
+        iban: generateIban(),
+        balance: INITIAL_BALANCE,
+        inventory: [],
+        lastHandcuffBoughtAt: null,
+        transactions: [
+          {
+            id: Date.now(),
+            type: 'in',
+            title: 'رصيد افتتاحي للحساب الجديد',
+            meta: 'منحة بداية السيرفر',
+            amount: INITIAL_BALANCE,
+            date: new Date().toLocaleString('ar-EG')
+          }
+        ]
+      };
+
+      state.users.push(newUser);
+      state.sessionUser = newUser.username;
+      saveState(state);
+      e.target.reset();
+      showToast('تم إنشاء حسابك برصيد 1,000 نقطة!');
+      renderApp();
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      const user = state.users.find(
+        u => u.username.toLowerCase() === username.toLowerCase() && u.password === password
+      );
+
+      if (!user) {
+        showToast('اسم اللاعب أو كلمة المرور غير صحيحة.');
+        return;
+      }
+
+      state.sessionUser = user.username;
+      saveState(state);
+      e.target.reset();
+      showToast('أهلاً بك مجدداً يا ' + user.username);
+      renderApp();
+    }
+
+    function logout() {
+      state.sessionUser = null;
+      saveState(state);
+      renderApp();
+    }
+
+    function getCurrentUser() {
+      if (!state.sessionUser) return null;
+      return state.users.find(u => u.username === state.sessionUser) || null;
+    }
+
+    function switchView(viewId, btn) {
+      ['bankView', 'shopView', 'invView', 'adminView'].forEach(id => {
+        document.getElementById(id).classList.toggle('hidden', id !== viewId);
+      });
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    function copyIban() {
+      const user = getCurrentUser();
+      if (!user) return;
+      navigator.clipboard?.writeText(user.iban);
+      showToast('تم نسخ رقم الحساب: ' + user.iban);
+    }
+
+    function handleTransfer(e) {
+      e.preventDefault();
+      const user = getCurrentUser();
+      if (!user) return;
+
+      const targetIban = document.getElementById('targetIban').value.trim().toUpperCase();
+      const amount = Number(document.getElementById('transferAmount').value);
+      const note = document.getElementById('transferNote').value.trim() || 'تحويل نقاط رول بلاي';
+
+      if (!Number.isFinite(amount) || amount <= 0) {
+        showToast('أدخل قيمة صحيحة أكبر من صفر.');
+        return;
+      }
+
+      if (user.balance < amount) {
+        showToast('رصيدك غير كافٍ لإتمام هذا التحويل.');
+        return;
+      }
+
+      const recipient = state.users.find(u => u.iban.toUpperCase() === targetIban);
+      if (!recipient) {
+        showToast('لم يتم العثور على حساب بهذا الرقم.');
+        return;
+      }
+
+      if (recipient.username === user.username) {
+        showToast('لا يمكنك التحويل إلى حسابك نفسه.');
+        return;
+      }
+
+      const now = new Date().toLocaleString('ar-EG');
+      user.balance -= amount;
+      recipient.balance += amount;
+
+      user.transactions.unshift({
+        id: Date.now() + 1,
+        type: 'out',
+        title: `تحويل إلى ${recipient.username} (${recipient.iban})`,
+        meta: note,
+        amount,
+        date: now
+      });
+
+      recipient.transactions.unshift({
+        id: Date.now() + 2,
+        type: 'in',
+        title: `استلام من ${user.username} (${user.iban})`,
+        meta: note,
+        amount,
+        date: now
+      });
+
+      saveState(state);
+      e.target.reset();
+      showToast(`تم تحويل ${amount.toLocaleString()} نقطة بنجاح.`);
+      renderApp();
     }
 
     function buyItem(itemId) {
-      const item = ITEMS.find((i) => i.id === itemId);
       const user = getCurrentUser();
-      if (!item || !user) return;
+      if (!user) return;
+
+      const item = SHOP_ITEMS.find(i => i.id === itemId);
+      if (!item) return;
 
       if (item.dailyLimit) {
-        const rem = getHandcuffCooldownRemaining(user);
+        const rem = getHandcuffRemaining(user);
         if (rem > 0) {
-          showToast(`الكلبشات متاحة مرة واحدة يومياً — المتبقي ${formatRemaining(rem)}`);
+          showToast(`مسموح بشراء الكلبشات مرة واحدة كل 24 ساعة — المتبقي ${formatCooldown(rem)}`);
           return;
         }
       }
 
-      if (user.cash < item.price) {
-        showToast("رصيد الكاش غير كافٍ لشراء هذا العنصر");
+      if (user.balance < item.price) {
+        showToast('رصيدك لا يكفي لشراء ' + item.name);
         return;
       }
 
-      user.cash -= item.price;
-      user.inventory[item.name] = (user.inventory[item.name] || 0) + 1;
+      user.balance -= item.price;
       if (item.dailyLimit) {
-        user.lastHandcuffPurchase = Date.now();
+        user.lastHandcuffBoughtAt = Date.now();
       }
-      addLog(user, `شراء ${item.name} مقابل ${item.price.toLocaleString()} نقطة`);
-      saveState();
-      renderAll();
-      showToast(`تم شراء ${item.name} بنجاح`);
+
+      user.inventory.unshift({
+        ...item,
+        boughtAt: new Date().toLocaleString('ar-EG')
+      });
+
+      user.transactions.unshift({
+        id: Date.now(),
+        type: 'out',
+        title: `شراء: ${item.name}`,
+        meta: item.cat,
+        amount: item.price,
+        date: new Date().toLocaleString('ar-EG')
+      });
+
+      saveState(state);
+      showToast(`تم شراء ${item.name} وإضافته لحقيبتك.`);
+      renderApp();
     }
 
-    function renderStore() {
-      const grid = document.getElementById("storeGrid");
+    function handleAdminAdjust(e) {
+      e.preventDefault();
+      const targetName = document.getElementById('adminUserSelect').value;
+      const action = document.getElementById('adminAction').value;
+      const amount = Number(document.getElementById('adminAmount').value);
+
+      const target = state.users.find(u => u.username === targetName);
+      if (!target || !Number.isFinite(amount) || amount < 0) return;
+
+      const before = target.balance;
+      if (action === 'add') target.balance += amount;
+      if (action === 'sub') target.balance = Math.max(0, target.balance - amount);
+      if (action === 'set') target.balance = amount;
+
+      const diff = target.balance - before;
+      if (diff !== 0) {
+        target.transactions.unshift({
+          id: Date.now(),
+          type: diff >= 0 ? 'in' : 'out',
+          title: 'تعديل رصيد من الإدارة',
+          meta: `الرصيد الجديد: ${target.balance.toLocaleString()} PTS`,
+          amount: Math.abs(diff),
+          date: new Date().toLocaleString('ar-EG')
+        });
+      }
+
+      saveState(state);
+      e.target.reset();
+      showToast('تم تحديث رصيد ' + target.username);
+      renderApp();
+    }
+
+    function renderApp() {
       const user = getCurrentUser();
-      const cuffRem = getHandcuffCooldownRemaining(user);
+      const authSec = document.getElementById('authSection');
+      const appSec = document.getElementById('appSection');
 
-      grid.innerHTML = ITEMS.map((item) => {
-        const isDailyLocked = item.dailyLimit && cuffRem > 0;
-        const canAfford = user.cash >= item.price;
-        const disabled = isDailyLocked || !canAfford;
+      if (!user) {
+        authSec.classList.remove('hidden');
+        appSec.classList.add('hidden');
+        return;
+      }
 
+      authSec.classList.add('hidden');
+      appSec.classList.remove('hidden');
+
+      document.getElementById('welcomeUserText').textContent = `الحساب النشط: ${user.username}`;
+      document.getElementById('cardHolder').textContent = user.username;
+      document.getElementById('cardIban').textContent = user.iban;
+      document.getElementById('cardBalance').textContent = `${user.balance.toLocaleString()} PTS`;
+
+      const txList = document.getElementById('txList');
+      if (!user.transactions.length) {
+        txList.innerHTML = `<div class="tx-sub">لا توجد عمليات مسجلة حتى الآن.</div>`;
+      } else {
+        txList.innerHTML = user.transactions.map(tx => `
+          <div class="tx-item">
+            <div>
+              <div class="tx-title">${tx.title}</div>
+              <div class="tx-sub">${tx.meta} • ${tx.date}</div>
+            </div>
+            <div class="${tx.type === 'in' ? 'tx-plus' : 'tx-minus'}">
+              ${tx.type === 'in' ? '+' : '-'}${Number(tx.amount).toLocaleString()} PTS
+            </div>
+          </div>
+        `).join('');
+      }
+
+      const cuffRem = getHandcuffRemaining(user);
+      const shopGrid = document.getElementById('shopGrid');
+      shopGrid.innerHTML = SHOP_ITEMS.map(item => {
+        const isLocked = item.dailyLimit && cuffRem > 0;
         return `
           <div class="item-card">
             <div>
-              <span class="badge ${item.dailyLimit ? "badge-daily" : ""}">${item.category}</span>
-              <div class="item-title">${item.name}</div>
-              <p class="item-desc">${item.desc}</p>
-              <div class="item-price">${item.price.toLocaleString()} نقطة</div>
+              <span class="item-cat ${item.dailyLimit ? 'daily' : ''}">${item.cat}</span>
+              <div class="item-name">${item.name}</div>
+              <div class="item-desc">${item.desc}</div>
+              ${item.dailyLimit ? `<div class="item-limit">${isLocked ? `متاح مجدداً بعد: ${formatCooldown(cuffRem)}` : 'متاح اليوم (مرة واحدة كل 24 ساعة)'}</div>` : ''}
             </div>
-            <div>
-              <div class="cooldown-text">
-                ${item.dailyLimit ? (cuffRem > 0 ? `متاح بعد: ${formatRemaining(cuffRem)}` : "متاح اليوم (مرة واحدة كل 24 ساعة)") : ""}
-              </div>
-              <button type="button" style="width:100%" ${disabled ? "disabled" : ""} onclick="buyItem('${item.id}')">
-                ${isDailyLocked ? "تم الشراء اليوم" : "شراء"}
-              </button>
+            <div class="item-footer">
+              <span class="item-price">${item.price.toLocaleString()} PTS</span>
+              <button class="btn btn-gold" ${isLocked ? 'disabled' : ''} onclick="buyItem('${item.id}')">${isLocked ? 'مقيد اليوم' : 'شراء'}</button>
             </div>
           </div>
         `;
-      }).join("");
-    }
+      }).join('');
 
-    function renderInventoryAndHistory() {
-      const user = getCurrentUser();
-      const invBox = document.getElementById("inventoryList");
-      const histBox = document.getElementById("historyList");
-
-      const invEntries = Object.entries(user.inventory).filter(([, count]) => count > 0);
-      invBox.innerHTML = invEntries.length
-        ? invEntries
-            .map(
-              ([name, count]) => `
-              <div class="list-row">
-                <strong>${name}</strong>
-                <span>الكمية: ${count}</span>
-              </div>
-            `
-            )
-            .join("")
-        : `<div class="list-row"><span>الحقيبة فارغة حالياً</span></div>`;
-
-      histBox.innerHTML = user.history
-        .map(
-          (h) => `
-          <div class="list-row">
-            <span>${h.text}</span>
-            <small style="color:var(--muted)">${h.time}</small>
-          </div>
-        `
-        )
-        .join("");
-    }
-
-    function renderAll() {
-      const user = getCurrentUser();
-      document.getElementById("accountInput").value = state.activeUser;
-      document.getElementById("cashBalance").textContent = user.cash.toLocaleString();
-      document.getElementById("bankBalance").textContent = user.bank.toLocaleString();
-      renderStore();
-      renderInventoryAndHistory();
-    }
-
-    document.getElementById("switchAccountBtn").addEventListener("click", () => {
-      const name = document.getElementById("accountInput").value.trim();
-      if (!name) return showToast("اكتب اسم الحساب أولاً");
-      if (!state.accounts[name]) {
-        state.accounts[name] = createFreshAccount(name);
-        showToast(`تم إنشاء حساب جديد باسم ${name} برصيد 1,000 نقطة`);
+      const invGrid = document.getElementById('invGrid');
+      if (!user.inventory.length) {
+        invGrid.innerHTML = `<div class="tx-sub">حقيبتك فارغة حالياً. توجه إلى متجر المعدات لشراء أسلحة أو معدات مسموحة.</div>`;
       } else {
-        showToast(`تم الدخول إلى حساب ${name}`);
+        invGrid.innerHTML = user.inventory.map(entry => `
+          <div class="item-card">
+            <div>
+              <span class="item-cat">${entry.cat}</span>
+              <div class="item-name">${entry.name}</div>
+              <div class="item-desc">${entry.desc}</div>
+            </div>
+            <div class="item-footer">
+              <span class="tx-sub">تم الشراء: ${entry.boughtAt}</span>
+            </div>
+          </div>
+        `).join('');
       }
-      state.activeUser = name;
-      saveState();
-      renderAll();
-    });
 
-    document.getElementById("resetAccountBtn").addEventListener("click", () => {
-      const name = state.activeUser;
-      state.accounts[name] = createFreshAccount(name);
-      saveState();
-      renderAll();
-      showToast("تمت إعادة ضبط الحساب إلى 1,000 نقطة");
-    });
+      const adminSelect = document.getElementById('adminUserSelect');
+      adminSelect.innerHTML = state.users
+        .map(u => `<option value="${u.username}">${u.username} (${u.iban}) — ${u.balance.toLocaleString()} PTS</option>`)
+        .join('');
+    }
 
-    document.getElementById("depositBtn").addEventListener("click", () => {
-      const amount = Number(document.getElementById("bankAmountInput").value);
-      const user = getCurrentUser();
-      if (!amount || amount <= 0) return showToast("أدخل مبلغاً صحيحاً");
-      if (user.cash < amount) return showToast("رصيد الكاش لا يكفي للإيداع");
-      user.cash -= amount;
-      user.bank += amount;
-      addLog(user, `إيداع ${amount.toLocaleString()} نقطة في البنك`);
-      document.getElementById("bankAmountInput").value = "";
-      saveState();
-      renderAll();
-      showToast("تم الإيداع بنجاح");
-    });
-
-    document.getElementById("withdrawBtn").addEventListener("click", () => {
-      const amount = Number(document.getElementById("bankAmountInput").value);
-      const user = getCurrentUser();
-      if (!amount || amount <= 0) return showToast("أدخل مبلغاً صحيحاً");
-      if (user.bank < amount) return showToast("رصيد البنك لا يكفي للسحب");
-      user.bank -= amount;
-      user.cash += amount;
-      addLog(user, `سحب ${amount.toLocaleString()} نقطة إلى الكاش`);
-      document.getElementById("bankAmountInput").value = "";
-      saveState();
-      renderAll();
-      showToast("تم السحب بنجاح");
-    });
-
-    document.getElementById("transferBtn").addEventListener("click", () => {
-      const targetName = document.getElementById("transferTargetInput").value.trim();
-      const amount = Number(document.getElementById("transferAmountInput").value);
-      const user = getCurrentUser();
-
-      if (!targetName) return showToast("اكتب اسم الحساب المستلم");
-      if (targetName === state.activeUser) return showToast("لا يمكنك التحويل لنفس الحساب");
-      if (!amount || amount <= 0) return showToast("أدخل قيمة تحويل صحيحة");
-      if (user.cash < amount) return showToast("رصيد الكاش غير كافٍ للتحويل");
-
-      if (!state.accounts[targetName]) {
-        state.accounts[targetName] = createFreshAccount(targetName);
-      }
-      const targetUser = state.accounts[targetName];
-
-      user.cash -= amount;
-      targetUser.cash += amount;
-      addLog(user, `تحويل ${amount.toLocaleString()} نقطة إلى ${targetName}`);
-      addLog(targetUser, `استلام ${amount.toLocaleString()} نقطة من ${state.activeUser}`);
-
-      document.getElementById("transferTargetInput").value = "";
-      document.getElementById("transferAmountInput").value = "";
-      saveState();
-      renderAll();
-      showToast(`تم تحويل ${amount.toLocaleString()} نقطة إلى ${targetName}`);
-    });
-
-    document.querySelectorAll(".tab-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        const targetTab = btn.dataset.tab;
-        ["store", "bank", "inventory"].forEach((t) => {
-          document.getElementById(`tab-${t}`).classList.toggle("hidden", t !== targetTab);
-        });
-      });
-    });
-
-    // تحديث عدّاد الكلبشات كل ثانية إذا كان القسم مفتوحاً
     setInterval(() => {
       const user = getCurrentUser();
-      if (user.lastHandcuffPurchase && !document.getElementById("tab-store").classList.contains("hidden")) {
-        renderStore();
+      if (user && getHandcuffRemaining(user) > 0 && !document.getElementById('shopView').classList.contains('hidden')) {
+        renderApp();
       }
     }, 1000);
 
-    saveState();
-    renderAll();
+    renderApp();
   </script>
 </body>
 </html>
