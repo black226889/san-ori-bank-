@@ -11,17 +11,79 @@
     :root {
       --bg-dark: #07080a;
       --bg-card: rgba(18, 20, 26, 0.88);
-      --gold: #d4af37;
-      --gold-bright: #f5d061;
-      --gold-dim: rgba(212, 175, 55, 0.16);
+      --accent: #d4af37;
+      --accent-bright: #f5d061;
+      --accent-dark: #8a640b;
+      --accent-dim: rgba(212, 175, 55, 0.16);
+      --accent-glow: rgba(245, 208, 97, 0.32);
       --crimson: #e11d48;
       --crimson-dim: rgba(225, 29, 72, 0.16);
       --emerald: #10b981;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --border: rgba(212, 175, 55, 0.24);
+      --border: rgba(212, 175, 55, 0.28);
       --border-soft: rgba(255, 255, 255, 0.08);
-      --shadow-gold: 0 12px 35px rgba(212, 175, 55, 0.14);
+      --shadow-accent: 0 12px 35px rgba(212, 175, 55, 0.18);
+      --card-glow-shadow: 0 22px 55px rgba(0, 0, 0, 0.65), 0 0 28px rgba(245, 208, 97, 0.16);
+      --card-radial: radial-gradient(circle at 85% 15%, rgba(245, 208, 97, 0.28), transparent 45%);
+    }
+
+    body[data-theme="crimson"] {
+      --accent: #e11d48;
+      --accent-bright: #fb7185;
+      --accent-dark: #7f1d1d;
+      --accent-dim: rgba(225, 29, 72, 0.18);
+      --accent-glow: rgba(251, 113, 133, 0.34);
+      --border: rgba(251, 113, 133, 0.32);
+      --shadow-accent: 0 12px 35px rgba(225, 29, 72, 0.22);
+      --card-glow-shadow: 0 22px 55px rgba(0, 0, 0, 0.65), 0 0 28px rgba(251, 113, 133, 0.2);
+      --card-radial: radial-gradient(circle at 85% 15%, rgba(251, 113, 133, 0.28), transparent 45%);
+    }
+
+    body[data-theme="emerald"] {
+      --accent: #10b981;
+      --accent-bright: #34d399;
+      --accent-dark: #065f46;
+      --accent-dim: rgba(16, 185, 129, 0.18);
+      --accent-glow: rgba(52, 211, 153, 0.34);
+      --border: rgba(52, 211, 153, 0.32);
+      --shadow-accent: 0 12px 35px rgba(16, 185, 129, 0.22);
+      --card-glow-shadow: 0 22px 55px rgba(0, 0, 0, 0.65), 0 0 28px rgba(52, 211, 153, 0.2);
+      --card-radial: radial-gradient(circle at 85% 15%, rgba(52, 211, 153, 0.28), transparent 45%);
+    }
+
+    body[data-theme="violet"] {
+      --accent: #8b5cf6;
+      --accent-bright: #c084fc;
+      --accent-dark: #4c1d95;
+      --accent-dim: rgba(139, 92, 246, 0.18);
+      --accent-glow: rgba(192, 132, 252, 0.35);
+      --border: rgba(192, 132, 252, 0.34);
+      --shadow-accent: 0 12px 35px rgba(139, 92, 246, 0.22);
+      --card-glow-shadow: 0 22px 55px rgba(0, 0, 0, 0.65), 0 0 28px rgba(192, 132, 252, 0.22);
+      --card-radial: radial-gradient(circle at 85% 15%, rgba(192, 132, 252, 0.28), transparent 45%);
+    }
+
+    body[data-glow="off"] {
+      --accent-glow: transparent;
+      --shadow-accent: none;
+      --card-glow-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+      --card-radial: none;
+    }
+
+    body[data-glow="off"] .glass {
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    body[data-glow="off"] .black-card {
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    body[data-motion="off"] *,
+    body[data-motion="off"] *::before,
+    body[data-motion="off"] *::after {
+      transition: none !important;
+      animation: none !important;
     }
 
     * {
@@ -33,13 +95,14 @@
 
     body {
       background:
-        radial-gradient(circle at 15% 10%, rgba(212, 175, 55, 0.12), transparent 35%),
+        radial-gradient(circle at 15% 10%, var(--accent-dim), transparent 38%),
         radial-gradient(circle at 85% 20%, rgba(225, 29, 72, 0.1), transparent 35%),
         var(--bg-dark);
       color: var(--text-main);
       min-height: 100vh;
       line-height: 1.6;
       overflow-x: hidden;
+      transition: background 0.35s ease, color 0.25s ease;
     }
 
     .container {
@@ -54,7 +117,88 @@
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
       border-radius: 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 22px var(--accent-dim);
+      transition: border-color 0.25s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    .fx-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      font-size: 0.82rem;
+    }
+
+    .fx-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fx-label {
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-left: 4px;
+    }
+
+    .theme-pill {
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .theme-pill:hover {
+      transform: translateY(-1px);
+    }
+
+    .theme-pill.active {
+      border-color: var(--accent-bright);
+      background: var(--accent-dim);
+      color: var(--accent-bright);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot-gold { background: #f5d061; }
+    .dot-crimson { background: #fb7185; }
+    .dot-emerald { background: #34d399; }
+    .dot-violet { background: #c084fc; }
+
+    .toggle-btn {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      font-weight: 800;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-btn.is-on {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent-bright);
+      box-shadow: 0 0 12px var(--accent-dim);
     }
 
     .btn {
@@ -65,7 +209,7 @@
       padding: 11px 18px;
       font-weight: 700;
       font-size: 0.95rem;
-      transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease, background 0.25s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -82,9 +226,14 @@
     }
 
     .btn-gold {
-      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      background: linear-gradient(135deg, var(--accent-bright), var(--accent));
       color: #090a0d;
-      box-shadow: var(--shadow-gold);
+      box-shadow: var(--shadow-accent);
+    }
+
+    .btn-gold:hover:not(:disabled) {
+      box-shadow: 0 14px 36px var(--accent-glow);
+      transform: translateY(-1px);
     }
 
     .btn-crimson {
@@ -97,6 +246,11 @@
       background: rgba(255, 255, 255, 0.05);
       color: var(--text-main);
       border: 1px solid var(--border-soft);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      border-color: var(--border);
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .input-group {
@@ -120,10 +274,12 @@
       color: var(--text-main);
       font-size: 0.95rem;
       outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .input:focus, select:focus {
-      border-color: var(--gold);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
     }
 
     .auth-wrapper {
@@ -148,9 +304,9 @@
       display: inline-block;
       padding: 5px 12px;
       border-radius: 999px;
-      background: var(--gold-dim);
+      background: var(--accent-dim);
       border: 1px solid var(--border);
-      color: var(--gold-bright);
+      color: var(--accent-bright);
       font-size: 0.78rem;
       font-weight: 800;
       margin-bottom: 10px;
@@ -159,7 +315,7 @@
     .auth-title {
       font-size: 1.7rem;
       font-weight: 900;
-      background: linear-gradient(135deg, #fff, var(--gold-bright));
+      background: linear-gradient(135deg, #fff, var(--accent-bright));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 6px;
@@ -193,7 +349,7 @@
     }
 
     .auth-tab.active {
-      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      background: linear-gradient(135deg, var(--accent-bright), var(--accent));
       color: #090a0d;
     }
 
@@ -223,18 +379,19 @@
       width: 44px;
       height: 44px;
       border-radius: 12px;
-      background: linear-gradient(135deg, var(--gold-bright), #8a640b);
+      background: linear-gradient(135deg, var(--accent-bright), var(--accent-dark));
       color: #090a0d;
       display: grid;
       place-items: center;
       font-weight: 900;
       font-size: 1.15rem;
+      box-shadow: 0 0 18px var(--accent-dim);
     }
 
     .brand h1 {
       font-size: 1.15rem;
       font-weight: 900;
-      color: var(--gold-bright);
+      color: var(--accent-bright);
     }
 
     .brand span {
@@ -258,12 +415,14 @@
       font-weight: 700;
       font-size: 0.88rem;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
 
     .nav-btn.active, .nav-btn:hover {
       color: #090a0d;
-      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      background: linear-gradient(135deg, var(--accent-bright), var(--accent));
       border-color: transparent;
+      box-shadow: var(--shadow-accent);
     }
 
     .grid-2 {
@@ -275,15 +434,21 @@
 
     .black-card {
       background:
-        radial-gradient(circle at 85% 15%, rgba(245, 208, 97, 0.28), transparent 45%),
-        linear-gradient(135deg, #16181f 0%, #0a0b0e 65%, #1c1709 100%);
-      border: 1px solid rgba(245, 208, 97, 0.45);
+        var(--card-radial),
+        linear-gradient(135deg, #16181f 0%, #0a0b0e 65%, #16141a 100%);
+      border: 1px solid var(--border);
       border-radius: 22px;
       padding: 24px;
       min-height: 220px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      box-shadow: var(--card-glow-shadow);
+      transition: box-shadow 0.3s ease, border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .black-card:hover {
+      transform: translateY(-2px);
     }
 
     .card-top {
@@ -296,13 +461,13 @@
       width: 44px;
       height: 32px;
       border-radius: 7px;
-      background: linear-gradient(135deg, #f7df8b, #b6891d);
+      background: linear-gradient(135deg, var(--accent-bright), var(--accent-dark));
     }
 
     .card-tier {
       font-size: 0.78rem;
       font-weight: 800;
-      color: var(--gold-bright);
+      color: var(--accent-bright);
       background: rgba(0, 0, 0, 0.45);
       padding: 4px 10px;
       border-radius: 999px;
@@ -317,8 +482,9 @@
     .balance-amount {
       font-size: 2.05rem;
       font-weight: 900;
-      color: var(--gold-bright);
+      color: var(--accent-bright);
       margin: 10px 0;
+      text-shadow: 0 0 18px var(--accent-dim);
     }
 
     .card-bottom {
@@ -342,8 +508,8 @@
     }
 
     .copy-mini {
-      background: var(--gold-dim);
-      color: var(--gold-bright);
+      background: var(--accent-dim);
+      color: var(--accent-bright);
       border: 1px solid var(--border);
       border-radius: 7px;
       padding: 2px 8px;
@@ -430,13 +596,20 @@
       flex-direction: column;
       justify-content: space-between;
       gap: 14px;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
+    }
+
+    .item-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--border);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), 0 0 18px var(--accent-dim);
     }
 
     .item-cat {
       font-size: 0.72rem;
       font-weight: 800;
-      color: var(--gold-bright);
-      background: var(--gold-dim);
+      color: var(--accent-bright);
+      background: var(--accent-dim);
       padding: 3px 9px;
       border-radius: 999px;
       display: inline-block;
@@ -478,7 +651,7 @@
 
     .item-price {
       font-weight: 900;
-      color: var(--gold-bright);
+      color: var(--accent-bright);
       font-size: 1rem;
     }
 
@@ -504,7 +677,7 @@
     }
 
     .acc-item.active {
-      border-color: var(--gold);
+      border-color: var(--accent);
     }
 
     .toast {
@@ -514,7 +687,7 @@
       transform: translateX(-50%) translateY(100px);
       background: #11141c;
       color: #fff;
-      border: 1px solid var(--gold);
+      border: 1px solid var(--accent);
       padding: 12px 20px;
       border-radius: 14px;
       font-weight: 700;
@@ -524,6 +697,7 @@
       z-index: 9999;
       text-align: center;
       max-width: 92vw;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 18px var(--accent-dim);
     }
 
     .toast.show {
@@ -545,9 +719,25 @@
     }
   </style>
 </head>
-<body>
+<body data-theme="gold" data-glow="on" data-motion="on">
 
-  <section id="authSection" class="auth-wrapper">
+  <div class="container" style="padding-bottom: 0;">
+    <div class="fx-bar glass">
+      <div class="fx-group">
+        <span class="fx-label">لون الثيم:</span>
+        <button type="button" class="theme-pill active" data-set-theme="gold"><span class="dot dot-gold"></span>ذهبي</button>
+        <button type="button" class="theme-pill" data-set-theme="crimson"><span class="dot dot-crimson"></span>قرمزي</button>
+        <button type="button" class="theme-pill" data-set-theme="emerald"><span class="dot dot-emerald"></span>زمردي</button>
+        <button type="button" class="theme-pill" data-set-theme="violet"><span class="dot dot-violet"></span>بنفسجي</button>
+      </div>
+      <div class="fx-group">
+        <button type="button" id="toggleGlowBtn" class="toggle-btn is-on">التوهج: شغال</button>
+        <button type="button" id="toggleMotionBtn" class="toggle-btn is-on">الحركة: شغالة</button>
+      </div>
+    </div>
+  </div>
+
+  <section id="authSection" class="auth-wrapper" style="min-height: 82vh;">
     <div id="authBox" class="auth-box glass">
       <div id="externalAuthContainer">
         <div class="auth-badge">SAN ORI ROLEPLAY • SIMULATION BANK</div>
@@ -737,6 +927,7 @@
   <script>
     const INITIAL_BALANCE = 1000;
     const STORAGE_KEY = 'san_ori_bank_v1';
+    const FX_STORAGE_KEY = 'san_ori_fx_prefs_v1';
     const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const ADMIN_USER = 'dr black';
     const ADMIN_PASS = 'black';
@@ -760,6 +951,69 @@
     let standaloneMode = 'none';
     let inspectedUser = null;
     let cloudConnected = false;
+
+    function loadFxPrefs() {
+      try {
+        const p = JSON.parse(localStorage.getItem(FX_STORAGE_KEY) || '{}');
+        return {
+          theme: ['gold', 'crimson', 'emerald', 'violet'].includes(p.theme) ? p.theme : 'gold',
+          glow: p.glow === 'off' ? 'off' : 'on',
+          motion: p.motion === 'off' ? 'off' : 'on'
+        };
+      } catch (e) {
+        return { theme: 'gold', glow: 'on', motion: 'on' };
+      }
+    }
+
+    let fxPrefs = loadFxPrefs();
+
+    function applyFxPrefs() {
+      document.body.setAttribute('data-theme', fxPrefs.theme);
+      document.body.setAttribute('data-glow', fxPrefs.glow);
+      document.body.setAttribute('data-motion', fxPrefs.motion);
+
+      document.querySelectorAll('[data-set-theme]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-set-theme') === fxPrefs.theme);
+      });
+
+      const glowBtn = document.getElementById('toggleGlowBtn');
+      if (glowBtn) {
+        const isOn = fxPrefs.glow === 'on';
+        glowBtn.classList.toggle('is-on', isOn);
+        glowBtn.textContent = isOn ? 'التوهج: شغال' : 'التوهج: مطفي';
+      }
+
+      const motionBtn = document.getElementById('toggleMotionBtn');
+      if (motionBtn) {
+        const isOn = fxPrefs.motion === 'on';
+        motionBtn.classList.toggle('is-on', isOn);
+        motionBtn.textContent = isOn ? 'الحركة: شغالة' : 'الحركة: مطفية';
+      }
+
+      try {
+        localStorage.setItem(FX_STORAGE_KEY, JSON.stringify(fxPrefs));
+      } catch (e) {}
+    }
+
+    document.querySelectorAll('[data-set-theme]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        fxPrefs.theme = btn.getAttribute('data-set-theme');
+        applyFxPrefs();
+        toast('تم تغيير لون الثيم إلى: ' + btn.textContent.trim());
+      });
+    });
+
+    document.getElementById('toggleGlowBtn').addEventListener('click', () => {
+      fxPrefs.glow = fxPrefs.glow === 'on' ? 'off' : 'on';
+      applyFxPrefs();
+      toast(fxPrefs.glow === 'on' ? 'تم تشغيل التوهج والإضاءة' : 'تم إطفاء التوهج والإضاءة');
+    });
+
+    document.getElementById('toggleMotionBtn').addEventListener('click', () => {
+      fxPrefs.motion = fxPrefs.motion === 'on' ? 'off' : 'on';
+      applyFxPrefs();
+      toast(fxPrefs.motion === 'on' ? 'تم تشغيل الحركة والمؤثرات' : 'تم إطفاء الحركة والمؤثرات');
+    });
 
     function hasCloudDb() {
       return typeof FIREBASE_DB_URL === 'string' && FIREBASE_DB_URL.startsWith('https://');
@@ -1243,146 +1497,4 @@
     document.getElementById('extAdminLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const u = document.getElementById('extAdminUser').value.trim().toLowerCase();
-      const p = document.getElementById('extAdminPass').value.trim().toLowerCase();
-      if (u === ADMIN_USER && p === ADMIN_PASS) {
-        adminUnlocked = true;
-        standaloneMode = 'panel';
-        e.target.reset();
-        render();
-        toast('تم فتح لوحة الأدمن بنجاح.');
-        await syncFromCloud();
-      } else {
-        toast('اسم الأدمن أو كلمة المرور غير صحيحة.');
-      }
-    });
-
-    document.getElementById('inAppAdminLoginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const u = document.getElementById('inAppAdminUser').value.trim().toLowerCase();
-      const p = document.getElementById('inAppAdminPass').value.trim().toLowerCase();
-      if (u === ADMIN_USER && p === ADMIN_PASS) {
-        adminUnlocked = true;
-        e.target.reset();
-        render();
-        toast('تم فتح لوحة الأدمن بنجاح.');
-        await syncFromCloud();
-      } else {
-        toast('اسم الأدمن أو كلمة المرور غير صحيحة.');
-      }
-    });
-
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const view = btn.getAttribute('data-view');
-        ['bankView', 'shopView', 'invView', 'adminView'].forEach(v => {
-          document.getElementById(v).classList.toggle('hidden', v !== view);
-        });
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        render();
-        await syncFromCloud();
-      });
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      adminUnlocked = false;
-      standaloneMode = 'none';
-      state.sessionUser = null;
-      saveLocal();
-      render();
-    });
-
-    document.getElementById('copyIbanBtn').addEventListener('click', () => {
-      const user = getCurrentUser();
-      if (user) {
-        navigator.clipboard?.writeText(user.iban);
-        toast('تم نسخ رقم الحساب: ' + user.iban);
-      }
-    });
-
-    document.getElementById('transferForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const currentSession = getCurrentUser();
-      if (!currentSession) return;
-
-      const prefix = document.getElementById('transferBankPrefix').value;
-      const targetInputRaw = document.getElementById('targetIban').value;
-      const targetIban = normalizeTransferTarget(prefix, targetInputRaw);
-      const targetDigitsOnly = cleanIbanKey(targetInputRaw).replace(/^[A-Z0-9\u0600-\u06FF]+-/, '');
-      const amount = Number(document.getElementById('transferAmount').value);
-      const note = document.getElementById('transferNote').value.trim() || 'تحويل نقاط رول بلاي';
-
-      if (!Number.isFinite(amount) || amount <= 0 || Number(currentSession.balance || 0) < amount) {
-        toast('رصيدك غير كافٍ أو القيمة غير صحيحة.');
-        return;
-      }
-
-      const latest = await cloudGetUsers();
-      const list = cloudConnected ? latest : state.users;
-
-      const sender = list.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
-      if (!sender) {
-        toast('تعذر العثور على حساب المرسل.');
-        return;
-      }
-
-      const rec = list.find(u => {
-        const uIban = cleanIbanKey(u.iban);
-        const uDigits = uIban.replace(/^[A-Z0-9\u0600-\u06FF]+-/, '');
-        return uIban === targetIban || uIban === cleanIbanKey(targetInputRaw) || (targetDigitsOnly && uDigits === targetDigitsOnly);
-      });
-
-      if (!rec) {
-        toast('الرقم غير صحيح أو الحساب غير مسجل بعد.');
-        return;
-      }
-
-      if (String(rec.username).toLowerCase() === String(sender.username).toLowerCase()) {
-        toast('لا يمكنك التحويل إلى رقم حسابك نفسه.');
-        return;
-      }
-
-      const now = new Date().toLocaleString('ar-EG');
-      sender.balance = Number(sender.balance || 0) - amount;
-      rec.balance = Number(rec.balance || 0) + amount;
-      sender.transactions = Array.isArray(sender.transactions) ? sender.transactions : [];
-      rec.transactions = Array.isArray(rec.transactions) ? rec.transactions : [];
-
-      sender.transactions.unshift({
-        id: Date.now() + 1,
-        type: 'out',
-        title: `تحويل إلى ${rec.username} (${rec.iban})`,
-        meta: note,
-        amount,
-        date: now
-      });
-
-      rec.transactions.unshift({
-        id: Date.now() + 2,
-        type: 'in',
-        title: `استلام من ${sender.username} (${sender.iban})`,
-        meta: note,
-        amount,
-        date: now
-      });
-
-      await cloudSaveUsers(list);
-      e.target.reset();
-      document.getElementById('transferBankPrefix').value = 'SO';
-      render();
-      toast(`تم تحويل ${amount.toLocaleString()} نقطة إلى ${rec.username} بنجاح.`);
-    });
-
-    setInterval(async () => {
-      if (hasCloudDb()) {
-        await syncFromCloud();
-      } else if (getCurrentUser() && cuffRemaining(getCurrentUser()) > 0 && !document.getElementById('shopView').classList.contains('hidden')) {
-        render();
-      }
-    }, 5000);
-
-    render();
-    syncFromCloud();
-  </script>
-</body>
-</html>
+      const p = document.getElementById('extAdminPass').value.trim().toLo
