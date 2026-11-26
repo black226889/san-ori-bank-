@@ -29,9 +29,9 @@
     }
 
     @keyframes ambientShift {
-      0% { filter: hue-rotate(0deg) saturate(1.08); }
-      50% { filter: hue-rotate(14deg) saturate(1.18); }
-      100% { filter: hue-rotate(0deg) saturate(1.08); }
+      0% { filter: hue-rotate(0deg) saturate(1.12); }
+      50% { filter: hue-rotate(18deg) saturate(1.22); }
+      100% { filter: hue-rotate(0deg) saturate(1.12); }
     }
 
     @keyframes pulseGlow {
@@ -69,8 +69,8 @@
       min-height: 100vh;
       line-height: 1.6;
       overflow-x: hidden;
-      animation: ambientShift 12s ease-in-out infinite;
-      transition: background 0.35s ease, color 0.25s ease;
+      animation: ambientShift 5s ease-in-out infinite;
+      transition: background 0.2s ease, color 0.2s ease;
     }
 
     .container {
@@ -86,7 +86,7 @@
       border: 1px solid var(--border);
       border-radius: 20px;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 24px var(--accent-dim);
-      transition: border-color 0.25s ease, box-shadow 0.3s ease, transform 0.2s ease;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.18s ease;
     }
 
     .btn {
@@ -97,7 +97,7 @@
       padding: 11px 18px;
       font-weight: 700;
       font-size: 0.95rem;
-      transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease, background 0.25s ease;
+      transition: transform 0.14s ease, box-shadow 0.18s ease, opacity 0.18s ease, background 0.2s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -162,7 +162,7 @@
       color: var(--text-main);
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
     .input:focus, select:focus {
@@ -303,7 +303,7 @@
       font-weight: 700;
       font-size: 0.88rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.18s ease;
     }
 
     .nav-btn.active, .nav-btn:hover {
@@ -332,8 +332,8 @@
       flex-direction: column;
       justify-content: space-between;
       box-shadow: var(--card-glow-shadow);
-      animation: pulseGlow 4s ease-in-out infinite;
-      transition: box-shadow 0.3s ease, border-color 0.25s ease, transform 0.25s ease;
+      animation: pulseGlow 2.2s ease-in-out infinite;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     .black-card:hover {
@@ -485,7 +485,7 @@
       flex-direction: column;
       justify-content: space-between;
       gap: 14px;
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.2s ease;
     }
 
     .item-card:hover {
@@ -571,7 +571,7 @@
 
     .palette-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
       gap: 10px;
       margin-bottom: 12px;
     }
@@ -642,7 +642,7 @@
       font-weight: 700;
       font-size: 0.9rem;
       opacity: 0;
-      transition: 0.25s ease;
+      transition: 0.2s ease;
       z-index: 9999;
       text-align: center;
       max-width: 92vw;
@@ -867,14 +867,23 @@
     const FIREBASE_DB_URL = 'https://san-ori-bank-default-rtdb.firebaseio.com';
 
     const PRESET_COLORS = [
-      { id: 'gold', name: 'ذهبي ملكي', accent: '#d4af37', bright: '#f5d061', dark: '#8a640b' },
-      { id: 'crimson', name: 'أحمر قرمزي', accent: '#e11d48', bright: '#fb7185', dark: '#7f1d1d' },
-      { id: 'emerald', name: 'أخضر زمردي', accent: '#10b981', bright: '#34d399', dark: '#065f46' },
-      { id: 'violet', name: 'بنفسجي نيون', accent: '#8b5cf6', bright: '#c084fc', dark: '#4c1d95' },
-      { id: 'cyan', name: 'أزرق سماوي', accent: '#06b6d4', bright: '#67e8f9', dark: '#164e63' },
-      { id: 'orange', name: 'برتقالي ناري', accent: '#f97316', bright: '#fdba74', dark: '#7c2d12' },
-      { id: 'rose', name: 'وردي فخم', accent: '#ec4899', bright: '#f472b6', dark: '#831843' },
-      { id: 'lime', name: 'أخضر ليموني', accent: '#84cc16', bright: '#bef264', dark: '#365314' }
+      { id: 'royal_gold', name: 'ذهبي ملكي • فخامة وقوة', accent: '#d4af37', bright: '#f5d061', dark: '#8a640b' },
+      { id: 'blood_crimson', name: 'أحمر قرمزي • خطر وجرأة', accent: '#e11d48', bright: '#fb7185', dark: '#7f1d1d' },
+      { id: 'ruby_red', name: 'أحمر ياقوتي • حماس وإثارة', accent: '#ef4444', bright: '#fca5a5', dark: '#7f1d1d' },
+      { id: 'emerald_green', name: 'أخضر زمردي • نمو وأمان', accent: '#10b981', bright: '#34d399', dark: '#065f46' },
+      { id: 'jade_mint', name: 'أخضر نعناعي • صفاء وحيوية', accent: '#14b8a6', bright: '#5eead4', dark: '#115e59' },
+      { id: 'lime_volt', name: 'أخضر ليموني • طاقة وسرعة', accent: '#84cc16', bright: '#bef264', dark: '#365314' },
+      { id: 'neon_violet', name: 'بنفسجي نيون • غموض وسوق سوداء', accent: '#8b5cf6', bright: '#c084fc', dark: '#4c1d95' },
+      { id: 'royal_purple', name: 'أرجواني ملكي • هيبة وسيادة', accent: '#a855f7', bright: '#d8b4fe', dark: '#581c87' },
+      { id: 'sky_cyan', name: 'أزرق سماوي • وضوح وتقنية', accent: '#06b6d4', bright: '#67e8f9', dark: '#164e63' },
+      { id: 'electric_blue', name: 'أزرق كهربائي • دقة وتحكم', accent: '#3b82f6', bright: '#93c5fd', dark: '#1e3a8a' },
+      { id: 'indigo_night', name: 'نيلي ليلي • عمق وهدوء', accent: '#6366f1', bright: '#a5b4fc', dark: '#312e81' },
+      { id: 'fire_orange', name: 'برتقالي ناري • نشاط وتحدي', accent: '#f97316', bright: '#fdba74', dark: '#7c2d12' },
+      { id: 'amber_blaze', name: 'كهرماني متوهج • تحذير وبريق', accent: '#f59e0b', bright: '#fcd34d', dark: '#78350f' },
+      { id: 'coral_sunset', name: 'مرجاني غروبي • دفء وتميز', accent: '#fb7185', bright: '#fda4af', dark: '#881337' },
+      { id: 'luxury_rose', name: 'وردي فخم • تألق وجاذبية', accent: '#ec4899', bright: '#f472b6', dark: '#831843' },
+      { id: 'magenta_pulse', name: 'أرجواني وردي • نبض وحداثة', accent: '#d946ef', bright: '#f0abfc', dark: '#701a75' },
+      { id: 'silver_chrome', name: 'فضي معدني • حداثة وصرامة', accent: '#94a3b8', bright: '#e2e8f0', dark: '#334155' }
     ];
 
     const SHOP_ITEMS = [
@@ -925,12 +934,14 @@
         const allowedIds = Array.isArray(raw.allowedIds) && raw.allowedIds.length
           ? raw.allowedIds.filter(id => allColors.some(c => c.id === id))
           : PRESET_COLORS.map(c => c.id);
-        const finalAllowed = allowedIds.length ? allowedIds : ['gold'];
+        const finalAllowed = allowedIds.length ? allowedIds : ['royal_gold'];
         const activeColorId = finalAllowed.includes(raw.activeColorId) ? raw.activeColorId : finalAllowed[0];
+        const speedMs = Number(raw.cycleSpeedMs);
 
         return {
           fxEnabled: raw.fxEnabled === 'off' ? 'off' : 'on',
           autoCycle: raw.autoCycle === 'off' ? 'off' : 'on',
+          cycleSpeedMs: Number.isFinite(speedMs) && speedMs >= 250 && speedMs <= 10000 ? speedMs : 800,
           activeColorId,
           allowedIds: finalAllowed,
           customColors
@@ -939,7 +950,8 @@
         return {
           fxEnabled: 'on',
           autoCycle: 'on',
-          activeColorId: 'gold',
+          cycleSpeedMs: 800,
+          activeColorId: 'royal_gold',
           allowedIds: PRESET_COLORS.map(c => c.id),
           customColors: []
         };
@@ -978,6 +990,7 @@
         cycleTimer = null;
       }
 
+      const intervalMs = Number(fxConfig.cycleSpeedMs) || 800;
       if (fxConfig.fxEnabled === 'on' && fxConfig.autoCycle === 'on' && fxConfig.allowedIds.length > 1) {
         cycleTimer = setInterval(() => {
           const idx = fxConfig.allowedIds.indexOf(fxConfig.activeColorId);
@@ -987,7 +1000,7 @@
           if (adminUnlocked) {
             render();
           }
-        }, 4500);
+        }, intervalMs);
       }
     }
 
@@ -1133,6 +1146,7 @@
       const allColors = getAllColors();
       const isFxOn = fxConfig.fxEnabled === 'on';
       const isCycleOn = fxConfig.autoCycle === 'on';
+      const currentSpeed = Number(fxConfig.cycleSpeedMs) || 800;
 
       const cardsHtml = allColors.map(c => {
         const isAllowed = fxConfig.allowedIds.includes(c.id);
@@ -1142,7 +1156,7 @@
             <div class="swatch-top">
               <div style="display:flex;align-items:center;gap:8px;">
                 <span class="swatch-dot" style="background:linear-gradient(135deg,${c.bright},${c.accent});"></span>
-                <strong style="font-size:0.84rem;">${c.name}</strong>
+                <strong style="font-size:0.8rem;">${c.name}</strong>
               </div>
               ${isCurrent ? `<span class="item-cat" style="margin:0;padding:2px 7px;">نشط</span>` : ''}
             </div>
@@ -1157,22 +1171,25 @@
       return `
         <div class="admin-box">
           <div class="section-title">
-            <span>تحكم الأدمن في الألوان والتوهج والحركة (الموقع بالكامل)</span>
+            <span>تحكم الأدمن في الألوان والسرعة والتوهج</span>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
               <button type="button" id="adminToggleAllFxBtn" class="btn ${isFxOn ? 'btn-gold' : 'btn-ghost'}" style="padding:7px 13px;font-size:0.82rem;">
-                ${isFxOn ? 'المؤثرات والتوهج: شغال (اضغط للإطفاء عن الكل)' : 'المؤثرات والتوهج: مطفي عن الكل (اضغط للتشغيل)'}
+                ${isFxOn ? 'المؤثرات والتوهج: شغال' : 'المؤثرات والتوهج: مطفي'}
               </button>
               <button type="button" id="adminToggleCycleBtn" class="btn ${isCycleOn ? 'btn-gold' : 'btn-ghost'}" style="padding:7px 13px;font-size:0.82rem;">
-                ${isCycleOn ? 'تبديل الألوان التلقائي: شغال' : 'تبديل الألوان التلقائي: ثابت'}
+                ${isCycleOn ? 'تبديل الألوان: شغال' : 'تبديل الألوان: ثابت'}
               </button>
             </div>
           </div>
-          <div class="tx-sub" style="margin-bottom:10px;">
-            حدد الألوان اللي حابب تكون متاحة في الموقع، أو اختار لون نشط فوراً، أو أضف لون مخصص خاص بيك.
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            <span class="tx-sub" style="margin:0;">سرعة التبديل:</span>
+            <button type="button" class="mini-btn ${currentSpeed === 400 ? 'selected' : ''}" data-fx-speed="400">فائق السرعة (0.4ث)</button>
+            <button type="button" class="mini-btn ${currentSpeed === 800 ? 'selected' : ''}" data-fx-speed="800">سريع (0.8ث)</button>
+            <button type="button" class="mini-btn ${currentSpeed === 1500 ? 'selected' : ''}" data-fx-speed="1500">متوسط (1.5ث)</button>
           </div>
           <div class="palette-grid">${cardsHtml}</div>
           <form class="adminAddCustomColorForm" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-            <input type="text" class="input customColorName" placeholder="اسم اللون (مثال: ذهبي دموي)" style="max-width:210px;padding:8px 12px;font-size:0.85rem;" />
+            <input type="text" class="input customColorName" placeholder="اسم اللون ومعناه (مثال: ذهبي دموي • قوة)" style="max-width:230px;padding:8px 12px;font-size:0.85rem;" />
             <input type="color" class="customColorHex" value="#f59e0b" style="width:46px;height:38px;border:none;background:none;cursor:pointer;" />
             <button type="submit" class="btn btn-ghost" style="padding:8px 14px;font-size:0.84rem;">+ إضافة لون للقائمة</button>
           </form>
@@ -1200,6 +1217,17 @@
           toast(fxConfig.autoCycle === 'on' ? 'تم تشغيل التبديل التلقائي بين الألوان المحددة' : 'تم تثبيت اللون الحالي ومنع التبديل التلقائي');
         });
       }
+
+      container.querySelectorAll('[data-fx-speed]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const ms = Number(btn.getAttribute('data-fx-speed'));
+          fxConfig.cycleSpeedMs = ms;
+          fxConfig.autoCycle = 'on';
+          applyFxConfig();
+          render();
+          toast(`تم ضبط سرعة تبديل الألوان على ${(ms / 1000)} ثانية`);
+        });
+      });
 
       container.querySelectorAll('[data-pick-color]').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1457,7 +1485,7 @@
             </div>
             <div class="item-footer">
               <span class="item-price">${item.price.toLocaleString()} PTS</span>
-              <button type=="button" class="btn btn-gold" ${locked ? 'disabled' : ''} data-buy="${item.id}">${locked ? 'مقيد اليوم' : 'شراء'}</button>
+              <button type="button" class="btn btn-gold" ${locked ? 'disabled' : ''} data-buy="${item.id}">${locked ? 'مقيد اليوم' : 'شراء'}</button>
             </div>
           </div>
         `;
@@ -1518,247 +1546,3 @@
         buildAdminHtml('inAppAdminContent');
       }
     }
-
-    document.getElementById('tabLogin').addEventListener('click', () => {
-      document.getElementById('tabLogin').classList.add('active');
-      document.getElementById('tabRegister').classList.remove('active');
-      document.getElementById('loginForm').classList.remove('hidden');
-      document.getElementById('registerForm').classList.add('hidden');
-    });
-
-    document.getElementById('tabRegister').addEventListener('click', () => {
-      document.getElementById('tabRegister').classList.add('active');
-      document.getElementById('tabLogin').classList.remove('active');
-      document.getElementById('registerForm').classList.remove('hidden');
-      document.getElementById('loginForm').classList.add('hidden');
-    });
-
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('regUsername').value.trim();
-      const password = document.getElementById('regPassword').value;
-      if (!username || !password) return;
-
-      const latest = await cloudGetUsers();
-      const baseList = cloudConnected ? latest : state.users;
-
-      if (baseList.some(u => String(u.username || '').toLowerCase() === username.toLowerCase())) {
-        toast('اسم اللاعب مستخدم بالفعل، اختر اسماً آخر.');
-        return;
-      }
-
-      const now = new Date().toLocaleString('ar-EG');
-      const iban = makeIban(baseList);
-      const newUser = {
-        username,
-        password,
-        iban,
-        balance: INITIAL_BALANCE,
-        createdAt: now,
-        lastLoginAt: now,
-        inventory: [],
-        lastHandcuffBoughtAt: null,
-        transactions: [{ id: Date.now(), type: 'in', title: 'رصيد افتتاحي للحساب الجديد', meta: 'منحة بداية السيرفر', amount: INITIAL_BALANCE, date: now }]
-      };
-
-      baseList.push(newUser);
-      state.sessionUser = username;
-      inspectedUser = username;
-      await cloudSaveUsers(baseList);
-      e.target.reset();
-      render();
-      toast('تم إنشاء حسابك برصيد 1,000 نقطة!');
-    });
-
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('loginUsername').value.trim();
-      const password = document.getElementById('loginPassword').value;
-
-      const latest = await cloudGetUsers();
-      const baseList = cloudConnected ? latest : state.users;
-
-      const user = baseList.find(
-        u => String(u.username || '').toLowerCase() === username.toLowerCase() && u.password === password
-      );
-
-      if (!user) {
-        toast('اسم اللاعب أو كلمة المرور غير صحيحة.');
-        return;
-      }
-
-      user.lastLoginAt = new Date().toLocaleString('ar-EG');
-      if (!user.createdAt) user.createdAt = user.lastLoginAt;
-      state.sessionUser = user.username;
-      inspectedUser = user.username;
-      await cloudSaveUsers(baseList);
-      e.target.reset();
-      render();
-      toast('أهلاً بك مجدداً يا ' + user.username);
-    });
-
-    document.getElementById('openAdminBtn').addEventListener('click', async () => {
-      standaloneMode = adminUnlocked ? 'panel' : 'login';
-      render();
-      if (adminUnlocked) {
-        await syncFromCloud();
-      }
-    });
-
-    document.getElementById('extAdminBackBtn').addEventListener('click', () => {
-      standaloneMode = 'none';
-      render();
-    });
-
-    document.getElementById('extAdminCloseBtn').addEventListener('click', () => {
-      standaloneMode = 'none';
-      render();
-    });
-
-    document.getElementById('extAdminLoginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const u = document.getElementById('extAdminUser').value.trim().toLowerCase();
-      const p = document.getElementById('extAdminPass').value.trim().toLowerCase();
-      if (u === ADMIN_USER && p === ADMIN_PASS) {
-        adminUnlocked = true;
-        standaloneMode = 'panel';
-        e.target.reset();
-        render();
-        toast('تم فتح لوحة الأدمن بنجاح.');
-        await syncFromCloud();
-      } else {
-        toast('اسم الأدمن أو كلمة المرور غير صحيحة.');
-      }
-    });
-
-    document.getElementById('inAppAdminLoginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const u = document.getElementById('inAppAdminUser').value.trim().toLowerCase();
-      const p = document.getElementById('inAppAdminPass').value.trim().toLowerCase();
-      if (u === ADMIN_USER && p === ADMIN_PASS) {
-        adminUnlocked = true;
-        e.target.reset();
-        render();
-        toast('تم فتح لوحة الأدمن بنجاح.');
-        await syncFromCloud();
-      } else {
-        toast('اسم الأدمن أو كلمة المرور غير صحيحة.');
-      }
-    });
-
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const view = btn.getAttribute('data-view');
-        ['bankView', 'shopView', 'invView', 'adminView'].forEach(v => {
-          document.getElementById(v).classList.toggle('hidden', v !== view);
-        });
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        render();
-        await syncFromCloud();
-      });
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      adminUnlocked = false;
-      standaloneMode = 'none';
-      state.sessionUser = null;
-      saveLocal();
-      render();
-    });
-
-    document.getElementById('copyIbanBtn').addEventListener('click', () => {
-      const user = getCurrentUser();
-      if (user) {
-        navigator.clipboard?.writeText(user.iban);
-        toast('تم نسخ رقم الحساب: ' + user.iban);
-      }
-    });
-
-    document.getElementById('transferForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const currentSession = getCurrentUser();
-      if (!currentSession) return;
-
-      const prefix = document.getElementById('transferBankPrefix').value;
-      const targetInputRaw = document.getElementById('targetIban').value;
-      const targetIban = normalizeTransferTarget(prefix, targetInputRaw);
-      const targetDigitsOnly = cleanIbanKey(targetInputRaw).replace(/^[A-Z0-9\u0600-\u06FF]+-/, '');
-      const amount = Number(document.getElementById('transferAmount').value);
-      const note = document.getElementById('transferNote').value.trim() || 'تحويل نقاط رول بلاي';
-
-      if (!Number.isFinite(amount) || amount <= 0 || Number(currentSession.balance || 0) < amount) {
-        toast('رصيدك غير كافٍ أو القيمة غير صحيحة.');
-        return;
-      }
-
-      const latest = await cloudGetUsers();
-      const list = cloudConnected ? latest : state.users;
-
-      const sender = list.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
-      if (!sender) {
-        toast('تعذر العثور على حساب المرسل.');
-        return;
-      }
-
-      const rec = list.find(u => {
-        const uIban = cleanIbanKey(u.iban);
-        const uDigits = uIban.replace(/^[A-Z0-9\u0600-\u06FF]+-/, '');
-        return uIban === targetIban || uIban === cleanIbanKey(targetInputRaw) || (targetDigitsOnly && uDigits === targetDigitsOnly);
-      });
-
-      if (!rec) {
-        toast('الرقم غير صحيح أو الحساب غير مسجل بعد.');
-        return;
-      }
-
-      if (String(rec.username).toLowerCase() === String(sender.username).toLowerCase()) {
-        toast('لا يمكنك التحويل إلى رقم حسابك نفسه.');
-        return;
-      }
-
-      const now = new Date().toLocaleString('ar-EG');
-      sender.balance = Number(sender.balance || 0) - amount;
-      rec.balance = Number(rec.balance || 0) + amount;
-      sender.transactions = Array.isArray(sender.transactions) ? sender.transactions : [];
-      rec.transactions = Array.isArray(rec.transactions) ? rec.transactions : [];
-
-      sender.transactions.unshift({
-        id: Date.now() + 1,
-        type: 'out',
-        title: `تحويل إلى ${rec.username} (${rec.iban})`,
-        meta: note,
-        amount,
-        date: now
-      });
-
-      rec.transactions.unshift({
-        id: Date.now() + 2,
-        type: 'in',
-        title: `استلام من ${sender.username} (${sender.iban})`,
-        meta: note,
-        amount,
-        date: now
-      });
-
-      await cloudSaveUsers(list);
-      e.target.reset();
-      document.getElementById('transferBankPrefix').value = 'SO';
-      render();
-      toast(`تم تحويل ${amount.toLocaleString()} نقطة إلى ${rec.username} بنجاح.`);
-    });
-
-    setInterval(async () => {
-      if (hasCloudDb()) {
-        await syncFromCloud();
-      } else if (getCurrentUser() && cuffRemaining(getCurrentUser()) > 0 && !document.getElementById('shopView').classList.contains('hidden')) {
-        render();
-      }
-    }, 5000);
-
-    applyFxConfig();
-    render();
-    syncFromCloud();
-  </script>
-</body>
-</html>
