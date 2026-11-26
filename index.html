@@ -1438,4 +1438,440 @@
         <div class="admin-box" style="margin:0;">
           <div class="section-title">
             <span>تفاصيل الحساب: ${acc.username}</span>
-            <span class="tx-plus">${Number(acc.balance || 0).toLocale
+            <span class="tx-plus">${Number(acc.balance || 0).toLocaleString().toLocaleString()} PTS</span>
+          </div>
+          <div class="tx-sub" style="margin-bottom:8px;">
+            رقم الحساب: <strong>${acc.iban}</strong> • آخر تسجيل دخول: <strong>${acc.lastLoginAt || 'غير مسجل'}</strong> • فتح الحساب: <strong>${acc.createdAt || 'غير مسجل'}</strong>
+          </div>
+          <div style="margin-bottom:10px;">${invHtml}</div>
+          <div class="tx-list" style="max-height:170px;">${txHtml}</div>
+        </div>
+      `;
+
+      bindFxAdminEvents(box);
+      bindBroadcastEvents(box);
+
+      box.querySelectorAll('.acc-item').forEach(el => {
+        el.addEventListener('click', () => {
+          inspectedUser = decodeURIComponent(el.getAttribute('data-acc'));
+          render();
+        });
+      });
+
+      const adjForm = box.querySelector('.adminAdjustForm');
+      if (adjForm) {
+        adjForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const uName = adjForm.querySelector('.adjUser').value;
+          const act = adjForm.querySelector('.adjAction').value;
+          const val = Number(adjForm.querySelector('.adjAmount').value);
+          if (!Number.isFinite(val) || val < 0) return;
+
+          const latest = await cloudGetUsers();
+          const list = cloudConnected ? latest : state.users;
+          const target = list.find(u => u.username === uName);
+          if (!target) return;
+
+          const before = Number(target.balance || 0);
+          if (act === 'add') target.balance = before + val;
+          if (act === 'sub') target.balance = Math.max(0, before - val);
+          if (act === 'set') target.balance = val;
+
+          const diff = Number(target.balance || 0) - before;
+          if (diff !== 0) {
+            target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
+            target.transactions.unshift({
+              id: Date.now(),
+              type: diff > 0 ? 'in' : 'out',
+              title: 'تعديل رصيد من الأدمن',
+              meta: `الرصيد الجديد: ${Number(target.balance || 0).toLocaleString()} PTS`,
+              amount: Math.abs(diff),
+              date: new Date().toLocaleString('ar-EG')
+            });
+          }
+
+          inspectedUser = target.username;
+          await cloudSaveUsers(list);
+          render();
+          toast('تم تحديث رصيد ' + target.username);
+        });
+      }
+    }
+
+    function bindBroadcastEvents(box) {
+      const bForm = box.querySelector('.adminBroadcastForm');
+      if (!bForm) return;
+      bForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const val = bForm.querySelector('.broadcastInput').value;
+        await cloudSaveBroadcast(val);
+        renderBroadcast();
+        toast(val.trim() ? 'تم نشر الإعلان للجميع' : 'تم إخفاء الإعلان');
+      });
+      bForm.querySelector('.clearBroadcastBtn')?.addEventListener('click', async () => {
+        await cloudSaveBroadcast('');
+        renderBroadcast();
+        render();
+        toast('تم مسح الإعلان');
+      });
+    }
+
+    function render() {
+      renderBroadcast();
+      const user = getCurrentUser();
+      const authSec = document.getElementById('authSection');
+      const appSec = document.getElementById('appSection');
+      const authBox = document.getElementById('authBox');
+
+      if (!user) {
+        authSec.classList.remove('hidden');
+        appSec.classList.add('hidden');
+
+        document.getElementById('externalAuthContainer').classList.toggle('hidden', standaloneMode !== 'none');
+        document.getElementById('standaloneAdminLoginBox').classList.toggle('hidden', standaloneMode !== 'login');
+        document.getElementById('standaloneAdminPanelBox').classList.toggle('hidden', standaloneMode !== 'panel');
+        authBox.classList.toggle('wide', standaloneMode === 'panel');
+
+        if (standaloneMode === 'panel') {
+          buildAdminHtml('extAdminContent');
+        }
+        return;
+      }
+
+      authSec.classList.add('hidden');
+      appSec.classList.remove('hidden');
+
+      document.getElementById('welcomeUserText').textContent = `الحساب النشط: ${user.username}`;
+      document.getElementById('cardHolder').textContent = user.username;
+      document.getElementById('cardIban').textContent = user.iban;
+      document.getElementById('cardBalance').textContent = `${Number(user.balance || 0).toLocaleString()} PTS`;
+
+      const txs = user.transactions || [];
+      document.getElementById('txList').innerHTML = txs.length
+        ? txs.map(t => `
+            <div class="tx-item">
+              <div><div class="tx-title">${t.title}</div><div class="tx-sub">${t.meta || ''} • ${t.date}</div></div>
+              <div class="${t.type === 'in' ? 'tx-plus' : 'tx-minus'}">${t.type === 'in' ? '+' : '-'}${Number(t.amount).toLocaleString()} PTS</div>
+            </div>
+          `).join('')
+        : `<div class="tx-sub">لا توجد عمليات مسجلة حتى الآن.</div>`;
+
+      const rem = cuffRemaining(user);
+      document.getElementById('shopGrid').innerHTML = SHOP_ITEMS.map(item => {
+        const locked = item.dailyLimit && rem > 0;
+        return `
+          <div class="item-card">
+            <div>
+              <span class="item-cat ${item.dailyLimit ? 'daily' : ''}">${item.cat}</span>
+              <div class="item-name">${item.name}</div>
+              <div class="item-desc">${item.desc}</div>
+              ${item.dailyLimit ? `<div class="item-limit">${locked ? `متاح مجدداً بعد: ${formatCooldown(rem)}` : 'متاح اليوم (مرة واحدة كل 24 ساعة)'}</div>` : ''}
+            </div>
+            <div class="item-footer">
+              <span class="item-price">${item.price.toLocaleString()} PTS</span>
+              <button type="button" class="btn btn-gold" ${locked ? 'disabled' : ''} data-buy="${item.id}">${locked ? 'مقيد اليوم' : 'شراء'}</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('[data-buy]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const item = SHOP_ITEMS.find(i => i.id === btn.getAttribute('data-buy'));
+          if (!item) return;
+
+          const current = getCurrentUser();
+          if (!current) return;
+
+          if (item.dailyLimit && cuffRemaining(current) > 0) {
+            toast('مسموح بالكلبشات مرة واحدة كل 24 ساعة.');
+            return;
+          }
+          if (Number(current.balance || 0) < item.price) {
+            toast('رصيدك غير كافٍ.');
+            return;
+          }
+
+          const now = new Date().toLocaleString('ar-EG');
+          current.balance = Number(current.balance || 0) - item.price;
+          if (item.dailyLimit) current.lastHandcuffBoughtAt = Date.now();
+          current.inventory = Array.isArray(current.inventory) ? current.inventory : [];
+          current.inventory.unshift({ ...item, boughtAt: now });
+          current.transactions = Array.isArray(current.transactions) ? current.transactions : [];
+          current.transactions.unshift({
+            id: Date.now(),
+            type: 'out',
+            title: `شراء: ${item.name}`,
+            meta: item.cat,
+            amount: item.price,
+            date: now
+          });
+
+          saveLocal();
+          render();
+          toast('تم شراء ' + item.name);
+          await cloudSaveUsers(state.users);
+        });
+      });
+
+      const inv = user.inventory || [];
+      document.getElementById('invGrid').innerHTML = inv.length
+        ? inv.map(i => `
+            <div class="item-card">
+              <div><span class="item-cat">${i.cat}</span><div class="item-name">${i.name}</div><div class="item-desc">${i.desc}</div></div>
+              <div class="item-footer"><span class="tx-sub">${i.boughtAt || ''}</span></div>
+            </div>
+          `).join('')
+        : `<div class="tx-sub">حقيبتك فارغة حالياً.</div>`;
+
+      document.getElementById('inAppAdminLoginBox').classList.toggle('hidden', adminUnlocked);
+      document.getElementById('inAppAdminContent').classList.toggle('hidden', !adminUnlocked);
+      if (adminUnlocked) {
+        buildAdminHtml('inAppAdminContent');
+      }
+    }
+
+    document.getElementById('tabLogin').addEventListener('click', () => {
+      document.getElementById('tabLogin').classList.add('active');
+      document.getElementById('tabRegister').classList.remove('active');
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('registerForm').classList.add('hidden');
+    });
+
+    document.getElementById('tabRegister').addEventListener('click', () => {
+      document.getElementById('tabRegister').classList.add('active');
+      document.getElementById('tabLogin').classList.remove('active');
+      document.getElementById('registerForm').classList.remove('hidden');
+      document.getElementById('loginForm').classList.add('hidden');
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+      if (!username || !password) return;
+
+      const latest = await cloudGetUsers();
+      const baseList = cloudConnected ? latest : state.users;
+
+      if (baseList.some(u => String(u.username || '').toLowerCase() === username.toLowerCase())) {
+        toast('اسم اللاعب مستخدم بالفعل، اختر اسماً آخر.');
+        return;
+      }
+
+      const now = new Date().toLocaleString('ar-EG');
+      const iban = makeIban(baseList);
+      const newUser = {
+        username,
+        password,
+        iban,
+        balance: INITIAL_BALANCE,
+        createdAt: now,
+        lastLoginAt: now,
+        inventory: [],
+        lastHandcuffBoughtAt: null,
+        transactions: [{ id: Date.now(), type: 'in', title: 'رصيد افتتاحي للحساب الجديد', meta: 'منحة بداية السيرفر', amount: INITIAL_BALANCE, date: now }]
+      };
+
+      baseList.push(newUser);
+      state.sessionUser = username;
+      inspectedUser = username;
+      await cloudSaveUsers(baseList);
+      e.target.reset();
+      render();
+      toast('تم إنشاء حسابك برصيد 1,000 نقطة!');
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      const latest = await cloudGetUsers();
+      const baseList = cloudConnected ? latest : state.users;
+
+      const user = baseList.find(
+        u => String(u.username || '').toLowerCase() === username.toLowerCase() && u.password === password
+      );
+
+      if (!user) {
+        toast('اسم اللاعب أو كلمة المرور غير صحيحة.');
+        return;
+      }
+
+      user.lastLoginAt = new Date().toLocaleString('ar-EG');
+      if (!user.createdAt) user.createdAt = user.lastLoginAt;
+      state.sessionUser = user.username;
+      inspectedUser = user.username;
+      await cloudSaveUsers(baseList);
+      e.target.reset();
+      render();
+      toast('أهلاً بك مجدداً يا ' + user.username);
+    });
+
+    document.getElementById('openAdminBtn').addEventListener('click', async () => {
+      standaloneMode = adminUnlocked ? 'panel' : 'login';
+      render();
+      if (adminUnlocked) {
+        await syncFromCloud();
+      }
+    });
+
+    document.getElementById('extAdminBackBtn').addEventListener('click', () => {
+      standaloneMode = 'none';
+      render();
+    });
+
+    document.getElementById('extAdminCloseBtn').addEventListener('click', () => {
+      standaloneMode = 'none';
+      render();
+    });
+
+    document.getElementById('extAdminLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('extAdminUser').value.trim().toLowerCase();
+      const p = document.getElementById('extAdminPass').value.trim().toLowerCase();
+      if (u === ADMIN_USER && p === ADMIN_PASS) {
+        adminUnlocked = true;
+        standaloneMode = 'panel';
+        e.target.reset();
+        render();
+        toast('تم فتح لوحة الأدمن بنجاح.');
+        await syncFromCloud();
+      } else {
+        toast('اسم الأدمن أو كلمة المرور غير صحيحة.');
+      }
+    });
+
+    document.getElementById('inAppAdminLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('inAppAdminUser').value.trim().toLowerCase();
+      const p = document.getElementById('inAppAdminPass').value.trim().toLowerCase();
+      if (u === ADMIN_USER && p === ADMIN_PASS) {
+        adminUnlocked = true;
+        e.target.reset();
+        render();
+        toast('تم فتح لوحة الأدمن بنجاح.');
+        await syncFromCloud();
+      } else {
+        toast('اسم الأدمن أو كلمة المرور غير صحيحة.');
+      }
+    });
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const view = btn.getAttribute('data-view');
+        ['bankView', 'shopView', 'invView', 'adminView'].forEach(v => {
+          document.getElementById(v).classList.toggle('hidden', v !== view);
+        });
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+        await syncFromCloud();
+      });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      adminUnlocked = false;
+      standaloneMode = 'none';
+      state.sessionUser = null;
+      saveLocal();
+      render();
+    });
+
+    document.getElementById('copyIbanBtn').addEventListener('click', () => {
+      const user = getCurrentUser();
+      if (user) {
+        navigator.clipboard?.writeText(user.iban);
+        toast('تم نسخ رقم الحساب: ' + user.iban);
+      }
+    });
+
+    document.getElementById('transferForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const currentSession = getCurrentUser();
+      if (!currentSession) return;
+
+      const prefix = document.getElementById('transferBankPrefix').value;
+      const targetInputRaw = document.getElementById('targetIban').value;
+      const targetIban = normalizeTransferTarget(prefix, targetInputRaw);
+      const targetDigitsOnly = cleanIbanKey(targetInputRaw).replace(/^[A-Z0-9\u0600-\u06FF]+-/, '');
+      const amount = Number(document.getElementById('transferAmount').value);
+      const note = document.getElementById('transferNote').value.trim() || 'تحويل نقاط رول بلاي';
+
+      if (!Number.isFinite(amount) || amount <= 0 || Number(currentSession.balance || 0) < amount) {
+        toast('رصيدك غير كافٍ أو القيمة غير صحيحة.');
+        return;
+      }
+
+      const latest = await cloudGetUsers();
+      const list = cloudConnected ? latest : state.users;
+
+      const sender = list.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
+      if (!sender) {
+        toast('تعذر العثور على حساب المرسل.');
+        return;
+      }
+
+      const rec = list.find(u => {
+        const uIban = cleanIbanKey(u.iban);
+        const uDigits = uIban.replace(/^[A-Z0-9\u0600-\u06FF]+-/, '');
+        return uIban === targetIban || uIban === cleanIbanKey(targetInputRaw) || (targetDigitsOnly && uDigits === targetDigitsOnly);
+      });
+
+      if (!rec) {
+        toast('الرقم غير صحيح أو الحساب غير مسجل بعد.');
+        return;
+      }
+
+      if (String(rec.username).toLowerCase() === String(sender.username).toLowerCase()) {
+        toast('لا يمكنك التحويل إلى رقم حسابك نفسه.');
+        return;
+      }
+
+      const now = new Date().toLocaleString('ar-EG');
+      sender.balance = Number(sender.balance || 0) - amount;
+      rec.balance = Number(rec.balance || 0) + amount;
+      sender.transactions = Array.isArray(sender.transactions) ? sender.transactions : [];
+      rec.transactions = Array.isArray(rec.transactions) ? rec.transactions : [];
+
+      sender.transactions.unshift({
+        id: Date.now() + 1,
+        type: 'out',
+        title: `تحويل إلى ${rec.username} (${rec.iban})`,
+        meta: note,
+        amount,
+        date: now
+      });
+
+      rec.transactions.unshift({
+        id: Date.now() + 2,
+        type: 'in',
+        title: `استلام من ${sender.username} (${sender.iban})`,
+        meta: note,
+        amount,
+        date: now
+      });
+
+      await cloudSaveUsers(list);
+      e.target.reset();
+      document.getElementById('transferBankPrefix').value = 'SO';
+      render();
+      toast(`تم تحويل ${amount.toLocaleString()} نقطة إلى ${rec.username} بنجاح.`);
+    });
+
+    setInterval(async () => {
+      if (hasCloudDb()) {
+        await syncFromCloud();
+      } else if (getCurrentUser() && cuffRemaining(getCurrentUser()) > 0 && !document.getElementById('shopView').classList.contains('hidden')) {
+        render();
+      }
+    }, 5000);
+
+    applyFxConfig();
+    render();
+    syncFromCloud();
+  </script>
+</body>
+</html>
+
