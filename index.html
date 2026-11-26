@@ -327,6 +327,9 @@
       font-size: 0.88rem;
       cursor: pointer;
       transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .nav-btn.active, .nav-btn:hover {
@@ -334,6 +337,15 @@
       background: linear-gradient(135deg, var(--accent-bright), var(--accent));
       border-color: transparent;
       box-shadow: var(--shadow-accent);
+    }
+
+    .nav-badge {
+      background: var(--crimson);
+      color: #fff;
+      border-radius: 999px;
+      padding: 1px 7px;
+      font-size: 0.72rem;
+      font-weight: 900;
     }
 
     .grid-2 {
@@ -536,6 +548,12 @@
       border: 1px solid rgba(245, 158, 11, 0.3);
     }
 
+    .item-cat.locked-item {
+      color: #fda4af;
+      background: var(--crimson-dim);
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+
     .item-name {
       font-size: 1.05rem;
       font-weight: 800;
@@ -605,6 +623,12 @@
       background: rgba(16, 185, 129, 0.16);
       color: #6ee7b7;
       border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .status-delivered {
+      background: rgba(59, 130, 246, 0.18);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.38);
     }
 
     .status-rejected {
@@ -871,8 +895,14 @@
         <button type="button" class="nav-btn active" data-view="bankView">البنك والتحويلات</button>
         <button type="button" class="nav-btn" data-view="shopView">متجر المعدات</button>
         <button type="button" class="nav-btn" data-view="invView">الحقيبة والطلبات</button>
-        <button type="button" class="nav-btn" data-view="dealerView">تاجر الأسلحة</button>
-        <button type="button" class="nav-btn" data-view="adminView">إدارة الأرصدة</button>
+        <button type="button" class="nav-btn" data-view="dealerView">
+          <span>تاجر الأسلحة</span>
+          <span id="dealerPendingBadge" class="nav-badge hidden">0</span>
+        </button>
+        <button type="button" class="nav-btn" data-view="adminView">
+          <span>إدارة الأرصدة</span>
+          <span id="adminPendingBadge" class="nav-badge hidden">0</span>
+        </button>
       </nav>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -940,7 +970,7 @@
       <div class="section-card glass">
         <div class="section-title">
           <span>متجر الأسلحة الخفيفة والمعدات المسموحة</span>
-          <span class="tag">يُخصم الرصيد ويُرسل للتاجر والأدمن</span>
+          <span class="tag">أداة صنع الأسلحة متاحة عبر التاجر والأدمن فقط</span>
         </div>
         <div class="input-group" style="max-width:460px;">
           <label>ملاحظة للتاجر أو الأدمن (اختياري — مثل وقت تفضله في الرول بلاي)</label>
@@ -1022,15 +1052,6 @@
     const SUPPORT_DISCORD = 'black2268891';
     const FIREBASE_DB_URL = 'https://san-ori-bank-default-rtdb.firebaseio.com';
 
-    const SAN_ORI_ZONES = [
-      'الميناء القديم - سان أوري',
-      'المستودعات الشرقية',
-      'الحي الصناعي',
-      'الأنفاق السفلية',
-      'سوق الليل',
-      'أطراف المدينة الشمالية'
-    ];
-
     const PRESET_COLORS = [
       { id: 'royal_gold', name: 'ذهبي ملكي • فخامة وقوة', accent: '#d4af37', bright: '#f5d061', dark: '#8a640b' },
       { id: 'blood_crimson', name: 'أحمر قرمزي • خطر وجرأة', accent: '#e11d48', bright: '#fb7185', dark: '#7f1d1d' },
@@ -1062,7 +1083,7 @@
       { id: 'mac_11', cat: 'سلاح خفيف', name: 'MAC-11', desc: 'رشاش خفيف سريع الطلقات مناسب للتحركات الخفيفة.', price: 1100 },
       { id: 'axe', cat: 'قتال عن قرب', name: 'الفأس', desc: 'فأس قتال عن قرب بضرر مرتفع.', price: 1200 },
       { id: 'medical', cat: 'معدات دعم', name: 'الطب', desc: 'إمدادات طبية وعلاج لاستعادة الصحة في الرول بلاي.', price: 2000 },
-      { id: 'weapon_crafter', cat: 'معدات خاصة', name: 'أداة صنع أسلحة', desc: 'أداة متقدمة لصناعة وتجهيز المعدات والأسلحة داخل الرول بلاي.', price: 40000 }
+      { id: 'weapon_crafter', cat: 'معدات خاصة', name: 'أداة صنع أسلحة', desc: 'أداة متقدمة لصناعة وتجهيز المعدات والأسلحة — تُمنح عبر التاجر أو الأدمن فقط.', price: 40000, dealerOnly: true }
     ];
 
     let adminUnlocked = false;
@@ -1072,9 +1093,14 @@
     let cloudConnected = false;
     let cycleTimer = null;
     let serverBroadcast = '';
+    let dealerFilter = 'pending';
 
     function makeTxCode() {
       return 'TX-' + Math.floor(100000 + Math.random() * 900000);
+    }
+
+    function makeDeliveryCode() {
+      return String(Math.floor(1000 + Math.random() * 9000));
     }
 
     function hexToRgba(hex, alpha) {
@@ -1639,7 +1665,42 @@
       }
     }
 
-    async function handleOrderDecision(orderId, decision, zone, timeSlot, reason) {
+    async function grantCrafterToUser(targetUsername, grantedByLabel) {
+      const latestUsers = await cloudGetUsers();
+      const usersList = cloudConnected ? [...latestUsers] : [...state.users];
+      const target = usersList.find(u => String(u.username).toLowerCase() === String(targetUsername || '').toLowerCase());
+      if (!target) {
+        toast('اختر لاعباً صحيحاً أولاً.');
+        return;
+      }
+
+      const nowStr = new Date().toLocaleString('ar-EG');
+      const txCode = makeTxCode();
+      target.inventory = Array.isArray(target.inventory) ? target.inventory : [];
+      target.inventory.unshift({
+        id: 'weapon_crafter',
+        cat: 'معدات خاصة',
+        name: 'أداة صنع أسلحة',
+        desc: `مُنحت بواسطة ${grantedByLabel} في سان أوري`,
+        boughtAt: nowStr
+      });
+
+      target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
+      target.transactions.unshift({
+        id: Date.now(),
+        type: 'in',
+        title: 'استلام: أداة صنع أسلحة',
+        meta: `#${txCode} • تسليم مباشر من ${grantedByLabel}`,
+        amount: 0,
+        date: nowStr
+      });
+
+      await cloudSaveUsers(usersList);
+      render();
+      toast(`تم تسليم «أداة صنع أسلحة» إلى ${target.username}`);
+    }
+
+    async function handleOrderDecision(orderId, decision, zone, timeSlot, dealerNote, reason) {
       const latestOrders = await cloudGetOrders();
       const ordersList = Array.isArray(latestOrders) ? [...latestOrders] : [...ordersState];
       const idx = ordersList.findIndex(o => String(o.id) === String(orderId));
@@ -1658,25 +1719,19 @@
 
       if (decision === 'approve') {
         order.status = 'approved';
-        order.deliveryZone = zone || SAN_ORI_ZONES[0];
-        order.deliveryTime = timeSlot || 'خلال 15 دقيقة';
+        order.deliveryZone = (zone || '').trim() || 'موقع سري في سان أوري';
+        order.deliveryTime = (timeSlot || '').trim() || 'خلال 15 دقيقة';
+        order.dealerNote = (dealerNote || '').trim();
+        order.deliveryCode = order.deliveryCode || makeDeliveryCode();
         order.decidedAt = nowStr;
 
         if (buyer) {
-          buyer.inventory = Array.isArray(buyer.inventory) ? buyer.inventory : [];
-          buyer.inventory.unshift({
-            id: order.itemId,
-            cat: order.itemCat,
-            name: order.itemName,
-            desc: `تمت الموافقة على التسليم في: ${order.deliveryZone} (${order.deliveryTime})`,
-            boughtAt: nowStr
-          });
           buyer.transactions = Array.isArray(buyer.transactions) ? buyer.transactions : [];
           buyer.transactions.unshift({
             id: Date.now(),
             type: 'in',
             title: `تأكيد تسليم: ${order.itemName}`,
-            meta: `#${order.txCode} • ${order.deliveryZone} • ${order.deliveryTime}`,
+            meta: `#${order.txCode} • كود التسليم: ${order.deliveryCode} • ${order.deliveryZone} (${order.deliveryTime})`,
             amount: 0,
             date: nowStr
           });
@@ -1685,10 +1740,10 @@
         await cloudSaveUsers(usersList);
         await cloudSaveOrders(ordersList);
         render();
-        toast(`تم قبول طلب ${order.itemName} وتحديد التسليم في ${order.deliveryZone}`);
+        toast(`تم قبول طلب ${order.itemName} • كود التسليم: ${order.deliveryCode}`);
       } else {
         order.status = 'rejected';
-        order.rejectReason = reason || 'الطلب غير متاح حالياً';
+        order.rejectReason = (reason || '').trim() || 'الطلب غير متاح حالياً';
         order.decidedAt = nowStr;
 
         if (buyer) {
@@ -1714,91 +1769,245 @@
       }
     }
 
+    async function updateApprovedDelivery(orderId, zone, timeSlot, dealerNote) {
+      const latestOrders = await cloudGetOrders();
+      const ordersList = Array.isArray(latestOrders) ? [...latestOrders] : [...ordersState];
+      const idx = ordersList.findIndex(o => String(o.id) === String(orderId));
+      if (idx === -1) return;
+
+      ordersList[idx].deliveryZone = (zone || '').trim() || ordersList[idx].deliveryZone;
+      ordersList[idx].deliveryTime = (timeSlot || '').trim() || ordersList[idx].deliveryTime;
+      ordersList[idx].dealerNote = (dealerNote || '').trim();
+      ordersList[idx].updatedAt = new Date().toLocaleString('ar-EG');
+
+      await cloudSaveOrders(ordersList);
+      render();
+      toast('تم تحديث منطقة وميعاد التسليم للطلب.');
+    }
+
+    async function confirmOrderReceivedByPlayer(orderId) {
+      const latestOrders = await cloudGetOrders();
+      const ordersList = Array.isArray(latestOrders) ? [...latestOrders] : [...ordersState];
+      const idx = ordersList.findIndex(o => String(o.id) === String(orderId));
+      if (idx === -1) return;
+
+      const order = ordersList[idx];
+      if (order.status !== 'approved') return;
+
+      const nowStr = new Date().toLocaleString('ar-EG');
+      order.status = 'delivered';
+      order.deliveredAt = nowStr;
+
+      const latestUsers = await cloudGetUsers();
+      const usersList = cloudConnected ? [...latestUsers] : [...state.users];
+      const buyer = usersList.find(u => String(u.username).toLowerCase() === String(order.username).toLowerCase());
+
+      if (buyer) {
+        buyer.inventory = Array.isArray(buyer.inventory) ? buyer.inventory : [];
+        buyer.inventory.unshift({
+          id: order.itemId,
+          cat: order.itemCat,
+          name: order.itemName,
+          desc: `تم الاستلام في: ${order.deliveryZone} (كود #${order.deliveryCode})`,
+          boughtAt: nowStr
+        });
+        buyer.transactions = Array.isArray(buyer.transactions) ? buyer.transactions : [];
+        buyer.transactions.unshift({
+          id: Date.now(),
+          type: 'in',
+          title: `تم استلام المعدات: ${order.itemName}`,
+          meta: `#${order.txCode} • كود التسليم: ${order.deliveryCode}`,
+          amount: 0,
+          date: nowStr
+        });
+      }
+
+      await cloudSaveUsers(usersList);
+      await cloudSaveOrders(ordersList);
+      render();
+      toast(`تم تأكيد استلام ${order.itemName} وإضافته لحقيبتك!`);
+    }
+
+    function buildCrafterGrantBox(roleLabel) {
+      const opts = state.users.length
+        ? state.users.map(u => `<option value="${u.username}">${u.username} (${u.iban})</option>`).join('')
+        : `<option value="">لا يوجد لاعبون مسجلون</option>`;
+
+      return `
+        <div class="admin-box">
+          <div class="section-title">
+            <span>تسليم «أداة صنع أسلحة» مباشرة</span>
+            <span class="tag">مقتصرة على التاجر والأدمن</span>
+          </div>
+          <form class="grantCrafterForm" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <select class="input crafterTargetUser" style="max-width:260px;">${opts}</select>
+            <button type="submit" class="btn btn-gold">منح أداة صنع أسلحة</button>
+            <span class="tx-sub">يتم إضافتها مباشرة لحقيبة اللاعب المختار باسم (${roleLabel}).</span>
+          </form>
+        </div>
+      `;
+    }
+
+    function bindCrafterGrantEvents(container, roleLabel) {
+      const form = container.querySelector('.grantCrafterForm');
+      if (!form) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = form.querySelector('.crafterTargetUser')?.value || '';
+        await grantCrafterToUser(username, roleLabel);
+      });
+    }
+
     function buildDealerPanelHtml(targetId) {
       const box = document.getElementById(targetId);
       if (!box) return;
 
-      const zoneOptions = SAN_ORI_ZONES.map(z => `<option value="${z}">${z}</option>`).join('');
       const pendingOrders = ordersState.filter(o => o.status === 'pending');
-      const historyOrders = ordersState.filter(o => o.status !== 'pending');
+      const approvedOrders = ordersState.filter(o => o.status === 'approved');
+      const deliveredOrders = ordersState.filter(o => o.status === 'delivered');
+      const rejectedOrders = ordersState.filter(o => o.status === 'rejected');
 
-      const pendingHtml = pendingOrders.length
-        ? pendingOrders.map(o => `
-            <div class="order-card" data-order-id="${o.id}">
-              <div class="order-header">
-                <div>
-                  <span class="status-pill status-pending">قيد المراجعة</span>
-                  <strong style="margin-right:8px;">${o.itemName}</strong>
-                  <span class="item-price" style="margin-right:8px;">${Number(o.price).toLocaleString()} PTS</span>
-                </div>
-                <span class="tx-sub">#${o.txCode} • ${o.createdAt}</span>
-              </div>
-              <div class="tx-sub">
-                اللاعب: <strong>${o.username}</strong> (${o.iban}) • ملاحظة اللاعب: <strong>${o.playerNote || 'لا يوجد'}</strong>
-              </div>
-              <div class="grid-2" style="margin-bottom:4px;gap:10px;">
-                <div>
-                  <label class="tx-sub" style="display:block;margin-bottom:4px;">المنطقة في سان أوري</label>
-                  <select class="input orderZoneSelect">${zoneOptions}</select>
-                </div>
-                <div>
-                  <label class="tx-sub" style="display:block;margin-bottom:4px;">معاد التسليم</label>
-                  <input type="text" class="input orderTimeInput" placeholder="مثال: الساعة 9:00 مساءً أو خلال 10 دقائق" />
-                </div>
-              </div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-                <button type="button" class="btn btn-emerald approveOrderBtn" style="padding:8px 14px;font-size:0.85rem;">قبول وتحديد التسليم</button>
-                <input type="text" class="input orderRejectReason" placeholder="سبب الرفض (اختياري)" style="max-width:220px;padding:8px 12px;font-size:0.84rem;" />
-                <button type="button" class="btn btn-crimson rejectOrderBtn" style="padding:8px 14px;font-size:0.85rem;">رفض وإرجاع النقاط</button>
-              </div>
-            </div>
-          `).join('')
-        : `<div class="tx-sub">لا توجد طلبات معلقة حالياً.</div>`;
+      let filteredList = pendingOrders;
+      if (dealerFilter === 'approved') filteredList = [...approvedOrders, ...deliveredOrders];
+      if (dealerFilter === 'rejected') filteredList = rejectedOrders;
 
-      const historyHtml = historyOrders.length
-        ? historyOrders.slice(0, 12).map(o => `
-            <div class="order-card">
-              <div class="order-header">
-                <div>
-                  <span class="status-pill ${o.status === 'approved' ? 'status-approved' : 'status-rejected'}">
-                    ${o.status === 'approved' ? 'مقبول' : 'مرفوض'}
-                  </span>
-                  <strong style="margin-right:8px;">${o.itemName}</strong> — <span class="tx-sub">${o.username} (${o.iban})</span>
+      const ordersHtml = filteredList.length
+        ? filteredList.map(o => {
+            if (o.status === 'pending') {
+              return `
+                <div class="order-card" data-order-id="${o.id}">
+                  <div class="order-header">
+                    <div>
+                      <span class="status-pill status-pending">قيد المراجعة</span>
+                      <strong style="margin-right:8px;">${o.itemName}</strong>
+                      <span class="item-price" style="margin-right:8px;">${Number(o.price).toLocaleString()} PTS</span>
+                    </div>
+                    <span class="tx-sub">#${o.txCode} • ${o.createdAt}</span>
+                  </div>
+                  <div class="tx-sub">
+                    اللاعب: <strong>${o.username}</strong> (${o.iban}) • ملاحظة اللاعب: <strong>${o.playerNote || 'لا يوجد'}</strong>
+                  </div>
+                  <div class="grid-2" style="margin-bottom:4px;gap:10px;">
+                    <div>
+                      <label class="tx-sub" style="display:block;margin-bottom:4px;">اكتب المنطقة في سان أوري</label>
+                      <input type="text" class="input orderZoneInput" placeholder="اكتب اسم المنطقة أو الشارع في سان أوري..." />
+                    </div>
+                    <div>
+                      <label class="tx-sub" style="display:block;margin-bottom:4px;">معاد التسليم</label>
+                      <input type="text" class="input orderTimeInput" placeholder="مثال: الساعة 9:00 مساءً أو خلال 10 دقائق" />
+                    </div>
+                  </div>
+                  <div>
+                    <label class="tx-sub" style="display:block;margin-bottom:4px;">ملاحظة إضافية من التاجر (اختياري)</label>
+                    <input type="text" class="input orderDealerNoteInput" placeholder="مثال: تعال لوحدك أو انتظر عند البوابة..." />
+                  </div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                    <button type="button" class="btn btn-emerald approveOrderBtn" style="padding:8px 14px;font-size:0.85rem;">قبول وتحديد التسليم</button>
+                    <input type="text" class="input orderRejectReason" placeholder="سبب الرفض (اختياري)" style="max-width:220px;padding:8px 12px;font-size:0.84rem;" />
+                    <button type="button" class="btn btn-crimson rejectOrderBtn" style="padding:8px 14px;font-size:0.85rem;">رفض وإرجاع النقاط</button>
+                  </div>
                 </div>
-                <span class="tx-sub">#${o.txCode} • ${o.decidedAt || o.createdAt}</span>
+              `;
+            }
+
+            if (o.status === 'approved') {
+              return `
+                <div class="order-card" data-edit-order-id="${o.id}">
+                  <div class="order-header">
+                    <div>
+                      <span class="status-pill status-approved">مقبول — بانتظار الاستلام</span>
+                      <strong style="margin-right:8px;">${o.itemName}</strong> — <span class="tx-sub">${o.username} (${o.iban})</span>
+                    </div>
+                    <span class="tx-sub">كود التسليم: <strong style="color:var(--accent-bright);">${o.deliveryCode || '----'}</strong> • #${o.txCode}</span>
+                  </div>
+                  <div class="delivery-box">
+                    المنطقة: <strong>${o.deliveryZone}</strong> • المعاد: <strong>${o.deliveryTime}</strong>
+                    ${o.dealerNote ? `<br/>ملاحظة التاجر: <strong>${o.dealerNote}</strong>` : ''}
+                  </div>
+                  <div class="grid-2" style="margin-bottom:4px;gap:10px;">
+                    <div>
+                      <label class="tx-sub" style="display:block;margin-bottom:4px;">تعديل المنطقة في سان أوري</label>
+                      <input type="text" class="input editZoneInput" value="${(o.deliveryZone || '').replace(/"/g, '&quot;')}" />
+                    </div>
+                    <div>
+                      <label class="tx-sub" style="display:block;margin-bottom:4px;">تعديل معاد التسليم</label>
+                      <input type="text" class="input editTimeInput" value="${(o.deliveryTime || '').replace(/"/g, '&quot;')}" />
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                    <input type="text" class="input editDealerNoteInput" value="${(o.dealerNote || '').replace(/"/g, '&quot;')}" placeholder="ملاحظة التاجر..." style="flex:1;min-width:200px;" />
+                    <button type="button" class="btn btn-ghost updateDeliveryBtn" style="padding:8px 14px;font-size:0.84rem;">حفظ التعديل</button>
+                  </div>
+                </div>
+              `;
+            }
+
+            return `
+              <div class="order-card">
+                <div class="order-header">
+                  <div>
+                    <span class="status-pill ${o.status === 'delivered' ? 'status-delivered' : 'status-rejected'}">
+                      ${o.status === 'delivered' ? 'تم التسليم' : 'مرفوض'}
+                    </span>
+                    <strong style="margin-right:8px;">${o.itemName}</strong> — <span class="tx-sub">${o.username} (${o.iban})</span>
+                  </div>
+                  <span class="tx-sub">#${o.txCode} • ${o.decidedAt || o.createdAt}</span>
+                </div>
+                ${o.status === 'delivered'
+                  ? `<div class="delivery-box">تم تسليم الطلب في <strong>${o.deliveryZone}</strong> (كود #${o.deliveryCode || '----'}) بتاريخ ${o.deliveredAt || ''}</div>`
+                  : `<div class="tx-sub" style="color:#fda4af;">سبب الرفض: ${o.rejectReason || 'غير محدد'}</div>`
+                }
               </div>
-              ${o.status === 'approved'
-                ? `<div class="delivery-box">المنطقة في سان أوري: <strong>${o.deliveryZone}</strong> • معاد التسليم: <strong>${o.deliveryTime}</strong></div>`
-                : `<div class="tx-sub" style="color:#fda4af;">سبب الرفض: ${o.rejectReason || 'غير محدد'}</div>`
-              }
-            </div>
-          `).join('')
-        : `<div class="tx-sub">لا يوجد سجل طلبات سابقة.</div>`;
+            `;
+          }).join('')
+        : `<div class="tx-sub">لا توجد طلبات في هذا القسم حالياً.</div>`;
 
       box.innerHTML = `
-        <div class="admin-box">
+        ${buildCrafterGrantBox('تاجر الأسلحة')}
+        <div class="admin-box" style="margin-bottom:0;">
           <div class="section-title">
-            <span>الطلبات الواردة للتاجر والأدمن (${pendingOrders.length})</span>
+            <span>إدارة طلبات المعدات (${ordersState.length})</span>
             <span class="tx-sub">الدعم: <strong>${SUPPORT_DISCORD}</strong></span>
           </div>
-          ${pendingHtml}
-        </div>
-        <div class="admin-box" style="margin-bottom:0;">
-          <div class="section-title"><span>سجل الطلبات المنفذة والمرفوضة</span></div>
-          ${historyHtml}
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+            <button type="button" class="mini-btn ${dealerFilter === 'pending' ? 'selected' : ''}" data-dealer-filter="pending">قيد المراجعة (${pendingOrders.length})</button>
+            <button type="button" class="mini-btn ${dealerFilter === 'approved' ? 'selected' : ''}" data-dealer-filter="approved">المقبولة والمستلمة (${approvedOrders.length + deliveredOrders.length})</button>
+            <button type="button" class="mini-btn ${dealerFilter === 'rejected' ? 'selected' : ''}" data-dealer-filter="rejected">المرفوضة (${rejectedOrders.length})</button>
+          </div>
+          ${ordersHtml}
         </div>
       `;
+
+      bindCrafterGrantEvents(box, 'تاجر الأسلحة');
+
+      box.querySelectorAll('[data-dealer-filter]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          dealerFilter = btn.getAttribute('data-dealer-filter');
+          render();
+        });
+      });
 
       box.querySelectorAll('.order-card[data-order-id]').forEach(card => {
         const oid = card.getAttribute('data-order-id');
         card.querySelector('.approveOrderBtn')?.addEventListener('click', async () => {
-          const zone = card.querySelector('.orderZoneSelect')?.value || SAN_ORI_ZONES[0];
-          const timeSlot = (card.querySelector('.orderTimeInput')?.value || '').trim() || 'حسب التنسيق داخل الرول بلاي';
-          await handleOrderDecision(oid, 'approve', zone, timeSlot, '');
+          const zone = (card.querySelector('.orderZoneInput')?.value || '').trim();
+          const timeSlot = (card.querySelector('.orderTimeInput')?.value || '').trim();
+          const dNote = (card.querySelector('.orderDealerNoteInput')?.value || '').trim();
+          await handleOrderDecision(oid, 'approve', zone, timeSlot, dNote, '');
         });
         card.querySelector('.rejectOrderBtn')?.addEventListener('click', async () => {
           const reason = (card.querySelector('.orderRejectReason')?.value || '').trim() || 'الكمية غير متاحة حالياً';
-          await handleOrderDecision(oid, 'reject', '', '', reason);
+          await handleOrderDecision(oid, 'reject', '', '', '', reason);
+        });
+      });
+
+      box.querySelectorAll('.order-card[data-edit-order-id]').forEach(card => {
+        const oid = card.getAttribute('data-edit-order-id');
+        card.querySelector('.updateDeliveryBtn')?.addEventListener('click', async () => {
+          const zone = (card.querySelector('.editZoneInput')?.value || '').trim();
+          const timeSlot = (card.querySelector('.editTimeInput')?.value || '').trim();
+          const dNote = (card.querySelector('.editDealerNoteInput')?.value || '').trim();
+          await updateApprovedDelivery(oid, zone, timeSlot, dNote);
         });
       });
     }
@@ -1810,6 +2019,7 @@
         ? `<span class="tag" style="background:rgba(16,185,129,0.16);color:#6ee7b7;border-color:rgba(16,185,129,0.35);">متصل بالسحابة (كل الأجهزة)</span>`
         : `<span class="tag">وضع محلي حالياً (تأكد من صلاحيات Rules في Firebase)</span>`;
 
+      const crafterSection = buildCrafterGrantBox('الأدمن');
       const fxSection = buildFxAdminBox();
 
       const broadcastSection = `
@@ -1824,7 +2034,8 @@
       `;
 
       if (!state.users.length) {
-        box.innerHTML = `${fxSection}${broadcastSection}<div class="admin-box"><div class="tx-sub">لا توجد حسابات مسجلة بعد. ${cloudNote}</div></div>`;
+        box.innerHTML = `${crafterSection}${fxSection}${broadcastSection}<div class="admin-box"><div class="tx-sub">لا توجد حسابات مسجلة بعد. ${cloudNote}</div></div>`;
+        bindCrafterGrantEvents(box, 'الأدمن');
         bindFxAdminEvents(box);
         bindBroadcastEvents(box);
         return;
@@ -1864,6 +2075,7 @@
       `).join('') || `<div class="tx-sub">لا توجد عمليات.</div>`;
 
       box.innerHTML = `
+        ${crafterSection}
         ${fxSection}
         ${broadcastSection}
         <div style="margin-bottom:12px;">${cloudNote}</div>
@@ -1916,6 +2128,7 @@
         </div>
       `;
 
+      bindCrafterGrantEvents(box, 'الأدمن');
       bindFxAdminEvents(box);
       bindBroadcastEvents(box);
       bindAccountControlEvents(box, acc);
@@ -1985,8 +2198,19 @@
       });
     }
 
+    function renderPendingBadges() {
+      const pendingCount = ordersState.filter(o => o.status === 'pending').length;
+      ['dealerPendingBadge', 'adminPendingBadge'].forEach(id => {
+        const badge = document.getElementById(id);
+        if (!badge) return;
+        badge.textContent = String(pendingCount);
+        badge.classList.toggle('hidden', pendingCount <= 0);
+      });
+    }
+
     function render() {
       renderBroadcast();
+      renderPendingBadges();
       const user = getCurrentUser();
       const authSec = document.getElementById('authSection');
       const appSec = document.getElementById('appSection');
@@ -2033,10 +2257,21 @@
       const myOrders = ordersState.filter(o => String(o.username).toLowerCase() === String(user.username).toLowerCase());
       document.getElementById('myOrdersList').innerHTML = myOrders.length
         ? myOrders.map(o => {
-            const statusClass = o.status === 'approved' ? 'status-approved' : (o.status === 'rejected' ? 'status-rejected' : 'status-pending');
-            const statusLabel = o.status === 'approved' ? 'مقبول — جاهز للتسليم' : (o.status === 'rejected' ? 'مرفوض — تم إرجاع النقاط' : 'قيد المراجعة');
+            let statusClass = 'status-pending';
+            let statusLabel = 'قيد المراجعة';
+            if (o.status === 'approved') {
+              statusClass = 'status-approved';
+              statusLabel = 'مقبول — بانتظار الاستلام';
+            } else if (o.status === 'delivered') {
+              statusClass = 'status-delivered';
+              statusLabel = 'تم الاستلام';
+            } else if (o.status === 'rejected') {
+              statusClass = 'status-rejected';
+              statusLabel = 'مرفوض — تم إرجاع النقاط';
+            }
+
             return `
-              <div class="order-card">
+              <div class="order-card" data-my-order-id="${o.id}">
                 <div class="order-header">
                   <div>
                     <span class="status-pill ${statusClass}">${statusLabel}</span>
@@ -2045,11 +2280,16 @@
                   </div>
                   <span class="tx-sub">#${o.txCode} • ${o.createdAt}</span>
                 </div>
-                ${o.status === 'approved'
+                ${(o.status === 'approved' || o.status === 'delivered')
                   ? `<div class="delivery-box">
                        <strong>تفاصيل التسليم في سان أوري:</strong><br/>
-                       المنطقة: <strong>${o.deliveryZone}</strong> • المعاد: <strong>${o.deliveryTime}</strong>
-                     </div>`
+                       المنطقة: <strong>${o.deliveryZone}</strong> • المعاد: <strong>${o.deliveryTime}</strong> • كود التسليم: <strong>${o.deliveryCode || '----'}</strong>
+                       ${o.dealerNote ? `<br/>ملاحظة التاجر: <strong>${o.dealerNote}</strong>` : ''}
+                     </div>
+                     ${o.status === 'approved'
+                       ? `<button type="button" class="btn btn-emerald confirmReceivedBtn" style="align-self:flex-start;padding:8px 14px;font-size:0.85rem;">تأكيد استلام المعدات</button>`
+                       : `<div class="tx-sub" style="color:#93c5fd;">تم تأكيد الاستلام بتاريخ ${o.deliveredAt || ''}</div>`
+                     }`
                   : (o.status === 'rejected'
                     ? `<div class="tx-sub" style="color:#fda4af;">سبب الرفض: ${o.rejectReason || 'غير محدد'}</div>`
                     : `<div class="tx-sub">تم خصم النقاط مبدئياً وبانتظار قرار التاجر أو الأدمن.</div>`
@@ -2060,8 +2300,35 @@
           }).join('')
         : `<div class="tx-sub">لا توجد طلبات مسجلة لحسابك بعد.</div>`;
 
+      document.querySelectorAll('.order-card[data-my-order-id] .confirmReceivedBtn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const card = btn.closest('[data-my-order-id]');
+          const oid = card?.getAttribute('data-my-order-id');
+          if (oid) {
+            await confirmOrderReceivedByPlayer(oid);
+          }
+        });
+      });
+
       const rem = cuffRemaining(user);
       document.getElementById('shopGrid').innerHTML = SHOP_ITEMS.map(item => {
+        if (item.dealerOnly) {
+          return `
+            <div class="item-card">
+              <div>
+                <span class="item-cat locked-item">مغلق في المتجر • التاجر والأدمن فقط</span>
+                <div class="item-name">${item.name}</div>
+                <div class="item-desc">${item.desc}</div>
+                <div class="item-limit" style="color:#fda4af;">لا يمكن شراؤها مباشرة — يتم تسليمها بواسطة التاجر أو الأدمن فقط.</div>
+              </div>
+              <div class="item-footer">
+                <span class="item-price">${item.price.toLocaleString()} PTS</span>
+                <button type="button" class="btn btn-ghost" disabled>التاجر والأدمن فقط</button>
+              </div>
+            </div>
+          `;
+        }
+
         const locked = item.dailyLimit && rem > 0;
         return `
           <div class="item-card">
@@ -2082,7 +2349,7 @@
       document.querySelectorAll('[data-buy]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const item = SHOP_ITEMS.find(i => i.id === btn.getAttribute('data-buy'));
-          if (!item) return;
+          if (!item || item.dealerOnly) return;
 
           const currentSession = getCurrentUser();
           if (!currentSession) return;
@@ -2136,6 +2403,7 @@
           nextOrders.unshift({
             id: 'ord_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
             txCode,
+            deliveryCode: '',
             username: current.username,
             iban: current.iban,
             itemId: item.id,
@@ -2144,12 +2412,14 @@
             price: item.price,
             dailyLimit: Boolean(item.dailyLimit),
             playerNote,
+            dealerNote: '',
             status: 'pending',
             deliveryZone: '',
             deliveryTime: '',
             rejectReason: '',
             createdAt: now,
-            decidedAt: ''
+            decidedAt: '',
+            deliveredAt: ''
           });
 
           await cloudSaveUsers(usersList);
@@ -2183,6 +2453,13 @@
         buildAdminHtml('inAppAdminContent');
       }
     }
+    document.querySelectorAll('.copySupportBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        navigator.clipboard?.writeText(SUPPORT_DISCORD).catch(() => {});
+        toast('تم نسخ حساب الدعم: ' + SUPPORT_DISCORD);
+      });
+    });
+
     document.getElementById('tabLogin').addEventListener('click', () => {
       document.getElementById('tabLogin').classList.add('active');
       document.getElementById('tabRegister').classList.remove('active');
@@ -2197,92 +2474,9 @@
       document.getElementById('loginForm').classList.add('hidden');
     });
 
-    document.querySelectorAll('.copySupportBtn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        navigator.clipboard?.writeText(SUPPORT_DISCORD);
-        toast('تم نسخ حساب الدعم في ديسكورد: ' + SUPPORT_DISCORD);
-      });
-    });
-
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('regUsername').value.trim();
-      const password = document.getElementById('regPassword').value;
-      if (!username || !password) return;
-
-      const latest = await cloudGetUsers();
-      const baseList = cloudConnected ? latest : state.users;
-
-      if (baseList.some(u => String(u.username || '').toLowerCase() === username.toLowerCase())) {
-        toast('اسم اللاعب مستخدم بالفعل، اختر اسماً آخر.');
-        return;
-      }
-
-      const now = new Date().toLocaleString('ar-EG');
-      const iban = makeIban(baseList);
-      const newUser = {
-        username,
-        password,
-        iban,
-        balance: INITIAL_BALANCE,
-        frozen: false,
-        createdAt: now,
-        lastLoginAt: now,
-        inventory: [],
-        lastHandcuffBoughtAt: null,
-        transactions: [{ id: Date.now(), type: 'in', title: 'رصيد افتتاحي للحساب الجديد', meta: `${makeTxCode()} • منحة بداية السيرفر`, amount: INITIAL_BALANCE, date: now }]
-      };
-
-      baseList.push(newUser);
-      state.sessionUser = username;
-      inspectedUser = username;
-      await cloudSaveUsers(baseList);
-      e.target.reset();
+    document.getElementById('openAdminBtn').addEventListener('click', () => {
+      standaloneMode = 'login';
       render();
-      toast('تم إنشاء حسابك برصيد 1,000 نقطة!');
-    });
-
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('loginUsername').value.trim();
-      const password = document.getElementById('loginPassword').value;
-
-      const latest = await cloudGetUsers();
-      const baseList = cloudConnected ? latest : state.users;
-
-      const user = baseList.find(
-        u => String(u.username || '').toLowerCase() === username.toLowerCase() && u.password === password
-      );
-
-      if (!user) {
-        toast('اسم اللاعب أو كلمة المرور غير صحيحة.');
-        return;
-      }
-
-      user.lastLoginAt = new Date().toLocaleString('ar-EG');
-      if (!user.createdAt) user.createdAt = user.lastLoginAt;
-      state.sessionUser = user.username;
-      inspectedUser = user.username;
-      await cloudSaveUsers(baseList);
-      e.target.reset();
-      render();
-      toast('أهلاً بك مجدداً يا ' + user.username);
-    });
-
-    document.getElementById('openAdminBtn').addEventListener('click', async () => {
-      standaloneMode = adminUnlocked ? 'panel' : 'login';
-      render();
-      if (adminUnlocked) {
-        await syncFromCloud();
-      }
-    });
-
-    document.getElementById('openDealerAuthBtn').addEventListener('click', async () => {
-      standaloneMode = (dealerUnlocked || adminUnlocked) ? 'dealer_panel' : 'dealer_login';
-      render();
-      if (dealerUnlocked || adminUnlocked) {
-        await syncFromCloud();
-      }
     });
 
     document.getElementById('extAdminBackBtn').addEventListener('click', () => {
@@ -2291,7 +2485,30 @@
     });
 
     document.getElementById('extAdminCloseBtn').addEventListener('click', () => {
+      adminUnlocked = false;
       standaloneMode = 'none';
+      render();
+    });
+
+    document.getElementById('extAdminLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('extAdminUser').value.trim().toLowerCase();
+      const p = document.getElementById('extAdminPass').value;
+      if (u === ADMIN_USER && p === ADMIN_PASS) {
+        adminUnlocked = true;
+        standaloneMode = 'panel';
+        document.getElementById('extAdminUser').value = '';
+        document.getElementById('extAdminPass').value = '';
+        await syncFromCloud();
+        render();
+        toast('تم فتح لوحة الأدمن');
+      } else {
+        toast('بيانات لوحة الأدمن غير صحيحة.');
+      }
+    });
+
+    document.getElementById('openDealerAuthBtn').addEventListener('click', () => {
+      standaloneMode = 'dealer_login';
       render();
     });
 
@@ -2301,104 +2518,121 @@
     });
 
     document.getElementById('extDealerCloseBtn').addEventListener('click', () => {
+      dealerUnlocked = false;
       standaloneMode = 'none';
       render();
     });
-
-    function checkDealerCredentials(u, p) {
-      return (u === DEALER_USER && p === DEALER_PASS) || (u === ADMIN_USER && p === ADMIN_PASS);
-    }
 
     document.getElementById('extDealerLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const u = document.getElementById('extDealerUser').value.trim().toLowerCase();
-      const p = document.getElementById('extDealerPass').value.trim().toLowerCase();
-      if (checkDealerCredentials(u, p)) {
+      const p = document.getElementById('extDealerPass').value;
+      if ((u === DEALER_USER && p === DEALER_PASS) || (u === ADMIN_USER && p === ADMIN_PASS)) {
         dealerUnlocked = true;
         standaloneMode = 'dealer_panel';
-        e.target.reset();
-        render();
-        toast('تم فتح لوحة تاجر الأسلحة بنجاح.');
+        document.getElementById('extDealerUser').value = '';
+        document.getElementById('extDealerPass').value = '';
         await syncFromCloud();
+        render();
+        toast('تم فتح لوحة تاجر الأسلحة');
       } else {
-        toast('بيانات التاجر أو الأدمن غير صحيحة.');
+        toast('بيانات لوحة التاجر غير صحيحة.');
       }
     });
 
-    document.getElementById('inAppDealerLoginForm').addEventListener('submit', async (e) => {
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const u = document.getElementById('inAppDealerUser').value.trim().toLowerCase();
-      const p = document.getElementById('inAppDealerPass').value.trim().toLowerCase();
-      if (checkDealerCredentials(u, p)) {
-        dealerUnlocked = true;
-        e.target.reset();
-        render();
-        toast('تم فتح لوحة تاجر الأسلحة بنجاح.');
-        await syncFromCloud();
-      } else {
-        toast('بيانات التاجر أو الأدمن غير صحيحة.');
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+      if (username.length < 2 || password.length < 3) {
+        toast('الاسم حرفان على الأقل وكلمة المرور 3 أحرف على الأقل.');
+        return;
       }
+
+      const latestUsers = await cloudGetUsers();
+      const usersList = cloudConnected ? [...latestUsers] : [...state.users];
+      if (usersList.some(u => String(u.username).toLowerCase() === username.toLowerCase())) {
+        toast('هذا الاسم مستخدم بالفعل.');
+        return;
+      }
+
+      const nowStr = new Date().toLocaleString('ar-EG');
+      const newUser = {
+        username,
+        password,
+        iban: makeIban(usersList),
+        balance: INITIAL_BALANCE,
+        frozen: false,
+        lastHandcuffBoughtAt: null,
+        createdAt: nowStr,
+        lastLoginAt: nowStr,
+        inventory: [],
+        transactions: [{
+          id: Date.now(),
+          type: 'in',
+          title: 'رصيد افتتاحي لحساب سان أوري',
+          meta: `#${makeTxCode()} • مكافأة فتح حساب`,
+          amount: INITIAL_BALANCE,
+          date: nowStr
+        }]
+      };
+
+      usersList.push(newUser);
+      state.sessionUser = newUser.username;
+      await cloudSaveUsers(usersList);
+      saveLocal();
+      document.getElementById('registerForm').reset();
+      render();
+      toast('تم إنشاء حسابك برصيد 1,000 نقطة');
     });
 
-    document.getElementById('extAdminLoginForm').addEventListener('submit', async (e) => {
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const u = document.getElementById('extAdminUser').value.trim().toLowerCase();
-      const p = document.getElementById('extAdminPass').value.trim().toLowerCase();
-      if (u === ADMIN_USER && p === ADMIN_PASS) {
-        adminUnlocked = true;
-        standaloneMode = 'panel';
-        e.target.reset();
-        render();
-        toast('تم فتح لوحة الأدمن بنجاح.');
-        await syncFromCloud();
-      } else {
-        toast('اسم الأدمن أو كلمة المرور غير صحيحة.');
-      }
-    });
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
 
-    document.getElementById('inAppAdminLoginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const u = document.getElementById('inAppAdminUser').value.trim().toLowerCase();
-      const p = document.getElementById('inAppAdminPass').value.trim().toLowerCase();
-      if (u === ADMIN_USER && p === ADMIN_PASS) {
-        adminUnlocked = true;
-        e.target.reset();
-        render();
-        toast('تم فتح لوحة الأدمن بنجاح.');
-        await syncFromCloud();
-      } else {
-        toast('اسم الأدمن أو كلمة المرور غير صحيحة.');
+      const latestUsers = await cloudGetUsers();
+      const usersList = cloudConnected ? [...latestUsers] : [...state.users];
+      const found = usersList.find(u => String(u.username).toLowerCase() === username.toLowerCase() && u.password === password);
+      if (!found) {
+        toast('اسم اللاعب أو كلمة المرور غير صحيحة.');
+        return;
       }
-    });
 
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const view = btn.getAttribute('data-view');
-        ['bankView', 'shopView', 'invView', 'dealerView', 'adminView'].forEach(v => {
-          document.getElementById(v).classList.toggle('hidden', v !== view);
-        });
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        render();
-        await syncFromCloud();
-      });
+      found.lastLoginAt = new Date().toLocaleString('ar-EG');
+      state.sessionUser = found.username;
+      await cloudSaveUsers(usersList);
+      saveLocal();
+      document.getElementById('loginForm').reset();
+      render();
+      toast('مرحباً بعودتك يا ' + found.username);
     });
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
+      state.sessionUser = null;
       adminUnlocked = false;
       dealerUnlocked = false;
       standaloneMode = 'none';
-      state.sessionUser = null;
       saveLocal();
       render();
     });
 
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        ['bankView', 'shopView', 'invView', 'dealerView', 'adminView'].forEach(id => {
+          document.getElementById(id).classList.toggle('hidden', id !== btn.dataset.view);
+        });
+        render();
+      });
+    });
+
     document.getElementById('copyIbanBtn').addEventListener('click', () => {
       const user = getCurrentUser();
-      if (user) {
-        navigator.clipboard?.writeText(user.iban);
-        toast('تم نسخ رقم الحساب: ' + user.iban);
-      }
+      if (!user) return;
+      navigator.clipboard?.writeText(user.iban).catch(() => {});
+      toast('تم نسخ رقم الحساب: ' + user.iban);
     });
 
     document.getElementById('transferForm').addEventListener('submit', async (e) => {
@@ -2407,95 +2641,123 @@
       if (!currentSession) return;
 
       if (currentSession.frozen) {
-        toast('حسابك مجمّد حالياً، تواصل مع الإدارة.');
+        toast('حسابك مجمّد حالياً، لا يمكنك إجراء تحويلات.');
         return;
       }
 
-      const prefix = document.getElementById('transferBankPrefix').value;
-      const targetInputRaw = document.getElementById('targetIban').value;
-      const targetIban = normalizeTransferTarget(prefix, targetInputRaw);
-      const targetDigitsOnly = cleanIbanKey(targetInputRaw).replace(/^[A-Z0-9\u0600-\u06FF]+-/, '');
+      const prefixVal = document.getElementById('transferBankPrefix').value;
+      const targetVal = document.getElementById('targetIban').value;
+      const normalizedTarget = normalizeTransferTarget(prefixVal, targetVal);
       const amount = Number(document.getElementById('transferAmount').value);
-      const note = document.getElementById('transferNote').value.trim() || 'تحويل نقاط رول بلاي';
+      const note = document.getElementById('transferNote').value.trim();
 
-      if (!Number.isFinite(amount) || amount <= 0 || Number(currentSession.balance || 0) < amount) {
-        toast('رصيدك غير كافٍ أو القيمة غير صحيحة.');
+      if (!normalizedTarget) {
+        toast('أدخل رقم حساب المستلم بشكل صحيح.');
+        return;
+      }
+      if (!Number.isFinite(amount) || amount <= 0) {
+        toast('أدخل مبلغاً صحيحاً أكبر من صفر.');
+        return;
+      }
+      if (cleanIbanKey(currentSession.iban) === normalizedTarget) {
+        toast('لا يمكنك التحويل لنفس حسابك.');
+        return;
+      }
+      if (Number(currentSession.balance || 0) < amount) {
+        toast('رصيدك غير كافٍ لإتمام التحويل.');
         return;
       }
 
-      const latest = await cloudGetUsers();
-      const list = cloudConnected ? latest : state.users;
+      const latestUsers = await cloudGetUsers();
+      const usersList = cloudConnected ? [...latestUsers] : [...state.users];
+      const sender = usersList.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
+      const receiver = usersList.find(u => cleanIbanKey(u.iban) === normalizedTarget);
 
-      const sender = list.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
       if (!sender) {
-        toast('تعذر العثور على حساب المرسل.');
+        toast('تعذر العثور على حسابك.');
         return;
       }
-
       if (sender.frozen) {
-        toast('حسابك مجمّد حالياً، تواصل مع الإدارة.');
+        toast('حسابك مجمّد حالياً، لا يمكنك إجراء تحويلات.');
         return;
       }
-
-      const rec = list.find(u => {
-        const uIban = cleanIbanKey(u.iban);
-        const uDigits = uIban.replace(/^[A-Z0-9\u0600-\u06FF]+-/, '');
-        return uIban === targetIban || uIban === cleanIbanKey(targetInputRaw) || (targetDigitsOnly && uDigits === targetDigitsOnly);
-      });
-
-      if (!rec) {
-        toast('الرقم غير صحيح أو الحساب غير مسجل بعد.');
+      if (!receiver) {
+        toast(`لم يتم العثور على حساب برقم (${normalizedTarget}). تأكد من الرقم أو اطلب من المستلم نسخ رقم حسابه.`);
         return;
       }
-
-      if (String(rec.username).toLowerCase() === String(sender.username).toLowerCase()) {
-        toast('لا يمكنك التحويل إلى رقم حسابك نفسه.');
+      if (Number(sender.balance || 0) < amount) {
+        toast('رصيدك غير كافٍ لإتمام التحويل.');
         return;
       }
 
       const now = new Date().toLocaleString('ar-EG');
       const txCode = makeTxCode();
       sender.balance = Number(sender.balance || 0) - amount;
-      rec.balance = Number(rec.balance || 0) + amount;
-      sender.transactions = Array.isArray(sender.transactions) ? sender.transactions : [];
-      rec.transactions = Array.isArray(rec.transactions) ? rec.transactions : [];
+      receiver.balance = Number(receiver.balance || 0) + amount;
 
+      sender.transactions = Array.isArray(sender.transactions) ? sender.transactions : [];
       sender.transactions.unshift({
         id: Date.now() + 1,
         type: 'out',
-        title: `تحويل إلى ${rec.username} (${rec.iban})`,
-        meta: `#${txCode} • ${note}`,
+        title: `تحويل إلى ${receiver.username} (${receiver.iban})`,
+        meta: `#${txCode}${note ? ' • ' + note : ''}`,
         amount,
         date: now
       });
 
-      rec.transactions.unshift({
+      receiver.transactions = Array.isArray(receiver.transactions) ? receiver.transactions : [];
+      receiver.transactions.unshift({
         id: Date.now() + 2,
         type: 'in',
         title: `استلام من ${sender.username} (${sender.iban})`,
-        meta: `#${txCode} • ${note}`,
+        meta: `#${txCode}${note ? ' • ' + note : ''}`,
         amount,
         date: now
       });
 
-      await cloudSaveUsers(list);
-      e.target.reset();
+      await cloudSaveUsers(usersList);
+      document.getElementById('transferForm').reset();
       document.getElementById('transferBankPrefix').value = 'SO';
       render();
-      toast(`تم تحويل ${amount.toLocaleString()} نقطة إلى ${rec.username} بنجاح.`);
+      toast(`تم تحويل ${amount.toLocaleString()} PTS إلى ${receiver.username} (${receiver.iban})`);
     });
 
-    setInterval(async () => {
-      if (hasCloudDb()) {
+    document.getElementById('inAppDealerLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('inAppDealerUser').value.trim().toLowerCase();
+      const p = document.getElementById('inAppDealerPass').value;
+      if ((u === DEALER_USER && p === DEALER_PASS) || (u === ADMIN_USER && p === ADMIN_PASS)) {
+        dealerUnlocked = true;
+        document.getElementById('inAppDealerUser').value = '';
+        document.getElementById('inAppDealerPass').value = '';
         await syncFromCloud();
-      } else if (getCurrentUser() && cuffRemaining(getCurrentUser()) > 0 && !document.getElementById('shopView').classList.contains('hidden')) {
         render();
+        toast('تم فتح لوحة تاجر الأسلحة');
+      } else {
+        toast('بيانات لوحة التاجر غير صحيحة.');
       }
-    }, 5000);
+    });
+
+    document.getElementById('inAppAdminLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('inAppAdminUser').value.trim().toLowerCase();
+      const p = document.getElementById('inAppAdminPass').value;
+      if (u === ADMIN_USER && p === ADMIN_PASS) {
+        adminUnlocked = true;
+        document.getElementById('inAppAdminUser').value = '';
+        document.getElementById('inAppAdminPass').value = '';
+        await syncFromCloud();
+        render();
+        toast('تم فتح لوحة الأدمن');
+      } else {
+        toast('بيانات الأدمن غير صحيحة.');
+      }
+    });
 
     applyFxConfig();
     render();
     syncFromCloud();
+    setInterval(syncFromCloud, 8000);
   </script>
 </body>
 </html>
