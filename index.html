@@ -14,76 +14,43 @@
       --accent: #d4af37;
       --accent-bright: #f5d061;
       --accent-dark: #8a640b;
-      --accent-dim: rgba(212, 175, 55, 0.16);
-      --accent-glow: rgba(245, 208, 97, 0.32);
+      --accent-dim: rgba(212, 175, 55, 0.18);
+      --accent-glow: rgba(245, 208, 97, 0.36);
       --crimson: #e11d48;
       --crimson-dim: rgba(225, 29, 72, 0.16);
       --emerald: #10b981;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --border: rgba(212, 175, 55, 0.28);
+      --border: rgba(245, 208, 97, 0.34);
       --border-soft: rgba(255, 255, 255, 0.08);
-      --shadow-accent: 0 12px 35px rgba(212, 175, 55, 0.18);
-      --card-glow-shadow: 0 22px 55px rgba(0, 0, 0, 0.65), 0 0 28px rgba(245, 208, 97, 0.16);
-      --card-radial: radial-gradient(circle at 85% 15%, rgba(245, 208, 97, 0.28), transparent 45%);
+      --shadow-accent: 0 12px 35px rgba(212, 175, 55, 0.22);
+      --card-glow-shadow: 0 22px 55px rgba(0, 0, 0, 0.65), 0 0 32px rgba(245, 208, 97, 0.22);
+      --card-radial: radial-gradient(circle at 85% 15%, rgba(245, 208, 97, 0.3), transparent 45%);
     }
 
-    body[data-theme="crimson"] {
-      --accent: #e11d48;
-      --accent-bright: #fb7185;
-      --accent-dark: #7f1d1d;
-      --accent-dim: rgba(225, 29, 72, 0.18);
-      --accent-glow: rgba(251, 113, 133, 0.34);
-      --border: rgba(251, 113, 133, 0.32);
-      --shadow-accent: 0 12px 35px rgba(225, 29, 72, 0.22);
-      --card-glow-shadow: 0 22px 55px rgba(0, 0, 0, 0.65), 0 0 28px rgba(251, 113, 133, 0.2);
-      --card-radial: radial-gradient(circle at 85% 15%, rgba(251, 113, 133, 0.28), transparent 45%);
+    @keyframes ambientShift {
+      0% { filter: hue-rotate(0deg) saturate(1.08); }
+      50% { filter: hue-rotate(14deg) saturate(1.18); }
+      100% { filter: hue-rotate(0deg) saturate(1.08); }
     }
 
-    body[data-theme="emerald"] {
-      --accent: #10b981;
-      --accent-bright: #34d399;
-      --accent-dark: #065f46;
-      --accent-dim: rgba(16, 185, 129, 0.18);
-      --accent-glow: rgba(52, 211, 153, 0.34);
-      --border: rgba(52, 211, 153, 0.32);
-      --shadow-accent: 0 12px 35px rgba(16, 185, 129, 0.22);
-      --card-glow-shadow: 0 22px 55px rgba(0, 0, 0, 0.65), 0 0 28px rgba(52, 211, 153, 0.2);
-      --card-radial: radial-gradient(circle at 85% 15%, rgba(52, 211, 153, 0.28), transparent 45%);
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 22px 55px rgba(0, 0, 0, 0.65), 0 0 24px var(--accent-glow); }
+      50% { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.72), 0 0 38px var(--accent-glow); }
     }
 
-    body[data-theme="violet"] {
-      --accent: #8b5cf6;
-      --accent-bright: #c084fc;
-      --accent-dark: #4c1d95;
-      --accent-dim: rgba(139, 92, 246, 0.18);
-      --accent-glow: rgba(192, 132, 252, 0.35);
-      --border: rgba(192, 132, 252, 0.34);
-      --shadow-accent: 0 12px 35px rgba(139, 92, 246, 0.22);
-      --card-glow-shadow: 0 22px 55px rgba(0, 0, 0, 0.65), 0 0 28px rgba(192, 132, 252, 0.22);
-      --card-radial: radial-gradient(circle at 85% 15%, rgba(192, 132, 252, 0.28), transparent 45%);
-    }
-
-    body[data-glow="off"] {
+    body[data-admin-fx="off"] {
       --accent-glow: transparent;
       --shadow-accent: none;
       --card-glow-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
       --card-radial: none;
     }
 
-    body[data-glow="off"] .glass {
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
-    }
-
-    body[data-glow="off"] .black-card {
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5);
-    }
-
-    body[data-motion="off"] *,
-    body[data-motion="off"] *::before,
-    body[data-motion="off"] *::after {
-      transition: none !important;
+    body[data-admin-fx="off"] *,
+    body[data-admin-fx="off"] *::before,
+    body[data-admin-fx="off"] *::after {
       animation: none !important;
+      transition: none !important;
     }
 
     * {
@@ -96,12 +63,13 @@
     body {
       background:
         radial-gradient(circle at 15% 10%, var(--accent-dim), transparent 38%),
-        radial-gradient(circle at 85% 20%, rgba(225, 29, 72, 0.1), transparent 35%),
+        radial-gradient(circle at 85% 20%, var(--accent-dim), transparent 36%),
         var(--bg-dark);
       color: var(--text-main);
       min-height: 100vh;
       line-height: 1.6;
       overflow-x: hidden;
+      animation: ambientShift 12s ease-in-out infinite;
       transition: background 0.35s ease, color 0.25s ease;
     }
 
@@ -117,88 +85,8 @@
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
       border-radius: 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 22px var(--accent-dim);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 24px var(--accent-dim);
       transition: border-color 0.25s ease, box-shadow 0.3s ease, transform 0.2s ease;
-    }
-
-    .fx-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 16px;
-      margin-bottom: 16px;
-      font-size: 0.82rem;
-    }
-
-    .fx-group {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .fx-label {
-      color: var(--text-muted);
-      font-weight: 700;
-      margin-left: 4px;
-    }
-
-    .theme-pill {
-      padding: 5px 11px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-main);
-      font-weight: 700;
-      font-size: 0.78rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
-    }
-
-    .theme-pill:hover {
-      transform: translateY(-1px);
-    }
-
-    .theme-pill.active {
-      border-color: var(--accent-bright);
-      background: var(--accent-dim);
-      color: var(--accent-bright);
-    }
-
-    .dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    .dot-gold { background: #f5d061; }
-    .dot-crimson { background: #fb7185; }
-    .dot-emerald { background: #34d399; }
-    .dot-violet { background: #c084fc; }
-
-    .toggle-btn {
-      padding: 5px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-muted);
-      font-weight: 800;
-      font-size: 0.78rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .toggle-btn.is-on {
-      background: var(--accent-dim);
-      border-color: var(--accent);
-      color: var(--accent-bright);
-      box-shadow: 0 0 12px var(--accent-dim);
     }
 
     .btn {
@@ -232,7 +120,7 @@
     }
 
     .btn-gold:hover:not(:disabled) {
-      box-shadow: 0 14px 36px var(--accent-glow);
+      box-shadow: 0 14px 38px var(--accent-glow);
       transform: translateY(-1px);
     }
 
@@ -297,7 +185,7 @@
     }
 
     .auth-box.wide {
-      max-width: 920px;
+      max-width: 960px;
     }
 
     .auth-badge {
@@ -385,7 +273,7 @@
       place-items: center;
       font-weight: 900;
       font-size: 1.15rem;
-      box-shadow: 0 0 18px var(--accent-dim);
+      box-shadow: 0 0 20px var(--accent-glow);
     }
 
     .brand h1 {
@@ -444,11 +332,12 @@
       flex-direction: column;
       justify-content: space-between;
       box-shadow: var(--card-glow-shadow);
+      animation: pulseGlow 4s ease-in-out infinite;
       transition: box-shadow 0.3s ease, border-color 0.25s ease, transform 0.25s ease;
     }
 
     .black-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
     }
 
     .card-top {
@@ -484,7 +373,7 @@
       font-weight: 900;
       color: var(--accent-bright);
       margin: 10px 0;
-      text-shadow: 0 0 18px var(--accent-dim);
+      text-shadow: 0 0 20px var(--accent-glow);
     }
 
     .card-bottom {
@@ -602,7 +491,7 @@
     .item-card:hover {
       transform: translateY(-3px);
       border-color: var(--border);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), 0 0 18px var(--accent-dim);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), 0 0 20px var(--accent-dim);
     }
 
     .item-cat {
@@ -680,6 +569,66 @@
       border-color: var(--accent);
     }
 
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .swatch-card {
+      background: rgba(18, 20, 26, 0.9);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .swatch-card.active-color {
+      border-color: var(--accent-bright);
+      box-shadow: 0 0 14px var(--accent-dim);
+    }
+
+    .swatch-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .swatch-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      flex-shrink: 0;
+    }
+
+    .swatch-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .mini-btn.selected {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent-bright);
+    }
+
     .toast {
       position: fixed;
       bottom: 22px;
@@ -719,25 +668,9 @@
     }
   </style>
 </head>
-<body data-theme="gold" data-glow="on" data-motion="on">
+<body data-admin-fx="on">
 
-  <div class="container" style="padding-bottom: 0;">
-    <div class="fx-bar glass">
-      <div class="fx-group">
-        <span class="fx-label">لون الثيم:</span>
-        <button type="button" class="theme-pill active" data-set-theme="gold"><span class="dot dot-gold"></span>ذهبي</button>
-        <button type="button" class="theme-pill" data-set-theme="crimson"><span class="dot dot-crimson"></span>قرمزي</button>
-        <button type="button" class="theme-pill" data-set-theme="emerald"><span class="dot dot-emerald"></span>زمردي</button>
-        <button type="button" class="theme-pill" data-set-theme="violet"><span class="dot dot-violet"></span>بنفسجي</button>
-      </div>
-      <div class="fx-group">
-        <button type="button" id="toggleGlowBtn" class="toggle-btn is-on">التوهج: شغال</button>
-        <button type="button" id="toggleMotionBtn" class="toggle-btn is-on">الحركة: شغالة</button>
-      </div>
-    </div>
-  </div>
-
-  <section id="authSection" class="auth-wrapper" style="min-height: 82vh;">
+  <section id="authSection" class="auth-wrapper">
     <div id="authBox" class="auth-box glass">
       <div id="externalAuthContainer">
         <div class="auth-badge">SAN ORI ROLEPLAY • SIMULATION BANK</div>
@@ -898,7 +831,7 @@
     </section>
 
     <section id="adminView" class="hidden">
-      <div class="section-card glass" style="max-width: 920px; margin: 0 auto;">
+      <div class="section-card glass" style="max-width: 960px; margin: 0 auto;">
         <div id="inAppAdminLoginBox">
           <div class="section-title"><span>دخول لوحة الأدمن</span></div>
           <form id="inAppAdminLoginForm">
@@ -927,11 +860,22 @@
   <script>
     const INITIAL_BALANCE = 1000;
     const STORAGE_KEY = 'san_ori_bank_v1';
-    const FX_STORAGE_KEY = 'san_ori_fx_prefs_v1';
+    const FX_CONFIG_KEY = 'san_ori_admin_fx_v1';
     const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const ADMIN_USER = 'dr black';
     const ADMIN_PASS = 'black';
     const FIREBASE_DB_URL = 'https://san-ori-bank-default-rtdb.firebaseio.com';
+
+    const PRESET_COLORS = [
+      { id: 'gold', name: 'ذهبي ملكي', accent: '#d4af37', bright: '#f5d061', dark: '#8a640b' },
+      { id: 'crimson', name: 'أحمر قرمزي', accent: '#e11d48', bright: '#fb7185', dark: '#7f1d1d' },
+      { id: 'emerald', name: 'أخضر زمردي', accent: '#10b981', bright: '#34d399', dark: '#065f46' },
+      { id: 'violet', name: 'بنفسجي نيون', accent: '#8b5cf6', bright: '#c084fc', dark: '#4c1d95' },
+      { id: 'cyan', name: 'أزرق سماوي', accent: '#06b6d4', bright: '#67e8f9', dark: '#164e63' },
+      { id: 'orange', name: 'برتقالي ناري', accent: '#f97316', bright: '#fdba74', dark: '#7c2d12' },
+      { id: 'rose', name: 'وردي فخم', accent: '#ec4899', bright: '#f472b6', dark: '#831843' },
+      { id: 'lime', name: 'أخضر ليموني', accent: '#84cc16', bright: '#bef264', dark: '#365314' }
+    ];
 
     const SHOP_ITEMS = [
       { id: 'knife', cat: 'قتال عن قرب', name: 'سكين', desc: 'سلاح أبيض خفيف للاشتباك القريب في شوارع سان أوري.', price: 150 },
@@ -951,69 +895,101 @@
     let standaloneMode = 'none';
     let inspectedUser = null;
     let cloudConnected = false;
+    let cycleTimer = null;
 
-    function loadFxPrefs() {
+    function hexToRgba(hex, alpha) {
+      const clean = String(hex || '#d4af37').replace('#', '');
+      const full = clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean.padEnd(6, '0').slice(0, 6);
+      const num = parseInt(full, 16);
+      const r = (num >> 16) & 255;
+      const g = (num >> 8) & 255;
+      const b = num & 255;
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function darkenHex(hex, factor = 0.55) {
+      const clean = String(hex || '#d4af37').replace('#', '');
+      const full = clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean.padEnd(6, '0').slice(0, 6);
+      const num = parseInt(full, 16);
+      const r = Math.max(0, Math.min(255, Math.floor(((num >> 16) & 255) * factor)));
+      const g = Math.max(0, Math.min(255, Math.floor(((num >> 8) & 255) * factor)));
+      const b = Math.max(0, Math.min(255, Math.floor((num & 255) * factor)));
+      return `#${[r, g, b].map(v => v.toString(16).padStart(2, '0')).join('')}`;
+    }
+
+    function loadFxConfig() {
       try {
-        const p = JSON.parse(localStorage.getItem(FX_STORAGE_KEY) || '{}');
+        const raw = JSON.parse(localStorage.getItem(FX_CONFIG_KEY) || '{}');
+        const customColors = Array.isArray(raw.customColors) ? raw.customColors : [];
+        const allColors = [...PRESET_COLORS, ...customColors];
+        const allowedIds = Array.isArray(raw.allowedIds) && raw.allowedIds.length
+          ? raw.allowedIds.filter(id => allColors.some(c => c.id === id))
+          : PRESET_COLORS.map(c => c.id);
+        const finalAllowed = allowedIds.length ? allowedIds : ['gold'];
+        const activeColorId = finalAllowed.includes(raw.activeColorId) ? raw.activeColorId : finalAllowed[0];
+
         return {
-          theme: ['gold', 'crimson', 'emerald', 'violet'].includes(p.theme) ? p.theme : 'gold',
-          glow: p.glow === 'off' ? 'off' : 'on',
-          motion: p.motion === 'off' ? 'off' : 'on'
+          fxEnabled: raw.fxEnabled === 'off' ? 'off' : 'on',
+          autoCycle: raw.autoCycle === 'off' ? 'off' : 'on',
+          activeColorId,
+          allowedIds: finalAllowed,
+          customColors
         };
       } catch (e) {
-        return { theme: 'gold', glow: 'on', motion: 'on' };
+        return {
+          fxEnabled: 'on',
+          autoCycle: 'on',
+          activeColorId: 'gold',
+          allowedIds: PRESET_COLORS.map(c => c.id),
+          customColors: []
+        };
       }
     }
 
-    let fxPrefs = loadFxPrefs();
+    let fxConfig = loadFxConfig();
 
-    function applyFxPrefs() {
-      document.body.setAttribute('data-theme', fxPrefs.theme);
-      document.body.setAttribute('data-glow', fxPrefs.glow);
-      document.body.setAttribute('data-motion', fxPrefs.motion);
+    function getAllColors() {
+      return [...PRESET_COLORS, ...(fxConfig.customColors || [])];
+    }
 
-      document.querySelectorAll('[data-set-theme]').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-set-theme') === fxPrefs.theme);
-      });
+    function applyFxConfig() {
+      const all = getAllColors();
+      const chosen = all.find(c => c.id === fxConfig.activeColorId) || all[0] || PRESET_COLORS[0];
+      const root = document.documentElement;
 
-      const glowBtn = document.getElementById('toggleGlowBtn');
-      if (glowBtn) {
-        const isOn = fxPrefs.glow === 'on';
-        glowBtn.classList.toggle('is-on', isOn);
-        glowBtn.textContent = isOn ? 'التوهج: شغال' : 'التوهج: مطفي';
-      }
+      root.style.setProperty('--accent', chosen.accent);
+      root.style.setProperty('--accent-bright', chosen.bright);
+      root.style.setProperty('--accent-dark', chosen.dark);
+      root.style.setProperty('--accent-dim', hexToRgba(chosen.accent, 0.18));
+      root.style.setProperty('--accent-glow', hexToRgba(chosen.bright, 0.36));
+      root.style.setProperty('--border', hexToRgba(chosen.bright, 0.34));
+      root.style.setProperty('--shadow-accent', `0 12px 35px ${hexToRgba(chosen.accent, 0.24)}`);
+      root.style.setProperty('--card-glow-shadow', `0 22px 55px rgba(0, 0, 0, 0.65), 0 0 32px ${hexToRgba(chosen.bright, 0.24)}`);
+      root.style.setProperty('--card-radial', `radial-gradient(circle at 85% 15%, ${hexToRgba(chosen.bright, 0.32)}, transparent 45%)`);
 
-      const motionBtn = document.getElementById('toggleMotionBtn');
-      if (motionBtn) {
-        const isOn = fxPrefs.motion === 'on';
-        motionBtn.classList.toggle('is-on', isOn);
-        motionBtn.textContent = isOn ? 'الحركة: شغالة' : 'الحركة: مطفية';
-      }
+      document.body.setAttribute('data-admin-fx', fxConfig.fxEnabled);
 
       try {
-        localStorage.setItem(FX_STORAGE_KEY, JSON.stringify(fxPrefs));
+        localStorage.setItem(FX_CONFIG_KEY, JSON.stringify(fxConfig));
       } catch (e) {}
+
+      if (cycleTimer) {
+        clearInterval(cycleTimer);
+        cycleTimer = null;
+      }
+
+      if (fxConfig.fxEnabled === 'on' && fxConfig.autoCycle === 'on' && fxConfig.allowedIds.length > 1) {
+        cycleTimer = setInterval(() => {
+          const idx = fxConfig.allowedIds.indexOf(fxConfig.activeColorId);
+          const nextIdx = (idx + 1) % fxConfig.allowedIds.length;
+          fxConfig.activeColorId = fxConfig.allowedIds[nextIdx];
+          applyFxConfig();
+          if (adminUnlocked) {
+            render();
+          }
+        }, 4500);
+      }
     }
-
-    document.querySelectorAll('[data-set-theme]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        fxPrefs.theme = btn.getAttribute('data-set-theme');
-        applyFxPrefs();
-        toast('تم تغيير لون الثيم إلى: ' + btn.textContent.trim());
-      });
-    });
-
-    document.getElementById('toggleGlowBtn').addEventListener('click', () => {
-      fxPrefs.glow = fxPrefs.glow === 'on' ? 'off' : 'on';
-      applyFxPrefs();
-      toast(fxPrefs.glow === 'on' ? 'تم تشغيل التوهج والإضاءة' : 'تم إطفاء التوهج والإضاءة');
-    });
-
-    document.getElementById('toggleMotionBtn').addEventListener('click', () => {
-      fxPrefs.motion = fxPrefs.motion === 'on' ? 'off' : 'on';
-      applyFxPrefs();
-      toast(fxPrefs.motion === 'on' ? 'تم تشغيل الحركة والمؤثرات' : 'تم إطفاء الحركة والمؤثرات');
-    });
 
     function hasCloudDb() {
       return typeof FIREBASE_DB_URL === 'string' && FIREBASE_DB_URL.startsWith('https://');
@@ -1103,6 +1079,11 @@
         state = loadLocal();
         render();
       }
+      if (e.key === FX_CONFIG_KEY) {
+        fxConfig = loadFxConfig();
+        applyFxConfig();
+        render();
+      }
     });
 
     function toast(msg) {
@@ -1148,6 +1129,140 @@
       return Math.max(0, DAILY_COOLDOWN_MS - (Date.now() - Number(user.lastHandcuffBoughtAt)));
     }
 
+    function buildFxAdminBox() {
+      const allColors = getAllColors();
+      const isFxOn = fxConfig.fxEnabled === 'on';
+      const isCycleOn = fxConfig.autoCycle === 'on';
+
+      const cardsHtml = allColors.map(c => {
+        const isAllowed = fxConfig.allowedIds.includes(c.id);
+        const isCurrent = fxConfig.activeColorId === c.id;
+        return `
+          <div class="swatch-card ${isCurrent ? 'active-color' : ''}">
+            <div class="swatch-top">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="swatch-dot" style="background:linear-gradient(135deg,${c.bright},${c.accent});"></span>
+                <strong style="font-size:0.84rem;">${c.name}</strong>
+              </div>
+              ${isCurrent ? `<span class="item-cat" style="margin:0;padding:2px 7px;">نشط</span>` : ''}
+            </div>
+            <div class="swatch-actions">
+              <button type="button" class="mini-btn ${isCurrent ? 'selected' : ''}" data-pick-color="${c.id}">تفعيل الآن</button>
+              <button type="button" class="mini-btn ${isAllowed ? 'selected' : ''}" data-toggle-allowed="${c.id}">${isAllowed ? 'ضمن القائمة ✓' : 'استبعاد'}</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="admin-box">
+          <div class="section-title">
+            <span>تحكم الأدمن في الألوان والتوهج والحركة (الموقع بالكامل)</span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" id="adminToggleAllFxBtn" class="btn ${isFxOn ? 'btn-gold' : 'btn-ghost'}" style="padding:7px 13px;font-size:0.82rem;">
+                ${isFxOn ? 'المؤثرات والتوهج: شغال (اضغط للإطفاء عن الكل)' : 'المؤثرات والتوهج: مطفي عن الكل (اضغط للتشغيل)'}
+              </button>
+              <button type="button" id="adminToggleCycleBtn" class="btn ${isCycleOn ? 'btn-gold' : 'btn-ghost'}" style="padding:7px 13px;font-size:0.82rem;">
+                ${isCycleOn ? 'تبديل الألوان التلقائي: شغال' : 'تبديل الألوان التلقائي: ثابت'}
+              </button>
+            </div>
+          </div>
+          <div class="tx-sub" style="margin-bottom:10px;">
+            حدد الألوان اللي حابب تكون متاحة في الموقع، أو اختار لون نشط فوراً، أو أضف لون مخصص خاص بيك.
+          </div>
+          <div class="palette-grid">${cardsHtml}</div>
+          <form class="adminAddCustomColorForm" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <input type="text" class="input customColorName" placeholder="اسم اللون (مثال: ذهبي دموي)" style="max-width:210px;padding:8px 12px;font-size:0.85rem;" />
+            <input type="color" class="customColorHex" value="#f59e0b" style="width:46px;height:38px;border:none;background:none;cursor:pointer;" />
+            <button type="submit" class="btn btn-ghost" style="padding:8px 14px;font-size:0.84rem;">+ إضافة لون للقائمة</button>
+          </form>
+        </div>
+      `;
+    }
+
+    function bindFxAdminEvents(container) {
+      const toggleFx = container.querySelector('#adminToggleAllFxBtn');
+      if (toggleFx) {
+        toggleFx.addEventListener('click', () => {
+          fxConfig.fxEnabled = fxConfig.fxEnabled === 'on' ? 'off' : 'on';
+          applyFxConfig();
+          render();
+          toast(fxConfig.fxEnabled === 'on' ? 'تم تشغيل التوهج والحركة على الموقع بالكامل' : 'تم إطفاء التوهج والحركة عن الموقع بالكامل');
+        });
+      }
+
+      const toggleCycle = container.querySelector('#adminToggleCycleBtn');
+      if (toggleCycle) {
+        toggleCycle.addEventListener('click', () => {
+          fxConfig.autoCycle = fxConfig.autoCycle === 'on' ? 'off' : 'on';
+          applyFxConfig();
+          render();
+          toast(fxConfig.autoCycle === 'on' ? 'تم تشغيل التبديل التلقائي بين الألوان المحددة' : 'تم تثبيت اللون الحالي ومنع التبديل التلقائي');
+        });
+      }
+
+      container.querySelectorAll('[data-pick-color]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-pick-color');
+          if (!fxConfig.allowedIds.includes(id)) {
+            fxConfig.allowedIds.push(id);
+          }
+          fxConfig.activeColorId = id;
+          applyFxConfig();
+          render();
+          toast('تم تفعيل اللون المختار');
+        });
+      });
+
+      container.querySelectorAll('[data-toggle-allowed]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-toggle-allowed');
+          if (fxConfig.allowedIds.includes(id)) {
+            if (fxConfig.allowedIds.length === 1) {
+              toast('يجب أن يبقى لون واحد على الأقل محدداً في القائمة.');
+              return;
+            }
+            fxConfig.allowedIds = fxConfig.allowedIds.filter(x => x !== id);
+            if (fxConfig.activeColorId === id) {
+              fxConfig.activeColorId = fxConfig.allowedIds[0];
+            }
+          } else {
+            fxConfig.allowedIds.push(id);
+          }
+          applyFxConfig();
+          render();
+          toast('تم تحديث قائمة الألوان المحددة');
+        });
+      });
+
+      const addForm = container.querySelector('.adminAddCustomColorForm');
+      if (addForm) {
+        addForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const nameInput = addForm.querySelector('.customColorName');
+          const hexInput = addForm.querySelector('.customColorHex');
+          const name = (nameInput.value || '').trim() || 'لون مخصص';
+          const hex = hexInput.value || '#d4af37';
+          const id = 'custom_' + Date.now();
+          const newSwatch = {
+            id,
+            name,
+            accent: hex,
+            bright: hex,
+            dark: darkenHex(hex, 0.5)
+          };
+          fxConfig.customColors = Array.isArray(fxConfig.customColors) ? fxConfig.customColors : [];
+          fxConfig.customColors.push(newSwatch);
+          fxConfig.allowedIds.push(id);
+          fxConfig.activeColorId = id;
+          nameInput.value = '';
+          applyFxConfig();
+          render();
+          toast('تمت إضافة وتفعيل اللون: ' + name);
+        });
+      }
+    }
+
     function buildAdminHtml(targetId) {
       const box = document.getElementById(targetId);
       if (!box) return;
@@ -1156,8 +1271,11 @@
         ? `<span class="tag" style="background:rgba(16,185,129,0.16);color:#6ee7b7;border-color:rgba(16,185,129,0.35);">متصل بالسحابة (كل الأجهزة)</span>`
         : `<span class="tag">وضع محلي حالياً (تأكد من صلاحيات Rules في Firebase)</span>`;
 
+      const fxSection = buildFxAdminBox();
+
       if (!state.users.length) {
-        box.innerHTML = `<div class="admin-box"><div class="tx-sub">لا توجد حسابات مسجلة بعد. ${cloudNote}</div></div>`;
+        box.innerHTML = `${fxSection}<div class="admin-box"><div class="tx-sub">لا توجد حسابات مسجلة بعد. ${cloudNote}</div></div>`;
+        bindFxAdminEvents(box);
         return;
       }
 
@@ -1195,6 +1313,7 @@
       `).join('') || `<div class="tx-sub">لا توجد عمليات.</div>`;
 
       box.innerHTML = `
+        ${fxSection}
         <div style="margin-bottom:12px;">${cloudNote}</div>
         <div class="grid-2" style="margin-bottom:14px;">
           <div class="admin-box" style="margin:0;">
@@ -1236,6 +1355,8 @@
           <div class="tx-list" style="max-height:170px;">${txHtml}</div>
         </div>
       `;
+
+      bindFxAdminEvents(box);
 
       box.querySelectorAll('.acc-item').forEach(el => {
         el.addEventListener('click', () => {
@@ -1336,165 +1457,4 @@
             </div>
             <div class="item-footer">
               <span class="item-price">${item.price.toLocaleString()} PTS</span>
-              <button type="button" class="btn btn-gold" ${locked ? 'disabled' : ''} data-buy="${item.id}">${locked ? 'مقيد اليوم' : 'شراء'}</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      document.querySelectorAll('[data-buy]').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const item = SHOP_ITEMS.find(i => i.id === btn.getAttribute('data-buy'));
-          if (!item) return;
-
-          const current = getCurrentUser();
-          if (!current) return;
-
-          if (item.dailyLimit && cuffRemaining(current) > 0) {
-            toast('مسموح بالكلبشات مرة واحدة كل 24 ساعة.');
-            return;
-          }
-          if (Number(current.balance || 0) < item.price) {
-            toast('رصيدك غير كافٍ.');
-            return;
-          }
-
-          const now = new Date().toLocaleString('ar-EG');
-          current.balance = Number(current.balance || 0) - item.price;
-          if (item.dailyLimit) current.lastHandcuffBoughtAt = Date.now();
-          current.inventory = Array.isArray(current.inventory) ? current.inventory : [];
-          current.inventory.unshift({ ...item, boughtAt: now });
-          current.transactions = Array.isArray(current.transactions) ? current.transactions : [];
-          current.transactions.unshift({
-            id: Date.now(),
-            type: 'out',
-            title: `شراء: ${item.name}`,
-            meta: item.cat,
-            amount: item.price,
-            date: now
-          });
-
-          saveLocal();
-          render();
-          toast('تم شراء ' + item.name);
-          await cloudSaveUsers(state.users);
-        });
-      });
-
-      const inv = user.inventory || [];
-      document.getElementById('invGrid').innerHTML = inv.length
-        ? inv.map(i => `
-            <div class="item-card">
-              <div><span class="item-cat">${i.cat}</span><div class="item-name">${i.name}</div><div class="item-desc">${i.desc}</div></div>
-              <div class="item-footer"><span class="tx-sub">${i.boughtAt || ''}</span></div>
-            </div>
-          `).join('')
-        : `<div class="tx-sub">حقيبتك فارغة حالياً.</div>`;
-
-      document.getElementById('inAppAdminLoginBox').classList.toggle('hidden', adminUnlocked);
-      document.getElementById('inAppAdminContent').classList.toggle('hidden', !adminUnlocked);
-      if (adminUnlocked) {
-        buildAdminHtml('inAppAdminContent');
-      }
-    }
-
-    document.getElementById('tabLogin').addEventListener('click', () => {
-      document.getElementById('tabLogin').classList.add('active');
-      document.getElementById('tabRegister').classList.remove('active');
-      document.getElementById('loginForm').classList.remove('hidden');
-      document.getElementById('registerForm').classList.add('hidden');
-    });
-
-    document.getElementById('tabRegister').addEventListener('click', () => {
-      document.getElementById('tabRegister').classList.add('active');
-      document.getElementById('tabLogin').classList.remove('active');
-      document.getElementById('registerForm').classList.remove('hidden');
-      document.getElementById('loginForm').classList.add('hidden');
-    });
-
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('regUsername').value.trim();
-      const password = document.getElementById('regPassword').value;
-      if (!username || !password) return;
-
-      const latest = await cloudGetUsers();
-      const baseList = cloudConnected ? latest : state.users;
-
-      if (baseList.some(u => String(u.username || '').toLowerCase() === username.toLowerCase())) {
-        toast('اسم اللاعب مستخدم بالفعل، اختر اسماً آخر.');
-        return;
-      }
-
-      const now = new Date().toLocaleString('ar-EG');
-      const iban = makeIban(baseList);
-      const newUser = {
-        username,
-        password,
-        iban,
-        balance: INITIAL_BALANCE,
-        createdAt: now,
-        lastLoginAt: now,
-        inventory: [],
-        lastHandcuffBoughtAt: null,
-        transactions: [{ id: Date.now(), type: 'in', title: 'رصيد افتتاحي للحساب الجديد', meta: 'منحة بداية السيرفر', amount: INITIAL_BALANCE, date: now }]
-      };
-
-      baseList.push(newUser);
-      state.sessionUser = username;
-      inspectedUser = username;
-      await cloudSaveUsers(baseList);
-      e.target.reset();
-      render();
-      toast('تم إنشاء حسابك برصيد 1,000 نقطة!');
-    });
-
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('loginUsername').value.trim();
-      const password = document.getElementById('loginPassword').value;
-
-      const latest = await cloudGetUsers();
-      const baseList = cloudConnected ? latest : state.users;
-
-      const user = baseList.find(
-        u => String(u.username || '').toLowerCase() === username.toLowerCase() && u.password === password
-      );
-
-      if (!user) {
-        toast('اسم اللاعب أو كلمة المرور غير صحيحة.');
-        return;
-      }
-
-      user.lastLoginAt = new Date().toLocaleString('ar-EG');
-      if (!user.createdAt) user.createdAt = user.lastLoginAt;
-      state.sessionUser = user.username;
-      inspectedUser = user.username;
-      await cloudSaveUsers(baseList);
-      e.target.reset();
-      render();
-      toast('أهلاً بك مجدداً يا ' + user.username);
-    });
-
-    document.getElementById('openAdminBtn').addEventListener('click', async () => {
-      standaloneMode = adminUnlocked ? 'panel' : 'login';
-      render();
-      if (adminUnlocked) {
-        await syncFromCloud();
-      }
-    });
-
-    document.getElementById('extAdminBackBtn').addEventListener('click', () => {
-      standaloneMode = 'none';
-      render();
-    });
-
-    document.getElementById('extAdminCloseBtn').addEventListener('click', () => {
-      standaloneMode = 'none';
-      render();
-    });
-
-    document.getElementById('extAdminLoginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const u = document.getElementById('extAdminUser').value.trim().toLowerCase();
-      const p = document.getElementById('extAdminPass').value.trim().toLo
+              <button type=
