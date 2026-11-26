@@ -130,6 +130,12 @@
       box-shadow: 0 10px 25px rgba(225, 29, 72, 0.22);
     }
 
+    .btn-emerald {
+      background: linear-gradient(135deg, #34d399, var(--emerald));
+      color: #06251b;
+      box-shadow: 0 10px 24px rgba(16, 185, 129, 0.22);
+    }
+
     .btn-ghost {
       background: rgba(255, 255, 255, 0.05);
       color: var(--text-main);
@@ -245,6 +251,23 @@
       margin-top: 14px;
       padding-top: 14px;
       border-top: 1px solid var(--border-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .support-bar {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(9, 11, 15, 0.75);
+      border: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
     }
 
     .topbar {
@@ -409,6 +432,7 @@
 
     .section-card {
       padding: 22px;
+      margin-bottom: 20px;
     }
 
     .section-title {
@@ -435,7 +459,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-height: 340px;
+      max-height: 360px;
       overflow-y: auto;
     }
 
@@ -448,6 +472,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .tx-title {
@@ -542,6 +567,59 @@
       font-weight: 900;
       color: var(--accent-bright);
       font-size: 1rem;
+    }
+
+    .order-card {
+      background: rgba(9, 11, 15, 0.8);
+      border: 1px solid var(--border-soft);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .status-pending {
+      background: rgba(245, 158, 11, 0.16);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .status-approved {
+      background: rgba(16, 185, 129, 0.16);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .status-rejected {
+      background: var(--crimson-dim);
+      color: #fda4af;
+      border: 1px solid rgba(225, 29, 72, 0.35);
+    }
+
+    .delivery-box {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      color: #d1fae5;
     }
 
     .admin-box {
@@ -715,6 +793,15 @@
 
         <div class="admin-gate-bar">
           <button type="button" id="openAdminBtn" class="btn btn-ghost" style="width:100%;">لوحة الأدمن</button>
+          <button type="button" id="openDealerAuthBtn" class="btn btn-ghost" style="width:100%;">لوحة تاجر الأسلحة</button>
+        </div>
+
+        <div class="support-bar">
+          <div>
+            <div style="font-weight:800;color:var(--accent-bright);">الدعم الفني والطلبات (Discord)</div>
+            <div class="tx-sub">حساب الدعم: <strong style="color:#fff;">black2268891</strong></div>
+          </div>
+          <button type="button" class="copy-mini copySupportBtn">نسخ الحساب</button>
         </div>
       </div>
 
@@ -742,6 +829,31 @@
         </div>
         <div id="extAdminContent"></div>
       </div>
+
+      <div id="standaloneDealerLoginBox" class="hidden">
+        <div class="auth-badge">ARMS DEALER • SAN ORI</div>
+        <h2 class="auth-title" style="font-size:1.45rem;">دخول لوحة تاجر الأسلحة</h2>
+        <form id="extDealerLoginForm">
+          <div class="input-group">
+            <label>اسم التاجر أو الأدمن</label>
+            <input id="extDealerUser" class="input" type="text" placeholder="اكتب اسم التاجر" required />
+          </div>
+          <div class="input-group">
+            <label>كلمة المرور</label>
+            <input id="extDealerPass" class="input" type="password" placeholder="أدخل كلمة المرور" required />
+          </div>
+          <button type="submit" class="btn btn-gold" style="width:100%; margin-bottom:8px;">دخول لوحة التاجر</button>
+          <button type="button" id="extDealerBackBtn" class="btn btn-ghost" style="width:100%;">رجوع</button>
+        </form>
+      </div>
+
+      <div id="standaloneDealerPanelBox" class="hidden">
+        <div class="section-title">
+          <h2 class="auth-title" style="font-size:1.4rem; margin:0;">لوحة تاجر الأسلحة والطلبات</h2>
+          <button type="button" id="extDealerCloseBtn" class="btn btn-ghost" style="padding:7px 12px; font-size:0.82rem;">خروج</button>
+        </div>
+        <div id="extDealerContent"></div>
+      </div>
     </div>
   </section>
 
@@ -758,11 +870,15 @@
       <nav class="nav-tabs">
         <button type="button" class="nav-btn active" data-view="bankView">البنك والتحويلات</button>
         <button type="button" class="nav-btn" data-view="shopView">متجر المعدات</button>
-        <button type="button" class="nav-btn" data-view="invView">الحقيبة</button>
+        <button type="button" class="nav-btn" data-view="invView">الحقيبة والطلبات</button>
+        <button type="button" class="nav-btn" data-view="dealerView">تاجر الأسلحة</button>
         <button type="button" class="nav-btn" data-view="adminView">إدارة الأرصدة</button>
       </nav>
 
-      <button type="button" id="logoutBtn" class="btn btn-ghost">خروج</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button type="button" class="btn btn-ghost copySupportBtn" style="padding:9px 14px;font-size:0.85rem;">الدعم: black2268891</button>
+        <button type="button" id="logoutBtn" class="btn btn-ghost">خروج</button>
+      </div>
     </header>
 
     <section id="bankView">
@@ -824,7 +940,11 @@
       <div class="section-card glass">
         <div class="section-title">
           <span>متجر الأسلحة الخفيفة والمعدات المسموحة</span>
-          <span class="tag">خصم فوري من الرصيد</span>
+          <span class="tag">يُخصم الرصيد ويُرسل للتاجر والأدمن</span>
+        </div>
+        <div class="input-group" style="max-width:460px;">
+          <label>ملاحظة للتاجر أو الأدمن (اختياري — مثل وقت تفضله في الرول بلاي)</label>
+          <input id="shopOrderNote" class="input" type="text" placeholder="مثال: متواجد بالمدينة بعد المغرب" />
         </div>
         <div id="shopGrid" class="shop-grid"></div>
       </div>
@@ -832,8 +952,33 @@
 
     <section id="invView" class="hidden">
       <div class="section-card glass">
-        <div class="section-title"><span>حقيبتك ومعداتك المشتراة</span></div>
+        <div class="section-title"><span>طلباتي وحالة التسليم في سان أوري</span></div>
+        <div id="myOrdersList"></div>
+      </div>
+
+      <div class="section-card glass">
+        <div class="section-title"><span>حقيبتك ومعداتك المستلمة</span></div>
         <div id="invGrid" class="shop-grid"></div>
+      </div>
+    </section>
+
+    <section id="dealerView" class="hidden">
+      <div class="section-card glass" style="max-width: 960px; margin: 0 auto;">
+        <div id="inAppDealerLoginBox">
+          <div class="section-title"><span>دخول لوحة تاجر الأسلحة</span></div>
+          <form id="inAppDealerLoginForm">
+            <div class="input-group">
+              <label>اسم التاجر أو الأدمن</label>
+              <input id="inAppDealerUser" class="input" type="text" required />
+            </div>
+            <div class="input-group">
+              <label>كلمة المرور</label>
+              <input id="inAppDealerPass" class="input" type="password" required />
+            </div>
+            <button type="submit" class="btn btn-gold" style="width:100%;">فتح لوحة تاجر الأسلحة</button>
+          </form>
+        </div>
+        <div id="inAppDealerContent" class="hidden"></div>
       </div>
     </section>
 
@@ -859,7 +1004,7 @@
   </main>
 
   <footer class="footer-note">
-    تنويه: هذا الموقع نظام محاكاة وبنك نقاط وهمي مخصص لأغراض الرول بلاي (San Ori) لشراء المعدات والأسلحة الخفيفة المسموحة فقط.
+    تنويه: هذا الموقع نظام محاكاة وبنك نقاط وهمي مخصص لأغراض الرول بلاي (San Ori) • الدعم الفني: <strong>black2268891</strong>.
   </footer>
 
   <div id="toast" class="toast"></div>
@@ -868,10 +1013,23 @@
     const INITIAL_BALANCE = 1000;
     const STORAGE_KEY = 'san_ori_bank_v1';
     const FX_CONFIG_KEY = 'san_ori_admin_fx_v1';
+    const ORDERS_KEY = 'san_ori_orders_v1';
     const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const ADMIN_USER = 'dr black';
     const ADMIN_PASS = 'black';
+    const DEALER_USER = 'dealer';
+    const DEALER_PASS = 'black';
+    const SUPPORT_DISCORD = 'black2268891';
     const FIREBASE_DB_URL = 'https://san-ori-bank-default-rtdb.firebaseio.com';
+
+    const SAN_ORI_ZONES = [
+      'الميناء القديم - سان أوري',
+      'المستودعات الشرقية',
+      'الحي الصناعي',
+      'الأنفاق السفلية',
+      'سوق الليل',
+      'أطراف المدينة الشمالية'
+    ];
 
     const PRESET_COLORS = [
       { id: 'royal_gold', name: 'ذهبي ملكي • فخامة وقوة', accent: '#d4af37', bright: '#f5d061', dark: '#8a640b' },
@@ -900,7 +1058,7 @@
       { id: 'glock_17', cat: 'سلاح خفيف', name: 'جلوك 17', desc: 'مسدس خفيف عملي وسريع الاستخدام في الرول بلاي.', price: 700 },
       { id: 'm19', cat: 'سلاح خفيف', name: 'M19', desc: 'مسدس خفيف بدقة وثبات جيدين.', price: 800 },
       { id: 'deagle_44', cat: 'سلاح خفيف', name: 'ديجل 44', desc: 'مسدس خفيف عالي الضرر للمواقف الحاسمة.', price: 950 },
-      { id: 'handcuffs', cat: 'معدات الضبط', name: 'كلبشات', desc: 'معدات ضبط — مسموح بشرائها مرة واحدة فقط كل 24 ساعة.', price: 1000, dailyLimit: true },
+      { id: 'handcuffs', cat: 'معدات الضبط', name: 'كلبشات', desc: 'معدات ضبط — مسموح بطلبها مرة واحدة فقط كل 24 ساعة.', price: 1000, dailyLimit: true },
       { id: 'mac_11', cat: 'سلاح خفيف', name: 'MAC-11', desc: 'رشاش خفيف سريع الطلقات مناسب للتحركات الخفيفة.', price: 1100 },
       { id: 'axe', cat: 'قتال عن قرب', name: 'الفأس', desc: 'فأس قتال عن قرب بضرر مرتفع.', price: 1200 },
       { id: 'medical', cat: 'معدات دعم', name: 'الطب', desc: 'إمدادات طبية وعلاج لاستعادة الصحة في الرول بلاي.', price: 2000 },
@@ -908,11 +1066,16 @@
     ];
 
     let adminUnlocked = false;
+    let dealerUnlocked = false;
     let standaloneMode = 'none';
     let inspectedUser = null;
     let cloudConnected = false;
     let cycleTimer = null;
     let serverBroadcast = '';
+
+    function makeTxCode() {
+      return 'TX-' + Math.floor(100000 + Math.random() * 900000);
+    }
 
     function hexToRgba(hex, alpha) {
       const clean = String(hex || '#d4af37').replace('#', '');
@@ -1044,10 +1207,33 @@
 
     let state = loadLocal();
 
+    function loadLocalOrders() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveLocalOrders(list) {
+      try {
+        localStorage.setItem(ORDERS_KEY, JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    let ordersState = loadLocalOrders();
+
     function normalizeUsersData(raw) {
       if (!raw) return [];
       const arr = Array.isArray(raw) ? raw : Object.values(raw);
       return arr.filter(u => u && typeof u === 'object' && u.username);
+    }
+
+    function normalizeOrdersData(raw) {
+      if (!raw) return [];
+      const arr = Array.isArray(raw) ? raw : Object.values(raw);
+      return arr.filter(o => o && typeof o === 'object' && o.id);
     }
 
     async function cloudGetUsers() {
@@ -1081,6 +1267,36 @@
         return true;
       } catch (err) {
         cloudConnected = false;
+        return false;
+      }
+    }
+
+    async function cloudGetOrders() {
+      if (!hasCloudDb()) return ordersState;
+      try {
+        const baseUrl = FIREBASE_DB_URL.replace(/\/+$/, '');
+        const res = await fetch(`${baseUrl}/san_ori_bank/orders.json?t=${Date.now()}`);
+        if (!res.ok) return ordersState;
+        const data = await res.json();
+        return normalizeOrdersData(data);
+      } catch (e) {
+        return ordersState;
+      }
+    }
+
+    async function cloudSaveOrders(list) {
+      ordersState = normalizeOrdersData(list);
+      saveLocalOrders(ordersState);
+      if (!hasCloudDb()) return false;
+      try {
+        const baseUrl = FIREBASE_DB_URL.replace(/\/+$/, '');
+        const res = await fetch(`${baseUrl}/san_ori_bank/orders.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(ordersState)
+        });
+        return res.ok;
+      } catch (e) {
         return false;
       }
     }
@@ -1150,13 +1366,18 @@
 
     async function syncFromCloud() {
       if (!hasCloudDb()) return;
-      const [remoteUsers, remoteBroadcast, remoteFx] = await Promise.all([
+      const [remoteUsers, remoteBroadcast, remoteFx, remoteOrders] = await Promise.all([
         cloudGetUsers(),
         cloudGetBroadcast(),
-        cloudGetFx()
+        cloudGetFx(),
+        cloudGetOrders()
       ]);
       serverBroadcast = remoteBroadcast;
       renderBroadcast();
+      if (Array.isArray(remoteOrders)) {
+        ordersState = remoteOrders;
+        saveLocalOrders(ordersState);
+      }
       if (remoteFx && typeof remoteFx === 'object') {
         try {
           localStorage.setItem(FX_CONFIG_KEY, JSON.stringify(remoteFx));
@@ -1179,6 +1400,10 @@
       if (e.key === FX_CONFIG_KEY) {
         fxConfig = loadFxConfig();
         applyFxConfig();
+        render();
+      }
+      if (e.key === ORDERS_KEY) {
+        ordersState = loadLocalOrders();
         render();
       }
     });
@@ -1414,6 +1639,169 @@
       }
     }
 
+    async function handleOrderDecision(orderId, decision, zone, timeSlot, reason) {
+      const latestOrders = await cloudGetOrders();
+      const ordersList = Array.isArray(latestOrders) ? [...latestOrders] : [...ordersState];
+      const idx = ordersList.findIndex(o => String(o.id) === String(orderId));
+      if (idx === -1) return;
+
+      const order = ordersList[idx];
+      if (order.status !== 'pending') {
+        toast('تم البت في هذا الطلب مسبقاً.');
+        return;
+      }
+
+      const latestUsers = await cloudGetUsers();
+      const usersList = cloudConnected ? [...latestUsers] : [...state.users];
+      const buyer = usersList.find(u => String(u.username).toLowerCase() === String(order.username).toLowerCase());
+      const nowStr = new Date().toLocaleString('ar-EG');
+
+      if (decision === 'approve') {
+        order.status = 'approved';
+        order.deliveryZone = zone || SAN_ORI_ZONES[0];
+        order.deliveryTime = timeSlot || 'خلال 15 دقيقة';
+        order.decidedAt = nowStr;
+
+        if (buyer) {
+          buyer.inventory = Array.isArray(buyer.inventory) ? buyer.inventory : [];
+          buyer.inventory.unshift({
+            id: order.itemId,
+            cat: order.itemCat,
+            name: order.itemName,
+            desc: `تمت الموافقة على التسليم في: ${order.deliveryZone} (${order.deliveryTime})`,
+            boughtAt: nowStr
+          });
+          buyer.transactions = Array.isArray(buyer.transactions) ? buyer.transactions : [];
+          buyer.transactions.unshift({
+            id: Date.now(),
+            type: 'in',
+            title: `تأكيد تسليم: ${order.itemName}`,
+            meta: `#${order.txCode} • ${order.deliveryZone} • ${order.deliveryTime}`,
+            amount: 0,
+            date: nowStr
+          });
+        }
+
+        await cloudSaveUsers(usersList);
+        await cloudSaveOrders(ordersList);
+        render();
+        toast(`تم قبول طلب ${order.itemName} وتحديد التسليم في ${order.deliveryZone}`);
+      } else {
+        order.status = 'rejected';
+        order.rejectReason = reason || 'الطلب غير متاح حالياً';
+        order.decidedAt = nowStr;
+
+        if (buyer) {
+          buyer.balance = Number(buyer.balance || 0) + Number(order.price || 0);
+          if (order.dailyLimit) {
+            buyer.lastHandcuffBoughtAt = null;
+          }
+          buyer.transactions = Array.isArray(buyer.transactions) ? buyer.transactions : [];
+          buyer.transactions.unshift({
+            id: Date.now(),
+            type: 'in',
+            title: `استرجاع رصيد (طلب مرفوض): ${order.itemName}`,
+            meta: `#${order.txCode} • السبب: ${order.rejectReason}`,
+            amount: Number(order.price || 0),
+            date: nowStr
+          });
+        }
+
+        await cloudSaveUsers(usersList);
+        await cloudSaveOrders(ordersList);
+        render();
+        toast(`تم رفض الطلب وإرجاع ${Number(order.price || 0).toLocaleString()} PTS لحساب ${order.username}`);
+      }
+    }
+
+    function buildDealerPanelHtml(targetId) {
+      const box = document.getElementById(targetId);
+      if (!box) return;
+
+      const zoneOptions = SAN_ORI_ZONES.map(z => `<option value="${z}">${z}</option>`).join('');
+      const pendingOrders = ordersState.filter(o => o.status === 'pending');
+      const historyOrders = ordersState.filter(o => o.status !== 'pending');
+
+      const pendingHtml = pendingOrders.length
+        ? pendingOrders.map(o => `
+            <div class="order-card" data-order-id="${o.id}">
+              <div class="order-header">
+                <div>
+                  <span class="status-pill status-pending">قيد المراجعة</span>
+                  <strong style="margin-right:8px;">${o.itemName}</strong>
+                  <span class="item-price" style="margin-right:8px;">${Number(o.price).toLocaleString()} PTS</span>
+                </div>
+                <span class="tx-sub">#${o.txCode} • ${o.createdAt}</span>
+              </div>
+              <div class="tx-sub">
+                اللاعب: <strong>${o.username}</strong> (${o.iban}) • ملاحظة اللاعب: <strong>${o.playerNote || 'لا يوجد'}</strong>
+              </div>
+              <div class="grid-2" style="margin-bottom:4px;gap:10px;">
+                <div>
+                  <label class="tx-sub" style="display:block;margin-bottom:4px;">المنطقة في سان أوري</label>
+                  <select class="input orderZoneSelect">${zoneOptions}</select>
+                </div>
+                <div>
+                  <label class="tx-sub" style="display:block;margin-bottom:4px;">معاد التسليم</label>
+                  <input type="text" class="input orderTimeInput" placeholder="مثال: الساعة 9:00 مساءً أو خلال 10 دقائق" />
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                <button type="button" class="btn btn-emerald approveOrderBtn" style="padding:8px 14px;font-size:0.85rem;">قبول وتحديد التسليم</button>
+                <input type="text" class="input orderRejectReason" placeholder="سبب الرفض (اختياري)" style="max-width:220px;padding:8px 12px;font-size:0.84rem;" />
+                <button type="button" class="btn btn-crimson rejectOrderBtn" style="padding:8px 14px;font-size:0.85rem;">رفض وإرجاع النقاط</button>
+              </div>
+            </div>
+          `).join('')
+        : `<div class="tx-sub">لا توجد طلبات معلقة حالياً.</div>`;
+
+      const historyHtml = historyOrders.length
+        ? historyOrders.slice(0, 12).map(o => `
+            <div class="order-card">
+              <div class="order-header">
+                <div>
+                  <span class="status-pill ${o.status === 'approved' ? 'status-approved' : 'status-rejected'}">
+                    ${o.status === 'approved' ? 'مقبول' : 'مرفوض'}
+                  </span>
+                  <strong style="margin-right:8px;">${o.itemName}</strong> — <span class="tx-sub">${o.username} (${o.iban})</span>
+                </div>
+                <span class="tx-sub">#${o.txCode} • ${o.decidedAt || o.createdAt}</span>
+              </div>
+              ${o.status === 'approved'
+                ? `<div class="delivery-box">المنطقة في سان أوري: <strong>${o.deliveryZone}</strong> • معاد التسليم: <strong>${o.deliveryTime}</strong></div>`
+                : `<div class="tx-sub" style="color:#fda4af;">سبب الرفض: ${o.rejectReason || 'غير محدد'}</div>`
+              }
+            </div>
+          `).join('')
+        : `<div class="tx-sub">لا يوجد سجل طلبات سابقة.</div>`;
+
+      box.innerHTML = `
+        <div class="admin-box">
+          <div class="section-title">
+            <span>الطلبات الواردة للتاجر والأدمن (${pendingOrders.length})</span>
+            <span class="tx-sub">الدعم: <strong>${SUPPORT_DISCORD}</strong></span>
+          </div>
+          ${pendingHtml}
+        </div>
+        <div class="admin-box" style="margin-bottom:0;">
+          <div class="section-title"><span>سجل الطلبات المنفذة والمرفوضة</span></div>
+          ${historyHtml}
+        </div>
+      `;
+
+      box.querySelectorAll('.order-card[data-order-id]').forEach(card => {
+        const oid = card.getAttribute('data-order-id');
+        card.querySelector('.approveOrderBtn')?.addEventListener('click', async () => {
+          const zone = card.querySelector('.orderZoneSelect')?.value || SAN_ORI_ZONES[0];
+          const timeSlot = (card.querySelector('.orderTimeInput')?.value || '').trim() || 'حسب التنسيق داخل الرول بلاي';
+          await handleOrderDecision(oid, 'approve', zone, timeSlot, '');
+        });
+        card.querySelector('.rejectOrderBtn')?.addEventListener('click', async () => {
+          const reason = (card.querySelector('.orderRejectReason')?.value || '').trim() || 'الكمية غير متاحة حالياً';
+          await handleOrderDecision(oid, 'reject', '', '', reason);
+        });
+      });
+    }
     function buildAdminHtml(targetId) {
       const box = document.getElementById(targetId);
       if (!box) return;
@@ -1565,7 +1953,7 @@
               id: Date.now(),
               type: diff > 0 ? 'in' : 'out',
               title: 'تعديل رصيد من الأدمن',
-              meta: `الرصيد الجديد: ${Number(target.balance || 0).toLocaleString()} PTS`,
+              meta: `${makeTxCode()} • الرصيد الجديد: ${Number(target.balance || 0).toLocaleString()} PTS`,
               amount: Math.abs(diff),
               date: new Date().toLocaleString('ar-EG')
             });
@@ -1578,6 +1966,7 @@
         });
       }
     }
+
     function bindBroadcastEvents(box) {
       const bForm = box.querySelector('.adminBroadcastForm');
       if (!bForm) return;
@@ -1610,10 +1999,15 @@
         document.getElementById('externalAuthContainer').classList.toggle('hidden', standaloneMode !== 'none');
         document.getElementById('standaloneAdminLoginBox').classList.toggle('hidden', standaloneMode !== 'login');
         document.getElementById('standaloneAdminPanelBox').classList.toggle('hidden', standaloneMode !== 'panel');
-        authBox.classList.toggle('wide', standaloneMode === 'panel');
+        document.getElementById('standaloneDealerLoginBox').classList.toggle('hidden', standaloneMode !== 'dealer_login');
+        document.getElementById('standaloneDealerPanelBox').classList.toggle('hidden', standaloneMode !== 'dealer_panel');
+        authBox.classList.toggle('wide', standaloneMode === 'panel' || standaloneMode === 'dealer_panel');
 
         if (standaloneMode === 'panel') {
           buildAdminHtml('extAdminContent');
+        }
+        if (standaloneMode === 'dealer_panel') {
+          buildDealerPanelHtml('extDealerContent');
         }
         return;
       }
@@ -1636,6 +2030,36 @@
           `).join('')
         : `<div class="tx-sub">لا توجد عمليات مسجلة حتى الآن.</div>`;
 
+      const myOrders = ordersState.filter(o => String(o.username).toLowerCase() === String(user.username).toLowerCase());
+      document.getElementById('myOrdersList').innerHTML = myOrders.length
+        ? myOrders.map(o => {
+            const statusClass = o.status === 'approved' ? 'status-approved' : (o.status === 'rejected' ? 'status-rejected' : 'status-pending');
+            const statusLabel = o.status === 'approved' ? 'مقبول — جاهز للتسليم' : (o.status === 'rejected' ? 'مرفوض — تم إرجاع النقاط' : 'قيد المراجعة');
+            return `
+              <div class="order-card">
+                <div class="order-header">
+                  <div>
+                    <span class="status-pill ${statusClass}">${statusLabel}</span>
+                    <strong style="margin-right:8px;">${o.itemName}</strong>
+                    <span class="item-price" style="margin-right:8px;">${Number(o.price).toLocaleString()} PTS</span>
+                  </div>
+                  <span class="tx-sub">#${o.txCode} • ${o.createdAt}</span>
+                </div>
+                ${o.status === 'approved'
+                  ? `<div class="delivery-box">
+                       <strong>تفاصيل التسليم في سان أوري:</strong><br/>
+                       المنطقة: <strong>${o.deliveryZone}</strong> • المعاد: <strong>${o.deliveryTime}</strong>
+                     </div>`
+                  : (o.status === 'rejected'
+                    ? `<div class="tx-sub" style="color:#fda4af;">سبب الرفض: ${o.rejectReason || 'غير محدد'}</div>`
+                    : `<div class="tx-sub">تم خصم النقاط مبدئياً وبانتظار قرار التاجر أو الأدمن.</div>`
+                  )
+                }
+              </div>
+            `;
+          }).join('')
+        : `<div class="tx-sub">لا توجد طلبات مسجلة لحسابك بعد.</div>`;
+
       const rem = cuffRemaining(user);
       document.getElementById('shopGrid').innerHTML = SHOP_ITEMS.map(item => {
         const locked = item.dailyLimit && rem > 0;
@@ -1649,7 +2073,7 @@
             </div>
             <div class="item-footer">
               <span class="item-price">${item.price.toLocaleString()} PTS</span>
-              <button type="button" class="btn btn-gold" ${locked ? 'disabled' : ''} data-buy="${item.id}">${locked ? 'مقيد اليوم' : 'شراء'}</button>
+              <button type="button" class="btn btn-gold" ${locked ? 'disabled' : ''} data-buy="${item.id}">${locked ? 'مقيد اليوم' : 'إرسال طلب'}</button>
             </div>
           </div>
         `;
@@ -1660,16 +2084,30 @@
           const item = SHOP_ITEMS.find(i => i.id === btn.getAttribute('data-buy'));
           if (!item) return;
 
-          const current = getCurrentUser();
-          if (!current) return;
+          const currentSession = getCurrentUser();
+          if (!currentSession) return;
 
-          if (current.frozen) {
+          if (currentSession.frozen) {
             toast('حسابك مجمّد حالياً، تواصل مع الإدارة.');
             return;
           }
 
-          if (item.dailyLimit && cuffRemaining(current) > 0) {
+          if (item.dailyLimit && cuffRemaining(currentSession) > 0) {
             toast('مسموح بالكلبشات مرة واحدة كل 24 ساعة.');
+            return;
+          }
+          if (Number(currentSession.balance || 0) < item.price) {
+            toast('رصيدك غير كافٍ.');
+            return;
+          }
+
+          const latestUsers = await cloudGetUsers();
+          const usersList = cloudConnected ? [...latestUsers] : [...state.users];
+          const current = usersList.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
+          if (!current) return;
+
+          if (current.frozen) {
+            toast('حسابك مجمّد حالياً، تواصل مع الإدارة.');
             return;
           }
           if (Number(current.balance || 0) < item.price) {
@@ -1678,24 +2116,48 @@
           }
 
           const now = new Date().toLocaleString('ar-EG');
+          const txCode = makeTxCode();
+          const playerNote = (document.getElementById('shopOrderNote')?.value || '').trim();
+
           current.balance = Number(current.balance || 0) - item.price;
           if (item.dailyLimit) current.lastHandcuffBoughtAt = Date.now();
-          current.inventory = Array.isArray(current.inventory) ? current.inventory : [];
-          current.inventory.unshift({ ...item, boughtAt: now });
           current.transactions = Array.isArray(current.transactions) ? current.transactions : [];
           current.transactions.unshift({
             id: Date.now(),
             type: 'out',
-            title: `شراء: ${item.name}`,
-            meta: item.cat,
+            title: `طلب معدات: ${item.name}`,
+            meta: `#${txCode} • قيد المراجعة لدى التاجر والأدمن`,
             amount: item.price,
             date: now
           });
 
-          saveLocal();
+          const latestOrders = await cloudGetOrders();
+          const nextOrders = Array.isArray(latestOrders) ? [...latestOrders] : [...ordersState];
+          nextOrders.unshift({
+            id: 'ord_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+            txCode,
+            username: current.username,
+            iban: current.iban,
+            itemId: item.id,
+            itemCat: item.cat,
+            itemName: item.name,
+            price: item.price,
+            dailyLimit: Boolean(item.dailyLimit),
+            playerNote,
+            status: 'pending',
+            deliveryZone: '',
+            deliveryTime: '',
+            rejectReason: '',
+            createdAt: now,
+            decidedAt: ''
+          });
+
+          await cloudSaveUsers(usersList);
+          await cloudSaveOrders(nextOrders);
+          const noteInput = document.getElementById('shopOrderNote');
+          if (noteInput) noteInput.value = '';
           render();
-          toast('تم شراء ' + item.name);
-          await cloudSaveUsers(state.users);
+          toast(`تم إرسال طلب ${item.name} للتاجر والأدمن وخصم ${item.price.toLocaleString()} PTS.`);
         });
       });
 
@@ -1709,13 +2171,18 @@
           `).join('')
         : `<div class="tx-sub">حقيبتك فارغة حالياً.</div>`;
 
+      document.getElementById('inAppDealerLoginBox').classList.toggle('hidden', dealerUnlocked);
+      document.getElementById('inAppDealerContent').classList.toggle('hidden', !dealerUnlocked);
+      if (dealerUnlocked) {
+        buildDealerPanelHtml('inAppDealerContent');
+      }
+
       document.getElementById('inAppAdminLoginBox').classList.toggle('hidden', adminUnlocked);
       document.getElementById('inAppAdminContent').classList.toggle('hidden', !adminUnlocked);
       if (adminUnlocked) {
         buildAdminHtml('inAppAdminContent');
       }
     }
-
     document.getElementById('tabLogin').addEventListener('click', () => {
       document.getElementById('tabLogin').classList.add('active');
       document.getElementById('tabRegister').classList.remove('active');
@@ -1728,6 +2195,13 @@
       document.getElementById('tabLogin').classList.remove('active');
       document.getElementById('registerForm').classList.remove('hidden');
       document.getElementById('loginForm').classList.add('hidden');
+    });
+
+    document.querySelectorAll('.copySupportBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        navigator.clipboard?.writeText(SUPPORT_DISCORD);
+        toast('تم نسخ حساب الدعم في ديسكورد: ' + SUPPORT_DISCORD);
+      });
     });
 
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
@@ -1756,7 +2230,7 @@
         lastLoginAt: now,
         inventory: [],
         lastHandcuffBoughtAt: null,
-        transactions: [{ id: Date.now(), type: 'in', title: 'رصيد افتتاحي للحساب الجديد', meta: 'منحة بداية السيرفر', amount: INITIAL_BALANCE, date: now }]
+        transactions: [{ id: Date.now(), type: 'in', title: 'رصيد افتتاحي للحساب الجديد', meta: `${makeTxCode()} • منحة بداية السيرفر`, amount: INITIAL_BALANCE, date: now }]
       };
 
       baseList.push(newUser);
@@ -1803,6 +2277,14 @@
       }
     });
 
+    document.getElementById('openDealerAuthBtn').addEventListener('click', async () => {
+      standaloneMode = (dealerUnlocked || adminUnlocked) ? 'dealer_panel' : 'dealer_login';
+      render();
+      if (dealerUnlocked || adminUnlocked) {
+        await syncFromCloud();
+      }
+    });
+
     document.getElementById('extAdminBackBtn').addEventListener('click', () => {
       standaloneMode = 'none';
       render();
@@ -1811,6 +2293,51 @@
     document.getElementById('extAdminCloseBtn').addEventListener('click', () => {
       standaloneMode = 'none';
       render();
+    });
+
+    document.getElementById('extDealerBackBtn').addEventListener('click', () => {
+      standaloneMode = 'none';
+      render();
+    });
+
+    document.getElementById('extDealerCloseBtn').addEventListener('click', () => {
+      standaloneMode = 'none';
+      render();
+    });
+
+    function checkDealerCredentials(u, p) {
+      return (u === DEALER_USER && p === DEALER_PASS) || (u === ADMIN_USER && p === ADMIN_PASS);
+    }
+
+    document.getElementById('extDealerLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('extDealerUser').value.trim().toLowerCase();
+      const p = document.getElementById('extDealerPass').value.trim().toLowerCase();
+      if (checkDealerCredentials(u, p)) {
+        dealerUnlocked = true;
+        standaloneMode = 'dealer_panel';
+        e.target.reset();
+        render();
+        toast('تم فتح لوحة تاجر الأسلحة بنجاح.');
+        await syncFromCloud();
+      } else {
+        toast('بيانات التاجر أو الأدمن غير صحيحة.');
+      }
+    });
+
+    document.getElementById('inAppDealerLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('inAppDealerUser').value.trim().toLowerCase();
+      const p = document.getElementById('inAppDealerPass').value.trim().toLowerCase();
+      if (checkDealerCredentials(u, p)) {
+        dealerUnlocked = true;
+        e.target.reset();
+        render();
+        toast('تم فتح لوحة تاجر الأسلحة بنجاح.');
+        await syncFromCloud();
+      } else {
+        toast('بيانات التاجر أو الأدمن غير صحيحة.');
+      }
     });
 
     document.getElementById('extAdminLoginForm').addEventListener('submit', async (e) => {
@@ -1847,7 +2374,7 @@
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const view = btn.getAttribute('data-view');
-        ['bankView', 'shopView', 'invView', 'adminView'].forEach(v => {
+        ['bankView', 'shopView', 'invView', 'dealerView', 'adminView'].forEach(v => {
           document.getElementById(v).classList.toggle('hidden', v !== view);
         });
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -1859,6 +2386,7 @@
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
       adminUnlocked = false;
+      dealerUnlocked = false;
       standaloneMode = 'none';
       state.sessionUser = null;
       saveLocal();
@@ -1926,6 +2454,7 @@
       }
 
       const now = new Date().toLocaleString('ar-EG');
+      const txCode = makeTxCode();
       sender.balance = Number(sender.balance || 0) - amount;
       rec.balance = Number(rec.balance || 0) + amount;
       sender.transactions = Array.isArray(sender.transactions) ? sender.transactions : [];
@@ -1935,7 +2464,7 @@
         id: Date.now() + 1,
         type: 'out',
         title: `تحويل إلى ${rec.username} (${rec.iban})`,
-        meta: note,
+        meta: `#${txCode} • ${note}`,
         amount,
         date: now
       });
@@ -1944,7 +2473,7 @@
         id: Date.now() + 2,
         type: 'in',
         title: `استلام من ${sender.username} (${sender.iban})`,
-        meta: note,
+        meta: `#${txCode} • ${note}`,
         amount,
         date: now
       });
