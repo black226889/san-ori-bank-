@@ -44,6 +44,13 @@
       50% { transform: scale(1.35); opacity: 0.65; }
     }
 
+    @keyframes cardSheen {
+      0% { transform: translateX(-140%) skewX(-22deg); opacity: 0; }
+      35% { opacity: 0.32; }
+      70% { opacity: 0.08; }
+      100% { transform: translateX(240%) skewX(-22deg); opacity: 0; }
+    }
+
     body[data-admin-fx="off"] {
       --accent-glow: transparent;
       --shadow-accent: none;
@@ -423,19 +430,38 @@
     }
 
     .black-card {
+      position: relative;
+      overflow: hidden;
       background:
         var(--card-radial),
-        linear-gradient(135deg, #16181f 0%, #0a0b0e 65%, #16141a 100%);
+        repeating-linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.018) 0px,
+          rgba(255, 255, 255, 0.018) 2px,
+          transparent 2px,
+          transparent 8px
+        ),
+        linear-gradient(135deg, #1b1e28 0%, #090a0e 58%, #191522 100%);
       border: 1px solid var(--border);
-      border-radius: 22px;
+      border-radius: 24px;
       padding: 24px;
-      min-height: 235px;
+      min-height: 245px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       box-shadow: var(--card-glow-shadow);
-      animation: pulseGlow 2.2s ease-in-out infinite;
+      animation: pulseGlow 2.4s ease-in-out infinite;
       transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .black-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 45%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+      animation: cardSheen 5.5s ease-in-out infinite;
+      pointer-events: none;
     }
 
     .black-card:hover {
@@ -448,21 +474,36 @@
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
     }
 
     .chip {
-      width: 44px;
-      height: 32px;
-      border-radius: 7px;
+      width: 46px;
+      height: 34px;
+      border-radius: 8px;
       background: linear-gradient(135deg, var(--accent-bright), var(--accent-dark));
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.45);
+    }
+
+    .card-meta-strip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-top: 4px;
     }
 
     .card-tier {
-      font-size: 0.76rem;
-      font-weight: 800;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
       color: var(--accent-bright);
-      background: rgba(0, 0, 0, 0.45);
-      padding: 4px 10px;
+      background: rgba(0, 0, 0, 0.52);
+      padding: 4px 11px;
       border-radius: 999px;
       border: 1px solid var(--border);
     }
@@ -492,11 +533,11 @@
     }
 
     .balance-amount {
-      font-size: 2.05rem;
+      font-size: 2.1rem;
       font-weight: 900;
       color: var(--accent-bright);
-      margin: 8px 0;
-      text-shadow: 0 0 20px var(--accent-glow);
+      margin: 6px 0;
+      text-shadow: 0 0 22px var(--accent-glow);
     }
 
     .card-bottom {
@@ -505,13 +546,15 @@
       align-items: flex-end;
       gap: 10px;
       flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
     }
 
     .iban-box {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(0, 0, 0, 0.45);
+      background: rgba(0, 0, 0, 0.55);
       padding: 6px 12px;
       border-radius: 10px;
       border: 1px solid var(--border-soft);
@@ -892,7 +935,6 @@
     }
   </style>
 </head>
-
 <body data-admin-fx="on" data-rp-theme="royal">
 
   <div id="broadcastBar" class="container hidden" style="padding-bottom:0;">
@@ -1041,6 +1083,7 @@
           <option value="black_market">ثيم: السوق السوداء</option>
           <option value="tactical_ops">ثيم: العمليات الليلية</option>
         </select>
+        <button type="button" id="claimDailyBonusBtn" class="btn btn-emerald" style="padding:8px 12px;font-size:0.82rem;">مكافأة اليوم</button>
         <button type="button" class="btn btn-ghost copySupportBtn" style="padding:8px 12px;font-size:0.82rem;">الدعم: black2268891</button>
         <button type="button" id="logoutBtn" class="btn btn-ghost" style="padding:8px 12px;font-size:0.82rem;">خروج</button>
       </div>
@@ -1059,7 +1102,11 @@
           <div>
             <div class="balance-label">الرصيد المتاح للشراء والتحويل</div>
             <div id="cardBalance" class="balance-amount">1,000 PTS</div>
-            <div id="cardLoanNotice" class="tx-sub" style="color:#fcd34d;"></div>
+            <div class="card-meta-strip">
+              <span>SAN ORI BLACK • VIRTUAL RP</span>
+              <span id="cardSecCode">SEC: --</span>
+            </div>
+            <div id="cardLoanNotice" class="tx-sub" style="color:#fcd34d;margin-top:4px;"></div>
           </div>
           <div class="card-bottom">
             <div>
@@ -1275,6 +1322,7 @@
   <script>
     const INITIAL_BALANCE = 1000;
     const MAX_LOAN_AMOUNT = 500;
+    const DAILY_BONUS_AMOUNT = 250;
     const STORAGE_KEY = 'san_ori_bank_v1';
     const FX_CONFIG_KEY = 'san_ori_admin_fx_v1';
     const ORDERS_KEY = 'san_ori_orders_v1';
@@ -1324,12 +1372,38 @@
     let serverBroadcast = '';
     let dealerFilter = 'pending';
     let pendingProofDataUrl = '';
+    let soundCtx = null;
+
+    function playUiTone(type = 'ok') {
+      if (fxConfig.fxEnabled === 'off') return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        if (!soundCtx) soundCtx = new AudioContext();
+        if (soundCtx.state === 'suspended') soundCtx.resume();
+        const osc = soundCtx.createOscillator();
+        const gain = soundCtx.createGain();
+        osc.type = type === 'alert' ? 'triangle' : 'sine';
+        osc.frequency.value = type === 'alert' ? 320 : 640;
+        gain.gain.setValueAtTime(0.035, soundCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, soundCtx.currentTime + 0.14);
+        osc.connect(gain);
+        gain.connect(soundCtx.destination);
+        osc.start();
+        osc.stop(soundCtx.currentTime + 0.14);
+      } catch (e) {}
+    }
     function makeTxCode() {
       return 'TX-' + Math.floor(100000 + Math.random() * 900000);
     }
 
     function makeDeliveryCode() {
       return String(Math.floor(1000 + Math.random() * 9000));
+    }
+
+    function getSecCodeForUser(user) {
+      const seed = String(user?.iban || 'SO-0000').replace(/\D/g, '') || '1000';
+      return ((Number(seed) * 73) % 899 + 100);
     }
 
     function hexToRgba(hex, alpha) {
@@ -1525,40 +1599,28 @@
       return cloudPutNode('users', state.users);
     }
 
-    async function cloudGetOrders() {
-      return cloudFetchNode('orders', ordersState, 'id');
-    }
-
+    async function cloudGetOrders() { return cloudFetchNode('orders', ordersState, 'id'); }
     async function cloudSaveOrders(list) {
       ordersState = normalizeArray(list, 'id');
       saveJsonArray(ORDERS_KEY, ordersState);
       return cloudPutNode('orders', ordersState);
     }
 
-    async function cloudGetDeposits() {
-      return cloudFetchNode('deposits', depositsState, 'id');
-    }
-
+    async function cloudGetDeposits() { return cloudFetchNode('deposits', depositsState, 'id'); }
     async function cloudSaveDeposits(list) {
       depositsState = normalizeArray(list, 'id');
       saveJsonArray(DEPOSITS_KEY, depositsState);
       return cloudPutNode('deposits', depositsState);
     }
 
-    async function cloudGetCrafterLogs() {
-      return cloudFetchNode('crafterLogs', crafterLogsState, 'id');
-    }
-
+    async function cloudGetCrafterLogs() { return cloudFetchNode('crafterLogs', crafterLogsState, 'id'); }
     async function cloudSaveCrafterLogs(list) {
       crafterLogsState = normalizeArray(list, 'id');
       saveJsonArray(CRAFTER_LOG_KEY, crafterLogsState);
       return cloudPutNode('crafterLogs', crafterLogsState);
     }
 
-    async function cloudGetTickets() {
-      return cloudFetchNode('tickets', ticketsState, 'id');
-    }
-
+    async function cloudGetTickets() { return cloudFetchNode('tickets', ticketsState, 'id'); }
     async function cloudSaveTickets(list) {
       ticketsState = normalizeArray(list, 'id');
       saveJsonArray(TICKETS_KEY, ticketsState);
@@ -1641,22 +1703,10 @@
       ]);
       serverBroadcast = remoteBroadcast;
       renderBroadcast();
-      if (Array.isArray(remoteOrders)) {
-        ordersState = remoteOrders;
-        saveJsonArray(ORDERS_KEY, ordersState);
-      }
-      if (Array.isArray(remoteDeposits)) {
-        depositsState = remoteDeposits;
-        saveJsonArray(DEPOSITS_KEY, depositsState);
-      }
-      if (Array.isArray(remoteCrafter)) {
-        crafterLogsState = remoteCrafter;
-        saveJsonArray(CRAFTER_LOG_KEY, crafterLogsState);
-      }
-      if (Array.isArray(remoteTickets)) {
-        ticketsState = remoteTickets;
-        saveJsonArray(TICKETS_KEY, ticketsState);
-      }
+      if (Array.isArray(remoteOrders)) { ordersState = remoteOrders; saveJsonArray(ORDERS_KEY, ordersState); }
+      if (Array.isArray(remoteDeposits)) { depositsState = remoteDeposits; saveJsonArray(DEPOSITS_KEY, depositsState); }
+      if (Array.isArray(remoteCrafter)) { crafterLogsState = remoteCrafter; saveJsonArray(CRAFTER_LOG_KEY, crafterLogsState); }
+      if (Array.isArray(remoteTickets)) { ticketsState = remoteTickets; saveJsonArray(TICKETS_KEY, ticketsState); }
       if (remoteFx && typeof remoteFx === 'object') {
         try {
           localStorage.setItem(FX_CONFIG_KEY, JSON.stringify(remoteFx));
@@ -1671,7 +1721,8 @@
       render();
     }
 
-    function toast(msg) {
+    function toast(msg, tone = 'ok') {
+      playUiTone(tone);
       const el = document.getElementById('toast');
       el.textContent = msg;
       el.classList.add('show');
@@ -1712,6 +1763,11 @@
     function cuffRemaining(user) {
       if (!user || !user.lastHandcuffBoughtAt) return 0;
       return Math.max(0, DAILY_COOLDOWN_MS - (Date.now() - Number(user.lastHandcuffBoughtAt)));
+    }
+
+    function dailyBonusRemaining(user) {
+      if (!user || !user.lastDailyBonusAt) return 0;
+      return Math.max(0, DAILY_COOLDOWN_MS - (Date.now() - Number(user.lastDailyBonusAt)));
     }
 
     function compressImageFile(file) {
@@ -1777,7 +1833,7 @@
 
       const dep = list[idx];
       if (dep.status !== 'pending') {
-        toast('تم البت في طلب الإيداع مسبقاً.');
+        toast('تم البت في طلب الإيداع مسبقاً.', 'alert');
         return;
       }
 
@@ -1787,7 +1843,7 @@
         const usersList = cloudConnected ? [...latestUsers] : [...state.users];
         const player = usersList.find(u => String(u.username).toLowerCase() === String(dep.username).toLowerCase());
         if (!player) {
-          toast('حساب اللاعب غير موجود.');
+          toast('حساب اللاعب غير موجود.', 'alert');
           return;
         }
 
@@ -1812,7 +1868,7 @@
         dep.decidedAt = nowStr;
         await cloudSaveDeposits(list);
         render();
-        toast(`تم رفض طلب إيداع ${dep.username}`);
+        toast(`تم رفض طلب إيداع ${dep.username}`, 'alert');
       }
     }
 
@@ -1824,7 +1880,7 @@
 
       const order = ordersList[idx];
       if (order.status !== 'pending') {
-        toast('لا يمكن إلغاء الطلب بعد البت فيه.');
+        toast('لا يمكن إلغاء الطلب بعد البت فيه.', 'alert');
         return;
       }
 
@@ -1985,7 +2041,7 @@
           const id = btn.getAttribute('data-toggle-allowed');
           if (fxConfig.allowedIds.includes(id)) {
             if (fxConfig.allowedIds.length === 1) {
-              toast('يجب أن يبقى لون واحد على الأقل.');
+              toast('يجب أن يبقى لون واحد على الأقل.', 'alert');
               return;
             }
             fxConfig.allowedIds = fxConfig.allowedIds.filter(x => x !== id);
@@ -2021,7 +2077,7 @@
       const usersList = cloudConnected ? [...latestUsers] : [...state.users];
       const target = usersList.find(u => String(u.username).toLowerCase() === String(targetUsername || '').toLowerCase());
       if (!target) {
-        toast('اختر لاعباً صحيحاً أولاً.');
+        toast('اختر لاعباً صحيحاً أولاً.', 'alert');
         return;
       }
 
@@ -2107,7 +2163,7 @@
 
       const order = ordersList[idx];
       if (order.status !== 'pending') {
-        toast('تم البت في هذا الطلب مسبقاً.');
+        toast('تم البت في هذا الطلب مسبقاً.', 'alert');
         return;
       }
 
@@ -2162,7 +2218,7 @@
         await cloudSaveUsers(usersList);
         await cloudSaveOrders(ordersList);
         render();
-        toast(`تم رفض الطلب وإرجاع ${Number(order.price || 0).toLocaleString()} PTS لحساب ${order.username}`);
+        toast(`تم رفض الطلب وإرجاع ${Number(order.price || 0).toLocaleString()} PTS لحساب ${order.username}`, 'alert');
       }
     }
 
@@ -2745,6 +2801,13 @@
       authSec.classList.add('hidden');
       appSec.classList.remove('hidden');
 
+      const bonusRem = dailyBonusRemaining(user);
+      const bonusBtn = document.getElementById('claimDailyBonusBtn');
+      if (bonusBtn) {
+        bonusBtn.disabled = bonusRem > 0 || Boolean(user.frozen);
+        bonusBtn.textContent = bonusRem > 0 ? `مكافأة اليوم (${formatCooldown(bonusRem)})` : `مكافأة اليوم (+${DAILY_BONUS_AMOUNT})`;
+      }
+
       const bal = Number(user.balance || 0);
       const loanDebt = Number(user.loanDebt || 0);
       let tier = 'STANDARD CARD';
@@ -2753,6 +2816,7 @@
 
       document.getElementById('welcomeUserText').textContent = `الحساب النشط: ${user.username}`;
       document.getElementById('cardTierLabel').textContent = tier;
+      document.getElementById('cardSecCode').textContent = `SEC: ${getSecCodeForUser(user)}`;
       const statusBadge = document.getElementById('cardStatusBadge');
       statusBadge.textContent = user.frozen ? 'مجمّد' : 'نشط';
       statusBadge.className = `card-status-badge ${user.frozen ? 'card-status-frozen' : 'card-status-active'}`;
@@ -2914,15 +2978,15 @@
           const currentSession = getCurrentUser();
           if (!currentSession) return;
           if (currentSession.frozen) {
-            toast('حسابك مجمّد حالياً، تواصل مع الإدارة.');
+            toast('حسابك مجمّد حالياً، تواصل مع الإدارة.', 'alert');
             return;
           }
           if (item.dailyLimit && cuffRemaining(currentSession) > 0) {
-            toast('مسموح بالكلبشات مرة واحدة كل 24 ساعة.');
+            toast('مسموح بالكلبشات مرة واحدة كل 24 ساعة.', 'alert');
             return;
           }
           if (Number(currentSession.balance || 0) < item.price) {
-            toast('رصيدك غير كافٍ.');
+            toast('رصيدك غير كافٍ.', 'alert');
             return;
           }
 
@@ -2930,7 +2994,7 @@
           const usersList = cloudConnected ? [...latestUsers] : [...state.users];
           const current = usersList.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
           if (!current || current.frozen || Number(current.balance || 0) < item.price) {
-            toast('تعذر إتمام الطلب، تحقق من الرصيد أو حالة الحساب.');
+            toast('تعذر إتمام الطلب، تحقق من الرصيد أو حالة الحساب.', 'alert');
             return;
           }
 
@@ -3002,6 +3066,38 @@
       if (adminUnlocked) buildAdminHtml('inAppAdminContent');
     }
 
+    document.getElementById('claimDailyBonusBtn')?.addEventListener('click', async () => {
+      const currentSession = getCurrentUser();
+      if (!currentSession) return;
+      if (currentSession.frozen) {
+        toast('حسابك مجمّد حالياً.', 'alert');
+        return;
+      }
+      if (dailyBonusRemaining(currentSession) > 0) {
+        toast('لقد حصلت على مكافأة اليوم بالفعل.', 'alert');
+        return;
+      }
+
+      const latestUsers = await cloudGetUsers();
+      const usersList = cloudConnected ? [...latestUsers] : [...state.users];
+      const user = usersList.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
+      if (!user) return;
+
+      const nowStr = new Date().toLocaleString('ar-EG');
+      user.lastDailyBonusAt = Date.now();
+      applyIncomingFundsWithLoanSettlement(
+        user,
+        DAILY_BONUS_AMOUNT,
+        nowStr,
+        'مكافأة دخول يومية • SAN ORI',
+        `#${makeTxCode()} • مكافأة يومية`
+      );
+
+      await cloudSaveUsers(usersList);
+      render();
+      toast(`تم إضافة مكافأة اليوم (+${DAILY_BONUS_AMOUNT} PTS) لحسابك!`);
+    });
+
     document.getElementById('closeReceiptModalBtn')?.addEventListener('click', () => {
       document.getElementById('receiptModal').classList.add('hidden');
     });
@@ -3026,7 +3122,7 @@
         document.getElementById('depositPreviewImg').src = pendingProofDataUrl;
         document.getElementById('depositPreviewWrap').classList.remove('hidden');
       } catch (err) {
-        toast('تعذر قراءة الصورة، اختر صورة أخرى.');
+        toast('تعذر قراءة الصورة، اختر صورة أخرى.', 'alert');
       }
     });
 
@@ -3035,7 +3131,7 @@
       const user = getCurrentUser();
       if (!user) return;
       if (user.frozen) {
-        toast('حسابك مجمّد حالياً.');
+        toast('حسابك مجمّد حالياً.', 'alert');
         return;
       }
 
@@ -3043,7 +3139,7 @@
         d => String(d.username).toLowerCase() === String(user.username).toLowerCase() && d.status === 'pending'
       );
       if (hasOpenDeposit) {
-        toast('لديك طلب إيداع قيد المراجعة بالفعل، انتظر قرار الأدمن أولاً.');
+        toast('لديك طلب إيداع قيد المراجعة بالفعل، انتظر قرار الأدمن أولاً.', 'alert');
         return;
       }
 
@@ -3052,11 +3148,11 @@
       const note = document.getElementById('depositNoteInput').value.trim();
 
       if (!Number.isFinite(amount) || amount <= 0) {
-        toast('أدخل مبلغاً صحيحاً أكبر من صفر.');
+        toast('أدخل مبلغاً صحيحاً أكبر من صفر.', 'alert');
         return;
       }
       if (!pendingProofDataUrl) {
-        toast('يجب رفع صورة الإثبات من اللعبة أولاً.');
+        toast('يجب رفع صورة الإثبات من اللعبة أولاً.', 'alert');
         return;
       }
 
@@ -3089,13 +3185,13 @@
       const currentSession = getCurrentUser();
       if (!currentSession) return;
       if (currentSession.frozen) {
-        toast('حسابك مجمّد حالياً.');
+        toast('حسابك مجمّد حالياً.', 'alert');
         return;
       }
 
       const reqAmount = Number(document.getElementById('loanAmountInput').value);
       if (!Number.isFinite(reqAmount) || reqAmount < 50 || reqAmount > MAX_LOAN_AMOUNT) {
-        toast(`مبلغ السلفة يجب أن يكون بين 50 و ${MAX_LOAN_AMOUNT} نقطة.`);
+        toast(`مبلغ السلفة يجب أن يكون بين 50 و ${MAX_LOAN_AMOUNT} نقطة.`, 'alert');
         return;
       }
 
@@ -3106,7 +3202,7 @@
 
       const existingDebt = Number(user.loanDebt || 0);
       if (existingDebt + reqAmount > MAX_LOAN_AMOUNT) {
-        toast(`الحد الأقصى لإجمالي السلفة هو ${MAX_LOAN_AMOUNT} PTS.`);
+        toast(`الحد الأقصى لإجمالي السلفة هو ${MAX_LOAN_AMOUNT} PTS.`, 'alert');
         return;
       }
 
@@ -3190,7 +3286,7 @@
         render();
         toast('تم فتح لوحة الأدمن');
       } else {
-        toast('بيانات لوحة الأدمن غير صحيحة.');
+        toast('بيانات لوحة الأدمن غير صحيحة.', 'alert');
       }
     });
 
@@ -3210,7 +3306,7 @@
         render();
         toast('تم فتح لوحة تاجر الأسلحة');
       } else {
-        toast('بيانات لوحة التاجر غير صحيحة.');
+        toast('بيانات لوحة التاجر غير صحيحة.', 'alert');
       }
     });
 
@@ -3219,14 +3315,14 @@
       const username = document.getElementById('regUsername').value.trim();
       const password = document.getElementById('regPassword').value;
       if (username.length < 2 || password.length < 3) {
-        toast('الاسم حرفان على الأقل وكلمة المرور 3 أحرف على الأقل.');
+        toast('الاسم حرفان على الأقل وكلمة المرور 3 أحرف على الأقل.', 'alert');
         return;
       }
 
       const latestUsers = await cloudGetUsers();
       const usersList = cloudConnected ? [...latestUsers] : [...state.users];
       if (usersList.some(u => String(u.username).toLowerCase() === username.toLowerCase())) {
-        toast('هذا الاسم مستخدم بالفعل.');
+        toast('هذا الاسم مستخدم بالفعل.', 'alert');
         return;
       }
 
@@ -3239,6 +3335,7 @@
         loanDebt: 0,
         frozen: false,
         lastHandcuffBoughtAt: null,
+        lastDailyBonusAt: null,
         createdAt: nowStr,
         lastLoginAt: nowStr,
         inventory: [],
@@ -3270,7 +3367,7 @@
       const usersList = cloudConnected ? [...latestUsers] : [...state.users];
       const found = usersList.find(u => String(u.username).toLowerCase() === username.toLowerCase() && u.password === password);
       if (!found) {
-        toast('اسم اللاعب أو كلمة المرور غير صحيحة.');
+        toast('اسم اللاعب أو كلمة المرور غير صحيحة.', 'alert');
         return;
       }
 
@@ -3315,7 +3412,7 @@
       const currentSession = getCurrentUser();
       if (!currentSession) return;
       if (currentSession.frozen) {
-        toast('حسابك مجمّد حالياً، لا يمكنك إجراء تحويلات.');
+        toast('حسابك مجمّد حالياً، لا يمكنك إجراء تحويلات.', 'alert');
         return;
       }
 
@@ -3326,15 +3423,15 @@
       const note = document.getElementById('transferNote').value.trim();
 
       if (!normalizedTarget || !Number.isFinite(amount) || amount <= 0) {
-        toast('تحقق من رقم الحساب والمبلغ.');
+        toast('تحقق من رقم الحساب والمبلغ.', 'alert');
         return;
       }
       if (cleanIbanKey(currentSession.iban) === normalizedTarget) {
-        toast('لا يمكنك التحويل لنفس حسابك.');
+        toast('لا يمكنك التحويل لنفس حسابك.', 'alert');
         return;
       }
       if (Number(currentSession.balance || 0) < amount) {
-        toast('رصيدك غير كافٍ لإتمام التحويل.');
+        toast('رصيدك غير كافٍ لإتمام التحويل.', 'alert');
         return;
       }
 
@@ -3344,15 +3441,15 @@
       const receiver = usersList.find(u => cleanIbanKey(u.iban) === normalizedTarget);
 
       if (!sender || sender.frozen) {
-        toast('تعذر إتمام التحويل من حسابك.');
+        toast('تعذر إتمام التحويل من حسابك.', 'alert');
         return;
       }
       if (!receiver) {
-        toast(`لم يتم العثور على حساب برقم (${normalizedTarget}).`);
+        toast(`لم يتم العثور على حساب برقم (${normalizedTarget}).`, 'alert');
         return;
       }
       if (Number(sender.balance || 0) < amount) {
-        toast('رصيدك غير كافٍ لإتمام التحويل.');
+        toast('رصيدك غير كافٍ لإتمام التحويل.', 'alert');
         return;
       }
 
@@ -3395,7 +3492,7 @@
         render();
         toast('تم فتح لوحة تاجر الأسلحة');
       } else {
-        toast('بيانات لوحة التاجر غير صحيحة.');
+        toast('بيانات لوحة التاجر غير صحيحة.', 'alert');
       }
     });
 
@@ -3410,7 +3507,7 @@
         render();
         toast('تم فتح لوحة الأدمن');
       } else {
-        toast('بيانات الأدمن غير صحيحة.');
+        toast('بيانات الأدمن غير صحيحة.', 'alert');
       }
     });
 
