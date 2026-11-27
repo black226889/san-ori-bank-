@@ -29,14 +29,19 @@
     }
 
     @keyframes ambientShift {
-      0% { filter: hue-rotate(0deg) saturate(1.12); }
-      50% { filter: hue-rotate(18deg) saturate(1.22); }
-      100% { filter: hue-rotate(0deg) saturate(1.12); }
+      0% { filter: hue-rotate(0deg) saturate(1.1); }
+      50% { filter: hue-rotate(14deg) saturate(1.18); }
+      100% { filter: hue-rotate(0deg) saturate(1.1); }
     }
 
     @keyframes pulseGlow {
       0%, 100% { box-shadow: 0 22px 55px rgba(0, 0, 0, 0.65), 0 0 24px var(--accent-glow); }
       50% { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.72), 0 0 38px var(--accent-glow); }
+    }
+
+    @keyframes dotPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.65; }
     }
 
     body[data-admin-fx="off"] {
@@ -51,6 +56,16 @@
     body[data-admin-fx="off"] *::after {
       animation: none !important;
       transition: none !important;
+    }
+
+    body[data-rp-theme="black_market"] {
+      --bg-dark: #06050a;
+      --bg-card: rgba(16, 12, 24, 0.9);
+    }
+
+    body[data-rp-theme="tactical_ops"] {
+      --bg-dark: #070a09;
+      --bg-card: rgba(12, 20, 18, 0.9);
     }
 
     * {
@@ -69,7 +84,7 @@
       min-height: 100vh;
       line-height: 1.6;
       overflow-x: hidden;
-      animation: ambientShift 5s ease-in-out infinite;
+      animation: ambientShift 6s ease-in-out infinite;
       transition: background 0.2s ease, color 0.2s ease;
     }
 
@@ -159,7 +174,7 @@
       font-weight: 600;
     }
 
-    .input, select {
+    .input, select, textarea {
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
@@ -171,7 +186,7 @@
       transition: border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .input:focus, select:focus {
+    .input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-dim);
     }
@@ -191,7 +206,7 @@
     }
 
     .auth-box.wide {
-      max-width: 960px;
+      max-width: 1040px;
     }
 
     .auth-badge {
@@ -311,6 +326,31 @@
       display: block;
     }
 
+    .cloud-pulse {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-soft);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #f59e0b;
+      animation: dotPulse 1.6s infinite;
+    }
+
+    .cloud-pulse.online .pulse-dot {
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+    }
+
     .nav-tabs {
       display: flex;
       flex-wrap: wrap;
@@ -318,13 +358,13 @@
     }
 
     .nav-btn {
-      padding: 9px 15px;
+      padding: 9px 14px;
       border-radius: 11px;
       border: 1px solid var(--border-soft);
       background: rgba(255, 255, 255, 0.03);
       color: var(--text-muted);
       font-weight: 700;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       cursor: pointer;
       transition: all 0.18s ease;
       display: inline-flex;
@@ -355,6 +395,33 @@
       margin-bottom: 22px;
     }
 
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-box {
+      background: rgba(11, 13, 18, 0.9);
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .stat-val {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: var(--accent-bright);
+      margin-top: 4px;
+    }
+
     .black-card {
       background:
         var(--card-radial),
@@ -362,7 +429,7 @@
       border: 1px solid var(--border);
       border-radius: 22px;
       padding: 24px;
-      min-height: 220px;
+      min-height: 235px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -379,6 +446,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .chip {
@@ -389,13 +458,32 @@
     }
 
     .card-tier {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 800;
       color: var(--accent-bright);
       background: rgba(0, 0, 0, 0.45);
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid var(--border);
+    }
+
+    .card-status-badge {
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .card-status-active {
+      background: rgba(16, 185, 129, 0.16);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .card-status-frozen {
+      background: var(--crimson-dim);
+      color: #fda4af;
+      border: 1px solid rgba(225, 29, 72, 0.35);
     }
 
     .balance-label {
@@ -407,7 +495,7 @@
       font-size: 2.05rem;
       font-weight: 900;
       color: var(--accent-bright);
-      margin: 10px 0;
+      margin: 8px 0;
       text-shadow: 0 0 20px var(--accent-glow);
     }
 
@@ -598,6 +686,11 @@
       gap: 10px;
     }
 
+    .order-card.high-value {
+      border-color: rgba(245, 158, 11, 0.55);
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.12);
+    }
+
     .order-header {
       display: flex;
       justify-content: space-between;
@@ -644,6 +737,16 @@
       padding: 10px 12px;
       font-size: 0.85rem;
       color: #d1fae5;
+    }
+
+    .proof-thumb {
+      max-width: 100%;
+      max-height: 220px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      object-fit: contain;
+      background: #050608;
     }
 
     .admin-box {
@@ -731,6 +834,25 @@
       color: var(--accent-bright);
     }
 
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 9998;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 560px;
+      padding: 22px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
     .toast {
       position: fixed;
       bottom: 22px;
@@ -770,7 +892,8 @@
     }
   </style>
 </head>
-<body data-admin-fx="on">
+
+<body data-admin-fx="on" data-rp-theme="royal">
 
   <div id="broadcastBar" class="container hidden" style="padding-bottom:0;">
     <div class="glass" style="padding:12px 18px;border-color:var(--accent);display:flex;align-items:center;justify-content:space-between;gap:10px;">
@@ -887,12 +1010,19 @@
         <div class="brand-logo">SO</div>
         <div>
           <h1>SAN ORI BANK & MARKET</h1>
-          <span id="welcomeUserText">مرحباً بك</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span id="welcomeUserText">مرحباً بك</span>
+            <span id="cloudPulseBadge" class="cloud-pulse">
+              <span class="pulse-dot"></span>
+              <span id="cloudPulseText">مزامنة...</span>
+            </span>
+          </div>
         </div>
       </div>
 
       <nav class="nav-tabs">
         <button type="button" class="nav-btn active" data-view="bankView">البنك والتحويلات</button>
+        <button type="button" class="nav-btn" data-view="depositView">إيداع من اللعبة</button>
         <button type="button" class="nav-btn" data-view="shopView">متجر المعدات</button>
         <button type="button" class="nav-btn" data-view="invView">الحقيبة والطلبات</button>
         <button type="button" class="nav-btn" data-view="dealerView">
@@ -905,9 +1035,14 @@
         </button>
       </nav>
 
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button type="button" class="btn btn-ghost copySupportBtn" style="padding:9px 14px;font-size:0.85rem;">الدعم: black2268891</button>
-        <button type="button" id="logoutBtn" class="btn btn-ghost">خروج</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <select id="rpThemeSelect" class="input" style="padding:8px 10px;font-size:0.8rem;width:auto;">
+          <option value="royal">ثيم: الفخامة الذهبية</option>
+          <option value="black_market">ثيم: السوق السوداء</option>
+          <option value="tactical_ops">ثيم: العمليات الليلية</option>
+        </select>
+        <button type="button" class="btn btn-ghost copySupportBtn" style="padding:8px 12px;font-size:0.82rem;">الدعم: black2268891</button>
+        <button type="button" id="logoutBtn" class="btn btn-ghost" style="padding:8px 12px;font-size:0.82rem;">خروج</button>
       </div>
     </header>
 
@@ -916,11 +1051,15 @@
         <div class="black-card">
           <div class="card-top">
             <div class="chip"></div>
-            <div class="card-tier">SAN ORI BLACK CARD</div>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <span id="cardTierLabel" class="card-tier">STANDARD</span>
+              <span id="cardStatusBadge" class="card-status-badge card-status-active">نشط</span>
+            </div>
           </div>
           <div>
             <div class="balance-label">الرصيد المتاح للشراء والتحويل</div>
             <div id="cardBalance" class="balance-amount">1,000 PTS</div>
+            <div id="cardLoanNotice" class="tx-sub" style="color:#fcd34d;"></div>
           </div>
           <div class="card-bottom">
             <div>
@@ -960,9 +1099,83 @@
         </div>
       </div>
 
+      <div class="grid-2">
+        <div class="section-card glass">
+          <div class="section-title">
+            <span>سلفة بنكية سريعة (RP Loan)</span>
+            <span class="tag">الحد الأقصى 500 نقطة</span>
+          </div>
+          <p class="tx-sub" style="margin-bottom:10px;">تقدر تطلب سلفة فورية لو رصيدك منخفض، وتتسدد تلقائياً من أول إيداع أو تحويل يوصلك.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <input id="loanAmountInput" class="input" type="number" min="50" max="500" placeholder="المبلغ (50 - 500)" style="max-width:190px;" />
+            <button type="button" id="requestLoanBtn" class="btn btn-gold">طلب سلفة الآن</button>
+          </div>
+        </div>
+
+        <div class="section-card glass">
+          <div class="section-title">
+            <span>تذكرة بلاغ أو مساعدة سريعة</span>
+            <span class="tag">تصل للأدمن فوراً</span>
+          </div>
+          <form id="ticketForm">
+            <div class="input-group" style="margin-bottom:10px;">
+              <input id="ticketMessageInput" class="input" type="text" placeholder="اكتب استفسارك أو بلاغك للإدارة..." required />
+            </div>
+            <button type="submit" class="btn btn-ghost" style="width:100%;">إرسال البلاغ للإدارة</button>
+          </form>
+        </div>
+      </div>
+
       <div class="section-card glass">
-        <div class="section-title"><span>سجل العمليات وكشف الحساب</span></div>
+        <div class="section-title">
+          <span>سجل العمليات والإيصالات الرقمية</span>
+          <span class="tx-sub">اضغط على أي عملية لعرض الإيصال</span>
+        </div>
         <div id="txList" class="tx-list"></div>
+      </div>
+    </section>
+
+    <section id="depositView" class="hidden">
+      <div class="section-card glass">
+        <div class="section-title">
+          <span>إيداع فلوس من اللعبة بصورة إثبات</span>
+          <span class="tag">يُراجع من الأدمن ويُضاف تلقائياً عند القبول</span>
+        </div>
+        <form id="depositProofForm">
+          <div class="grid-2" style="margin-bottom:0;gap:14px;">
+            <div class="input-group">
+              <label>المبلغ الذي حصلت عليه داخل اللعبة</label>
+              <input id="depositAmountInput" class="input" type="number" min="1" placeholder="اكتب المبلغ بالضبط كما في الصورة" required />
+            </div>
+            <div class="input-group">
+              <label>نوع النشاط أو مصدر الفلوس</label>
+              <select id="depositSourceSelect" class="input">
+                <option value="مهمة رسمية">مهمة رسمية</option>
+                <option value="سرقة / عملية">سرقة / عملية</option>
+                <option value="عمل حر / وظيفة">عمل حر / وظيفة</option>
+                <option value="مكافأة / فعالية">مكافأة / فعالية</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>ارفع صورة الإثبات من اللعبة (Screenshot)</label>
+            <input id="depositImageInput" class="input" type="file" accept="image/*" required />
+          </div>
+          <div id="depositPreviewWrap" class="hidden" style="margin-bottom:14px;">
+            <div class="tx-sub" style="margin-bottom:6px;">معاينة الصورة المضغوطة قبل الإرسال:</div>
+            <img id="depositPreviewImg" class="proof-thumb" alt="معاينة الإثبات" />
+          </div>
+          <div class="input-group">
+            <label>ملاحظة إضافية للأدمن (اختياري)</label>
+            <input id="depositNoteInput" class="input" type="text" placeholder="مثال: لقطة بعد إنهاء مهمة الميناء" />
+          </div>
+          <button type="submit" id="submitDepositBtn" class="btn btn-gold" style="width:100%;">إرسال طلب الإيداع للمراجعة</button>
+        </form>
+      </div>
+
+      <div class="section-card glass">
+        <div class="section-title"><span>سجل طلبات الإيداع الخاصة بك</span></div>
+        <div id="myDepositsList"></div>
       </div>
     </section>
 
@@ -993,7 +1206,7 @@
     </section>
 
     <section id="dealerView" class="hidden">
-      <div class="section-card glass" style="max-width: 960px; margin: 0 auto;">
+      <div class="section-card glass" style="max-width: 1020px; margin: 0 auto;">
         <div id="inAppDealerLoginBox">
           <div class="section-title"><span>دخول لوحة تاجر الأسلحة</span></div>
           <form id="inAppDealerLoginForm">
@@ -1013,7 +1226,7 @@
     </section>
 
     <section id="adminView" class="hidden">
-      <div class="section-card glass" style="max-width: 960px; margin: 0 auto;">
+      <div class="section-card glass" style="max-width: 1020px; margin: 0 auto;">
         <div id="inAppAdminLoginBox">
           <div class="section-title"><span>دخول لوحة الأدمن</span></div>
           <form id="inAppAdminLoginForm">
@@ -1033,6 +1246,26 @@
     </section>
   </main>
 
+  <div id="receiptModal" class="modal-overlay hidden">
+    <div class="modal-card glass">
+      <div class="section-title">
+        <span>إيصال عملية رقمي • SAN ORI</span>
+        <button type="button" id="closeReceiptModalBtn" class="btn btn-ghost" style="padding:6px 12px;font-size:0.82rem;">إغلاق</button>
+      </div>
+      <div id="receiptModalBody"></div>
+    </div>
+  </div>
+
+  <div id="imageModal" class="modal-overlay hidden">
+    <div class="modal-card glass" style="max-width:820px;text-align:center;">
+      <div class="section-title">
+        <span>معاينة صورة الإثبات</span>
+        <button type="button" id="closeImageModalBtn" class="btn btn-ghost" style="padding:6px 12px;font-size:0.82rem;">إغلاق</button>
+      </div>
+      <img id="modalFullImage" style="max-width:100%;max-height:72vh;border-radius:12px;" alt="صورة الإثبات" />
+    </div>
+  </div>
+
   <footer class="footer-note">
     تنويه: هذا الموقع نظام محاكاة وبنك نقاط وهمي مخصص لأغراض الرول بلاي (San Ori) • الدعم الفني: <strong>black2268891</strong>.
   </footer>
@@ -1041,9 +1274,13 @@
 
   <script>
     const INITIAL_BALANCE = 1000;
+    const MAX_LOAN_AMOUNT = 500;
     const STORAGE_KEY = 'san_ori_bank_v1';
     const FX_CONFIG_KEY = 'san_ori_admin_fx_v1';
     const ORDERS_KEY = 'san_ori_orders_v1';
+    const DEPOSITS_KEY = 'san_ori_deposits_v1';
+    const CRAFTER_LOG_KEY = 'san_ori_crafter_logs_v1';
+    const TICKETS_KEY = 'san_ori_tickets_v1';
     const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const ADMIN_USER = 'dr black';
     const ADMIN_PASS = 'black';
@@ -1055,20 +1292,12 @@
     const PRESET_COLORS = [
       { id: 'royal_gold', name: 'ذهبي ملكي • فخامة وقوة', accent: '#d4af37', bright: '#f5d061', dark: '#8a640b' },
       { id: 'blood_crimson', name: 'أحمر قرمزي • خطر وجرأة', accent: '#e11d48', bright: '#fb7185', dark: '#7f1d1d' },
-      { id: 'ruby_red', name: 'أحمر ياقوتي • حماس وإثارة', accent: '#ef4444', bright: '#fca5a5', dark: '#7f1d1d' },
       { id: 'emerald_green', name: 'أخضر زمردي • نمو وأمان', accent: '#10b981', bright: '#34d399', dark: '#065f46' },
-      { id: 'jade_mint', name: 'أخضر نعناعي • صفاء وحيوية', accent: '#14b8a6', bright: '#5eead4', dark: '#115e59' },
-      { id: 'lime_volt', name: 'أخضر ليموني • طاقة وسرعة', accent: '#84cc16', bright: '#bef264', dark: '#365314' },
       { id: 'neon_violet', name: 'بنفسجي نيون • غموض وسوق سوداء', accent: '#8b5cf6', bright: '#c084fc', dark: '#4c1d95' },
-      { id: 'royal_purple', name: 'أرجواني ملكي • هيبة وسيادة', accent: '#a855f7', bright: '#d8b4fe', dark: '#581c87' },
       { id: 'sky_cyan', name: 'أزرق سماوي • وضوح وتقنية', accent: '#06b6d4', bright: '#67e8f9', dark: '#164e63' },
       { id: 'electric_blue', name: 'أزرق كهربائي • دقة وتحكم', accent: '#3b82f6', bright: '#93c5fd', dark: '#1e3a8a' },
-      { id: 'indigo_night', name: 'نيلي ليلي • عمق وهدوء', accent: '#6366f1', bright: '#a5b4fc', dark: '#312e81' },
       { id: 'fire_orange', name: 'برتقالي ناري • نشاط وتحدي', accent: '#f97316', bright: '#fdba74', dark: '#7c2d12' },
-      { id: 'amber_blaze', name: 'كهرماني متوهج • تحذير وبريق', accent: '#f59e0b', bright: '#fcd34d', dark: '#78350f' },
-      { id: 'coral_sunset', name: 'مرجاني غروبي • دفء وتميز', accent: '#fb7185', bright: '#fda4af', dark: '#881337' },
       { id: 'luxury_rose', name: 'وردي فخم • تألق وجاذبية', accent: '#ec4899', bright: '#f472b6', dark: '#831843' },
-      { id: 'magenta_pulse', name: 'أرجواني وردي • نبض وحداثة', accent: '#d946ef', bright: '#f0abfc', dark: '#701a75' },
       { id: 'silver_chrome', name: 'فضي معدني • حداثة وصرامة', accent: '#94a3b8', bright: '#e2e8f0', dark: '#334155' }
     ];
 
@@ -1094,7 +1323,7 @@
     let cycleTimer = null;
     let serverBroadcast = '';
     let dealerFilter = 'pending';
-
+    let pendingProofDataUrl = '';
     function makeTxCode() {
       return 'TX-' + Math.floor(100000 + Math.random() * 900000);
     }
@@ -1134,7 +1363,6 @@
         const finalAllowed = allowedIds.length ? allowedIds : ['royal_gold'];
         const activeColorId = finalAllowed.includes(raw.activeColorId) ? raw.activeColorId : finalAllowed[0];
         const speedMs = Number(raw.cycleSpeedMs);
-
         return {
           fxEnabled: raw.fxEnabled === 'off' ? 'off' : 'on',
           autoCycle: raw.autoCycle === 'off' ? 'off' : 'on',
@@ -1177,10 +1405,7 @@
       root.style.setProperty('--card-radial', `radial-gradient(circle at 85% 15%, ${hexToRgba(chosen.bright, 0.32)}, transparent 45%)`);
 
       document.body.setAttribute('data-admin-fx', fxConfig.fxEnabled);
-
-      try {
-        localStorage.setItem(FX_CONFIG_KEY, JSON.stringify(fxConfig));
-      } catch (e) {}
+      try { localStorage.setItem(FX_CONFIG_KEY, JSON.stringify(fxConfig)); } catch (e) {}
 
       if (cycleTimer) {
         clearInterval(cycleTimer);
@@ -1194,9 +1419,7 @@
           const nextIdx = (idx + 1) % fxConfig.allowedIds.length;
           fxConfig.activeColorId = fxConfig.allowedIds[nextIdx];
           applyFxConfig();
-          if (adminUnlocked) {
-            render();
-          }
+          if (adminUnlocked) render();
         }, intervalMs);
       }
     }
@@ -1206,11 +1429,20 @@
     }
 
     function cleanIbanKey(val) {
-      return String(val || '')
-        .trim()
-        .toUpperCase()
-        .replace(/\s+/g, '')
-        .replace(/[–—−]/g, '-');
+      return String(val || '').trim().toUpperCase().replace(/\s+/g, '').replace(/[–—−]/g, '-');
+    }
+
+    function loadJsonArray(key) {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveJsonArray(key, arr) {
+      try { localStorage.setItem(key, JSON.stringify(arr)); } catch (e) {}
     }
 
     function loadLocal() {
@@ -1226,105 +1458,111 @@
     }
 
     function saveLocal() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch (e) {}
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
     }
 
     let state = loadLocal();
+    let ordersState = loadJsonArray(ORDERS_KEY);
+    let depositsState = loadJsonArray(DEPOSITS_KEY);
+    let crafterLogsState = loadJsonArray(CRAFTER_LOG_KEY);
+    let ticketsState = loadJsonArray(TICKETS_KEY);
 
-    function loadLocalOrders() {
+    function normalizeArray(raw, requiredKey) {
+      if (!raw) return [];
+      const arr = Array.isArray(raw) ? raw : Object.values(raw);
+      return arr.filter(item => item && typeof item === 'object' && item[requiredKey]);
+    }
+
+    async function cloudFetchNode(nodeName, fallbackArr, requiredKey) {
+      if (!hasCloudDb()) return fallbackArr;
       try {
-        const parsed = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]');
-        return Array.isArray(parsed) ? parsed : [];
+        const baseUrl = FIREBASE_DB_URL.replace(/\/+$/, '');
+        const res = await fetch(`${baseUrl}/san_ori_bank/${nodeName}.json?t=${Date.now()}`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        cloudConnected = true;
+        return normalizeArray(data, requiredKey);
       } catch (e) {
-        return [];
+        return fallbackArr;
       }
     }
 
-    function saveLocalOrders(list) {
+    async function cloudPutNode(nodeName, arr) {
+      if (!hasCloudDb()) return false;
       try {
-        localStorage.setItem(ORDERS_KEY, JSON.stringify(list));
-      } catch (e) {}
-    }
-
-    let ordersState = loadLocalOrders();
-
-    function normalizeUsersData(raw) {
-      if (!raw) return [];
-      const arr = Array.isArray(raw) ? raw : Object.values(raw);
-      return arr.filter(u => u && typeof u === 'object' && u.username);
-    }
-
-    function normalizeOrdersData(raw) {
-      if (!raw) return [];
-      const arr = Array.isArray(raw) ? raw : Object.values(raw);
-      return arr.filter(o => o && typeof o === 'object' && o.id);
+        const baseUrl = FIREBASE_DB_URL.replace(/\/+$/, '');
+        const res = await fetch(`${baseUrl}/san_ori_bank/${nodeName}.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(arr)
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        cloudConnected = true;
+        return true;
+      } catch (e) {
+        cloudConnected = false;
+        return false;
+      }
     }
 
     async function cloudGetUsers() {
-      if (!hasCloudDb()) return state.users;
       try {
         const baseUrl = FIREBASE_DB_URL.replace(/\/+$/, '');
         const res = await fetch(`${baseUrl}/san_ori_bank/users.json?t=${Date.now()}`);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         cloudConnected = true;
-        return normalizeUsersData(data);
-      } catch (err) {
+        return normalizeArray(data, 'username');
+      } catch (e) {
         cloudConnected = false;
         return state.users;
       }
     }
 
-    async function cloudSaveUsers(usersList) {
-      state.users = normalizeUsersData(usersList);
+    async function cloudSaveUsers(list) {
+      state.users = normalizeArray(list, 'username');
       saveLocal();
-      if (!hasCloudDb()) return false;
-      try {
-        const baseUrl = FIREBASE_DB_URL.replace(/\/+$/, '');
-        const res = await fetch(`${baseUrl}/san_ori_bank/users.json`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(state.users)
-        });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        cloudConnected = true;
-        return true;
-      } catch (err) {
-        cloudConnected = false;
-        return false;
-      }
+      return cloudPutNode('users', state.users);
     }
 
     async function cloudGetOrders() {
-      if (!hasCloudDb()) return ordersState;
-      try {
-        const baseUrl = FIREBASE_DB_URL.replace(/\/+$/, '');
-        const res = await fetch(`${baseUrl}/san_ori_bank/orders.json?t=${Date.now()}`);
-        if (!res.ok) return ordersState;
-        const data = await res.json();
-        return normalizeOrdersData(data);
-      } catch (e) {
-        return ordersState;
-      }
+      return cloudFetchNode('orders', ordersState, 'id');
     }
 
     async function cloudSaveOrders(list) {
-      ordersState = normalizeOrdersData(list);
-      saveLocalOrders(ordersState);
-      if (!hasCloudDb()) return false;
-      try {
-        const baseUrl = FIREBASE_DB_URL.replace(/\/+$/, '');
-        const res = await fetch(`${baseUrl}/san_ori_bank/orders.json`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(ordersState)
-        });
-        return res.ok;
-      } catch (e) {
-        return false;
-      }
+      ordersState = normalizeArray(list, 'id');
+      saveJsonArray(ORDERS_KEY, ordersState);
+      return cloudPutNode('orders', ordersState);
+    }
+
+    async function cloudGetDeposits() {
+      return cloudFetchNode('deposits', depositsState, 'id');
+    }
+
+    async function cloudSaveDeposits(list) {
+      depositsState = normalizeArray(list, 'id');
+      saveJsonArray(DEPOSITS_KEY, depositsState);
+      return cloudPutNode('deposits', depositsState);
+    }
+
+    async function cloudGetCrafterLogs() {
+      return cloudFetchNode('crafterLogs', crafterLogsState, 'id');
+    }
+
+    async function cloudSaveCrafterLogs(list) {
+      crafterLogsState = normalizeArray(list, 'id');
+      saveJsonArray(CRAFTER_LOG_KEY, crafterLogsState);
+      return cloudPutNode('crafterLogs', crafterLogsState);
+    }
+
+    async function cloudGetTickets() {
+      return cloudFetchNode('tickets', ticketsState, 'id');
+    }
+
+    async function cloudSaveTickets(list) {
+      ticketsState = normalizeArray(list, 'id');
+      saveJsonArray(TICKETS_KEY, ticketsState);
+      return cloudPutNode('tickets', ticketsState);
     }
 
     async function cloudGetBroadcast() {
@@ -1392,17 +1630,32 @@
 
     async function syncFromCloud() {
       if (!hasCloudDb()) return;
-      const [remoteUsers, remoteBroadcast, remoteFx, remoteOrders] = await Promise.all([
+      const [remoteUsers, remoteBroadcast, remoteFx, remoteOrders, remoteDeposits, remoteCrafter, remoteTickets] = await Promise.all([
         cloudGetUsers(),
         cloudGetBroadcast(),
         cloudGetFx(),
-        cloudGetOrders()
+        cloudGetOrders(),
+        cloudGetDeposits(),
+        cloudGetCrafterLogs(),
+        cloudGetTickets()
       ]);
       serverBroadcast = remoteBroadcast;
       renderBroadcast();
       if (Array.isArray(remoteOrders)) {
         ordersState = remoteOrders;
-        saveLocalOrders(ordersState);
+        saveJsonArray(ORDERS_KEY, ordersState);
+      }
+      if (Array.isArray(remoteDeposits)) {
+        depositsState = remoteDeposits;
+        saveJsonArray(DEPOSITS_KEY, depositsState);
+      }
+      if (Array.isArray(remoteCrafter)) {
+        crafterLogsState = remoteCrafter;
+        saveJsonArray(CRAFTER_LOG_KEY, crafterLogsState);
+      }
+      if (Array.isArray(remoteTickets)) {
+        ticketsState = remoteTickets;
+        saveJsonArray(TICKETS_KEY, ticketsState);
       }
       if (remoteFx && typeof remoteFx === 'object') {
         try {
@@ -1414,32 +1667,16 @@
       if (cloudConnected) {
         state.users = remoteUsers;
         saveLocal();
-        render();
       }
+      render();
     }
-
-    window.addEventListener('storage', (e) => {
-      if (e.key === STORAGE_KEY) {
-        state = loadLocal();
-        render();
-      }
-      if (e.key === FX_CONFIG_KEY) {
-        fxConfig = loadFxConfig();
-        applyFxConfig();
-        render();
-      }
-      if (e.key === ORDERS_KEY) {
-        ordersState = loadLocalOrders();
-        render();
-      }
-    });
 
     function toast(msg) {
       const el = document.getElementById('toast');
       el.textContent = msg;
       el.classList.add('show');
       clearTimeout(window.__t);
-      window.__t = setTimeout(() => el.classList.remove('show'), 2800);
+      window.__t = setTimeout(() => el.classList.remove('show'), 2900);
     }
 
     function makeIban(usersList) {
@@ -1477,6 +1714,176 @@
       return Math.max(0, DAILY_COOLDOWN_MS - (Date.now() - Number(user.lastHandcuffBoughtAt)));
     }
 
+    function compressImageFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            const maxW = 920;
+            const scale = img.width > maxW ? (maxW / img.width) : 1;
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.72));
+          };
+          img.onerror = reject;
+          img.src = reader.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function applyIncomingFundsWithLoanSettlement(userObj, incomingAmount, nowStr, baseTitle, baseMeta) {
+      const gross = Number(incomingAmount || 0);
+      const currentLoan = Number(userObj.loanDebt || 0);
+      if (currentLoan <= 0) {
+        userObj.balance = Number(userObj.balance || 0) + gross;
+        userObj.transactions = Array.isArray(userObj.transactions) ? userObj.transactions : [];
+        userObj.transactions.unshift({
+          id: Date.now() + Math.floor(Math.random() * 100),
+          type: 'in',
+          title: baseTitle,
+          meta: baseMeta,
+          amount: gross,
+          date: nowStr
+        });
+        return;
+      }
+
+      const repaid = Math.min(currentLoan, gross);
+      const netAdded = gross - repaid;
+      userObj.loanDebt = currentLoan - repaid;
+      userObj.balance = Number(userObj.balance || 0) + netAdded;
+      userObj.transactions = Array.isArray(userObj.transactions) ? userObj.transactions : [];
+      userObj.transactions.unshift({
+        id: Date.now() + Math.floor(Math.random() * 100),
+        type: 'in',
+        title: `${baseTitle} (سداد سلفة تلقائي -${repaid.toLocaleString()} PTS)`,
+        meta: `${baseMeta} • المتبقي من السلفة: ${userObj.loanDebt.toLocaleString()} PTS`,
+        amount: netAdded,
+        date: nowStr
+      });
+    }
+
+    async function handleDepositDecision(depositId, decision, rejectReason) {
+      const latestDeposits = await cloudGetDeposits();
+      const list = Array.isArray(latestDeposits) ? [...latestDeposits] : [...depositsState];
+      const idx = list.findIndex(d => String(d.id) === String(depositId));
+      if (idx === -1) return;
+
+      const dep = list[idx];
+      if (dep.status !== 'pending') {
+        toast('تم البت في طلب الإيداع مسبقاً.');
+        return;
+      }
+
+      const nowStr = new Date().toLocaleString('ar-EG');
+      if (decision === 'approve') {
+        const latestUsers = await cloudGetUsers();
+        const usersList = cloudConnected ? [...latestUsers] : [...state.users];
+        const player = usersList.find(u => String(u.username).toLowerCase() === String(dep.username).toLowerCase());
+        if (!player) {
+          toast('حساب اللاعب غير موجود.');
+          return;
+        }
+
+        dep.status = 'approved';
+        dep.decidedAt = nowStr;
+
+        applyIncomingFundsWithLoanSettlement(
+          player,
+          Number(dep.amount || 0),
+          nowStr,
+          `إيداع معتمد من اللعبة (${dep.source})`,
+          `#${dep.txCode}${dep.note ? ' • ' + dep.note : ''}`
+        );
+
+        await cloudSaveUsers(usersList);
+        await cloudSaveDeposits(list);
+        render();
+        toast(`تم قبول إيداع ${Number(dep.amount).toLocaleString()} PTS لحساب ${player.username}`);
+      } else {
+        dep.status = 'rejected';
+        dep.rejectReason = (rejectReason || '').trim() || 'الصورة غير واضحة أو المبلغ غير مطابق';
+        dep.decidedAt = nowStr;
+        await cloudSaveDeposits(list);
+        render();
+        toast(`تم رفض طلب إيداع ${dep.username}`);
+      }
+    }
+
+    async function cancelPendingOrderByPlayer(orderId) {
+      const latestOrders = await cloudGetOrders();
+      const ordersList = Array.isArray(latestOrders) ? [...latestOrders] : [...ordersState];
+      const idx = ordersList.findIndex(o => String(o.id) === String(orderId));
+      if (idx === -1) return;
+
+      const order = ordersList[idx];
+      if (order.status !== 'pending') {
+        toast('لا يمكن إلغاء الطلب بعد البت فيه.');
+        return;
+      }
+
+      const latestUsers = await cloudGetUsers();
+      const usersList = cloudConnected ? [...latestUsers] : [...state.users];
+      const buyer = usersList.find(u => String(u.username).toLowerCase() === String(order.username).toLowerCase());
+      const nowStr = new Date().toLocaleString('ar-EG');
+
+      order.status = 'rejected';
+      order.rejectReason = 'تم إلغاء الطلب بواسطة اللاعب';
+      order.decidedAt = nowStr;
+
+      if (buyer) {
+        buyer.balance = Number(buyer.balance || 0) + Number(order.price || 0);
+        if (order.dailyLimit) buyer.lastHandcuffBoughtAt = null;
+        buyer.transactions = Array.isArray(buyer.transactions) ? buyer.transactions : [];
+        buyer.transactions.unshift({
+          id: Date.now(),
+          type: 'in',
+          title: `إلغاء طلب واسترجاع الرصيد: ${order.itemName}`,
+          meta: `#${order.txCode} • إلغاء ذاتي قبل الموافقة`,
+          amount: Number(order.price || 0),
+          date: nowStr
+        });
+      }
+
+      await cloudSaveUsers(usersList);
+      await cloudSaveOrders(ordersList);
+      render();
+      toast(`تم إلغاء طلب ${order.itemName} وإرجاع ${Number(order.price).toLocaleString()} PTS لحسابك.`);
+    }
+
+    function openReceiptModal(tx) {
+      const modal = document.getElementById('receiptModal');
+      const body = document.getElementById('receiptModalBody');
+      if (!modal || !body || !tx) return;
+      body.innerHTML = `
+        <div class="admin-box" style="margin:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span class="auth-badge" style="margin:0;">إيصال رسمي • SAN ORI BANK</span>
+            <strong style="color:${tx.type === 'in' ? 'var(--emerald)' : '#fb7185'};font-size:1.15rem;">
+              ${tx.type === 'in' ? '+' : '-'}${Number(tx.amount || 0).toLocaleString()} PTS
+            </strong>
+          </div>
+          <div class="tx-title" style="margin-bottom:6px;">${tx.title}</div>
+          <div class="tx-sub" style="margin-bottom:6px;">التفاصيل والمرجع: <strong>${tx.meta || 'بدون مرجع'}</strong></div>
+          <div class="tx-sub">التاريخ والوقت: <strong>${tx.date}</strong></div>
+        </div>
+      `;
+      modal.classList.remove('hidden');
+    }
+
+    function openImageModal(src) {
+      const modal = document.getElementById('imageModal');
+      const img = document.getElementById('modalFullImage');
+      if (!modal || !img || !src) return;
+      img.src = src;
+      modal.classList.remove('hidden');
+    }
     function buildFxAdminBox() {
       const allColors = getAllColors();
       const isFxOn = fxConfig.fxEnabled === 'on';
@@ -1524,7 +1931,7 @@
           </div>
           <div class="palette-grid">${cardsHtml}</div>
           <form class="adminAddCustomColorForm" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-            <input type="text" class="input customColorName" placeholder="اسم اللون ومعناه (مثال: ذهبي دموي • قوة)" style="max-width:230px;padding:8px 12px;font-size:0.85rem;" />
+            <input type="text" class="input customColorName" placeholder="اسم اللون ومعناه" style="max-width:230px;padding:8px 12px;font-size:0.85rem;" />
             <input type="color" class="customColorHex" value="#f59e0b" style="width:46px;height:38px;border:none;background:none;cursor:pointer;" />
             <button type="submit" class="btn btn-ghost" style="padding:8px 14px;font-size:0.84rem;">+ إضافة لون للقائمة</button>
           </form>
@@ -1533,27 +1940,21 @@
     }
 
     function bindFxAdminEvents(container) {
-      const toggleFx = container.querySelector('#adminToggleAllFxBtn');
-      if (toggleFx) {
-        toggleFx.addEventListener('click', async () => {
-          fxConfig.fxEnabled = fxConfig.fxEnabled === 'on' ? 'off' : 'on';
-          applyFxConfig();
-          render();
-          await cloudSaveFx();
-          toast(fxConfig.fxEnabled === 'on' ? 'تم تشغيل التوهج والحركة على الموقع بالكامل' : 'تم إطفاء التوهج والحركة عن الموقع بالكامل');
-        });
-      }
+      container.querySelector('#adminToggleAllFxBtn')?.addEventListener('click', async () => {
+        fxConfig.fxEnabled = fxConfig.fxEnabled === 'on' ? 'off' : 'on';
+        applyFxConfig();
+        render();
+        await cloudSaveFx();
+        toast(fxConfig.fxEnabled === 'on' ? 'تم تشغيل التوهج والحركة' : 'تم إطفاء التوهج والحركة');
+      });
 
-      const toggleCycle = container.querySelector('#adminToggleCycleBtn');
-      if (toggleCycle) {
-        toggleCycle.addEventListener('click', async () => {
-          fxConfig.autoCycle = fxConfig.autoCycle === 'on' ? 'off' : 'on';
-          applyFxConfig();
-          render();
-          await cloudSaveFx();
-          toast(fxConfig.autoCycle === 'on' ? 'تم تشغيل التبديل التلقائي بين الألوان المحددة' : 'تم تثبيت اللون الحالي ومنع التبديل التلقائي');
-        });
-      }
+      container.querySelector('#adminToggleCycleBtn')?.addEventListener('click', async () => {
+        fxConfig.autoCycle = fxConfig.autoCycle === 'on' ? 'off' : 'on';
+        applyFxConfig();
+        render();
+        await cloudSaveFx();
+        toast(fxConfig.autoCycle === 'on' ? 'تم تشغيل التبديل التلقائي' : 'تم تثبيت اللون الحالي');
+      });
 
       container.querySelectorAll('[data-fx-speed]').forEach(btn => {
         btn.addEventListener('click', async () => {
@@ -1563,16 +1964,14 @@
           applyFxConfig();
           render();
           await cloudSaveFx();
-          toast(`تم ضبط سرعة تبديل الألوان على ${(ms / 1000)} ثانية`);
+          toast(`تم ضبط سرعة التبديل على ${(ms / 1000)} ثانية`);
         });
       });
 
       container.querySelectorAll('[data-pick-color]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const id = btn.getAttribute('data-pick-color');
-          if (!fxConfig.allowedIds.includes(id)) {
-            fxConfig.allowedIds.push(id);
-          }
+          if (!fxConfig.allowedIds.includes(id)) fxConfig.allowedIds.push(id);
           fxConfig.activeColorId = id;
           applyFxConfig();
           render();
@@ -1586,83 +1985,35 @@
           const id = btn.getAttribute('data-toggle-allowed');
           if (fxConfig.allowedIds.includes(id)) {
             if (fxConfig.allowedIds.length === 1) {
-              toast('يجب أن يبقى لون واحد على الأقل محدداً في القائمة.');
+              toast('يجب أن يبقى لون واحد على الأقل.');
               return;
             }
             fxConfig.allowedIds = fxConfig.allowedIds.filter(x => x !== id);
-            if (fxConfig.activeColorId === id) {
-              fxConfig.activeColorId = fxConfig.allowedIds[0];
-            }
+            if (fxConfig.activeColorId === id) fxConfig.activeColorId = fxConfig.allowedIds[0];
           } else {
             fxConfig.allowedIds.push(id);
           }
           applyFxConfig();
           render();
           await cloudSaveFx();
-          toast('تم تحديث قائمة الألوان المحددة');
         });
       });
 
       const addForm = container.querySelector('.adminAddCustomColorForm');
-      if (addForm) {
-        addForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const nameInput = addForm.querySelector('.customColorName');
-          const hexInput = addForm.querySelector('.customColorHex');
-          const name = (nameInput.value || '').trim() || 'لون مخصص';
-          const hex = hexInput.value || '#d4af37';
-          const id = 'custom_' + Date.now();
-          const newSwatch = {
-            id,
-            name,
-            accent: hex,
-            bright: hex,
-            dark: darkenHex(hex, 0.5)
-          };
-          fxConfig.customColors = Array.isArray(fxConfig.customColors) ? fxConfig.customColors : [];
-          fxConfig.customColors.push(newSwatch);
-          fxConfig.allowedIds.push(id);
-          fxConfig.activeColorId = id;
-          nameInput.value = '';
-          applyFxConfig();
-          render();
-          await cloudSaveFx();
-          toast('تمت إضافة وتفعيل اللون: ' + name);
-        });
-      }
-    }
-
-    function bindAccountControlEvents(box, acc) {
-      if (!acc) return;
-      const freezeBtn = box.querySelector('#adminToggleFreezeBtn');
-      if (freezeBtn) {
-        freezeBtn.addEventListener('click', async () => {
-          const latest = await cloudGetUsers();
-          const list = cloudConnected ? latest : state.users;
-          const target = list.find(u => u.username === acc.username);
-          if (!target) return;
-          target.frozen = !target.frozen;
-          inspectedUser = target.username;
-          await cloudSaveUsers(list);
-          render();
-          toast(target.frozen ? `تم تجميد حساب ${target.username}` : `تم فك تجميد حساب ${target.username}`);
-        });
-      }
-
-      const resetCuffBtn = box.querySelector('#adminResetCuffBtn');
-      if (resetCuffBtn) {
-        resetCuffBtn.addEventListener('click', async () => {
-          const latest = await cloudGetUsers();
-          const list = cloudConnected ? latest : state.users;
-          const target = list.find(u => u.username === acc.username);
-          if (!target) return;
-          target.lastHandcuffBoughtAt = null;
-          inspectedUser = target.username;
-          await cloudSaveUsers(list);
-          render();
-          toast(`تم تصفير عداد الكلبشات لحساب ${target.username}`);
-        });
-      }
+      addForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = (addForm.querySelector('.customColorName').value || '').trim() || 'لون مخصص';
+        const hex = addForm.querySelector('.customColorHex').value || '#d4af37';
+        const id = 'custom_' + Date.now();
+        fxConfig.customColors = Array.isArray(fxConfig.customColors) ? fxConfig.customColors : [];
+        fxConfig.customColors.push({ id, name, accent: hex, bright: hex, dark: darkenHex(hex, 0.5) });
+        fxConfig.allowedIds.push(id);
+        fxConfig.activeColorId = id;
+        applyFxConfig();
+        render();
+        await cloudSaveFx();
+        toast('تمت إضافة اللون: ' + name);
+      });
     }
 
     async function grantCrafterToUser(targetUsername, grantedByLabel) {
@@ -1695,9 +2046,57 @@
         date: nowStr
       });
 
+      const latestLogs = await cloudGetCrafterLogs();
+      const nextLogs = Array.isArray(latestLogs) ? [...latestLogs] : [...crafterLogsState];
+      nextLogs.unshift({
+        id: 'crf_' + Date.now(),
+        username: target.username,
+        iban: target.iban,
+        grantedBy: grantedByLabel,
+        date: nowStr
+      });
+
       await cloudSaveUsers(usersList);
+      await cloudSaveCrafterLogs(nextLogs);
       render();
       toast(`تم تسليم «أداة صنع أسلحة» إلى ${target.username}`);
+    }
+
+    function buildCrafterGrantBox(roleLabel) {
+      const opts = state.users.length
+        ? state.users.map(u => `<option value="${u.username}">${u.username} (${u.iban})</option>`).join('')
+        : `<option value="">لا يوجد لاعبون مسجلون</option>`;
+
+      const logsHtml = crafterLogsState.length
+        ? crafterLogsState.slice(0, 6).map(l => `
+            <div class="tx-item" style="padding:8px 12px;">
+              <div class="tx-sub">اللاعب: <strong>${l.username}</strong> (${l.iban}) • بواسطة: <strong>${l.grantedBy}</strong></div>
+              <div class="tx-sub">${l.date}</div>
+            </div>
+          `).join('')
+        : `<div class="tx-sub">لا يوجد سجل تسليم لأداة صنع الأسلحة بعد.</div>`;
+
+      return `
+        <div class="admin-box">
+          <div class="section-title">
+            <span>تسليم «أداة صنع أسلحة» وسجل التسليم</span>
+            <span class="tag">مقتصرة على التاجر والأدمن</span>
+          </div>
+          <form class="grantCrafterForm" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+            <select class="input crafterTargetUser" style="max-width:260px;">${opts}</select>
+            <button type="submit" class="btn btn-gold">منح أداة صنع أسلحة</button>
+          </form>
+          <div style="display:flex;flex-direction:column;gap:6px;">${logsHtml}</div>
+        </div>
+      `;
+    }
+
+    function bindCrafterGrantEvents(container, roleLabel) {
+      container.querySelector('.grantCrafterForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = container.querySelector('.crafterTargetUser')?.value || '';
+        await grantCrafterToUser(username, roleLabel);
+      });
     }
 
     async function handleOrderDecision(orderId, decision, zone, timeSlot, dealerNote, reason) {
@@ -1748,9 +2147,7 @@
 
         if (buyer) {
           buyer.balance = Number(buyer.balance || 0) + Number(order.price || 0);
-          if (order.dailyLimit) {
-            buyer.lastHandcuffBoughtAt = null;
-          }
+          if (order.dailyLimit) buyer.lastHandcuffBoughtAt = null;
           buyer.transactions = Array.isArray(buyer.transactions) ? buyer.transactions : [];
           buyer.transactions.unshift({
             id: Date.now(),
@@ -1782,7 +2179,7 @@
 
       await cloudSaveOrders(ordersList);
       render();
-      toast('تم تحديث منطقة وميعاد التسليم للطلب.');
+      toast('تم تحديث منطقة وميعاد التسليم.');
     }
 
     async function confirmOrderReceivedByPlayer(orderId) {
@@ -1828,36 +2225,6 @@
       toast(`تم تأكيد استلام ${order.itemName} وإضافته لحقيبتك!`);
     }
 
-    function buildCrafterGrantBox(roleLabel) {
-      const opts = state.users.length
-        ? state.users.map(u => `<option value="${u.username}">${u.username} (${u.iban})</option>`).join('')
-        : `<option value="">لا يوجد لاعبون مسجلون</option>`;
-
-      return `
-        <div class="admin-box">
-          <div class="section-title">
-            <span>تسليم «أداة صنع أسلحة» مباشرة</span>
-            <span class="tag">مقتصرة على التاجر والأدمن</span>
-          </div>
-          <form class="grantCrafterForm" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-            <select class="input crafterTargetUser" style="max-width:260px;">${opts}</select>
-            <button type="submit" class="btn btn-gold">منح أداة صنع أسلحة</button>
-            <span class="tx-sub">يتم إضافتها مباشرة لحقيبة اللاعب المختار باسم (${roleLabel}).</span>
-          </form>
-        </div>
-      `;
-    }
-
-    function bindCrafterGrantEvents(container, roleLabel) {
-      const form = container.querySelector('.grantCrafterForm');
-      if (!form) return;
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const username = form.querySelector('.crafterTargetUser')?.value || '';
-        await grantCrafterToUser(username, roleLabel);
-      });
-    }
-
     function buildDealerPanelHtml(targetId) {
       const box = document.getElementById(targetId);
       if (!box) return;
@@ -1873,12 +2240,14 @@
 
       const ordersHtml = filteredList.length
         ? filteredList.map(o => {
+            const isHigh = Number(o.price || 0) >= 2000;
             if (o.status === 'pending') {
               return `
-                <div class="order-card" data-order-id="${o.id}">
+                <div class="order-card ${isHigh ? 'high-value' : ''}" data-order-id="${o.id}">
                   <div class="order-header">
                     <div>
                       <span class="status-pill status-pending">قيد المراجعة</span>
+                      ${isHigh ? `<span class="item-cat" style="margin:0 6px;">طلب عالي القيمة</span>` : ''}
                       <strong style="margin-right:8px;">${o.itemName}</strong>
                       <span class="item-price" style="margin-right:8px;">${Number(o.price).toLocaleString()} PTS</span>
                     </div>
@@ -1926,11 +2295,11 @@
                   </div>
                   <div class="grid-2" style="margin-bottom:4px;gap:10px;">
                     <div>
-                      <label class="tx-sub" style="display:block;margin-bottom:4px;">تعديل المنطقة في سان أوري</label>
+                      <label class="tx-sub" style="display:block;margin-bottom:4px;">تعديل المنطقة</label>
                       <input type="text" class="input editZoneInput" value="${(o.deliveryZone || '').replace(/"/g, '&quot;')}" />
                     </div>
                     <div>
-                      <label class="tx-sub" style="display:block;margin-bottom:4px;">تعديل معاد التسليم</label>
+                      <label class="tx-sub" style="display:block;margin-bottom:4px;">تعديل المعاد</label>
                       <input type="text" class="input editTimeInput" value="${(o.deliveryTime || '').replace(/"/g, '&quot;')}" />
                     </div>
                   </div>
@@ -2011,13 +2380,77 @@
         });
       });
     }
+
     function buildAdminHtml(targetId) {
       const box = document.getElementById(targetId);
       if (!box) return;
 
-      const cloudNote = cloudConnected
-        ? `<span class="tag" style="background:rgba(16,185,129,0.16);color:#6ee7b7;border-color:rgba(16,185,129,0.35);">متصل بالسحابة (كل الأجهزة)</span>`
-        : `<span class="tag">وضع محلي حالياً (تأكد من صلاحيات Rules في Firebase)</span>`;
+      const totalCirculation = state.users.reduce((sum, u) => sum + Number(u.balance || 0), 0);
+      const pendingOrdersCount = ordersState.filter(o => o.status === 'pending').length;
+      const pendingDeposits = depositsState.filter(d => d.status === 'pending');
+
+      const statsHtml = `
+        <div class="stats-grid">
+          <div class="stat-box"><div class="stat-label">إجمالي الحسابات</div><div class="stat-val">${state.users.length}</div></div>
+          <div class="stat-box"><div class="stat-label">الرصيد المتداول</div><div class="stat-val">${totalCirculation.toLocaleString()}</div></div>
+          <div class="stat-box"><div class="stat-label">طلبات إيداع معلقة</div><div class="stat-val">${pendingDeposits.length}</div></div>
+          <div class="stat-box"><div class="stat-label">طلبات معدات معلقة</div><div class="stat-val">${pendingOrdersCount}</div></div>
+        </div>
+      `;
+
+      const depositsReviewHtml = `
+        <div class="admin-box">
+          <div class="section-title">
+            <span>مراجعة طلبات الإيداع بصور الإثبات (${pendingDeposits.length})</span>
+            <span class="tag">القبول يضيف الرصيد تلقائياً</span>
+          </div>
+          ${pendingDeposits.length
+            ? pendingDeposits.map(d => {
+                const isLarge = Number(d.amount || 0) >= 10000;
+                return `
+                  <div class="order-card ${isLarge ? 'high-value' : ''}" data-deposit-id="${d.id}">
+                    <div class="order-header">
+                      <div>
+                        <span class="status-pill status-pending">طلب إيداع</span>
+                        ${isLarge ? `<span class="item-cat" style="margin:0 6px;">مبلغ كبير • دقق الصورة</span>` : ''}
+                        <strong style="margin-right:8px;">${d.username} (${d.iban})</strong>
+                        <span class="item-price" style="margin-right:8px;">+${Number(d.amount).toLocaleString()} PTS</span>
+                      </div>
+                      <span class="tx-sub">#${d.txCode} • ${d.createdAt}</span>
+                    </div>
+                    <div class="tx-sub">المصدر: <strong>${d.source}</strong> • ملاحظة اللاعب: <strong>${d.note || 'لا يوجد'}</strong></div>
+                    ${d.imageData ? `<div><img src="${d.imageData}" class="proof-thumb reviewProofImg" alt="إثبات الإيداع" title="اضغط للتكبير" /></div>` : ''}
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                      <button type="button" class="btn btn-emerald approveDepositBtn" style="padding:8px 14px;font-size:0.85rem;">قبول وإضافة الرصيد تلقائياً</button>
+                      <input type="text" class="input depositRejectReason" placeholder="سبب الرفض (اختياري)" style="max-width:220px;padding:8px 12px;font-size:0.84rem;" />
+                      <button type="button" class="btn btn-crimson rejectDepositBtn" style="padding:8px 14px;font-size:0.85rem;">رفض الطلب</button>
+                    </div>
+                  </div>
+                `;
+              }).join('')
+            : `<div class="tx-sub">لا توجد طلبات إيداع بالصور قيد المراجعة حالياً.</div>`
+          }
+        </div>
+      `;
+
+      const openTickets = ticketsState.filter(t => t.status !== 'closed');
+      const ticketsHtml = `
+        <div class="admin-box">
+          <div class="section-title"><span>تذاكر وبلاغات اللاعبين (${openTickets.length})</span></div>
+          ${openTickets.length
+            ? openTickets.map(t => `
+                <div class="tx-item" data-ticket-id="${t.id}">
+                  <div>
+                    <div class="tx-title">${t.username} (${t.iban})</div>
+                    <div class="tx-sub">${t.message} • ${t.createdAt}</div>
+                  </div>
+                  <button type="button" class="btn btn-ghost closeTicketBtn" style="padding:6px 12px;font-size:0.8rem;">إغلاق البلاغ</button>
+                </div>
+              `).join('')
+            : `<div class="tx-sub">لا توجد بلاغات مفتوحة حالياً.</div>`
+          }
+        </div>
+      `;
 
       const crafterSection = buildCrafterGrantBox('الأدمن');
       const fxSection = buildFxAdminBox();
@@ -2026,7 +2459,7 @@
         <div class="admin-box">
           <div class="section-title"><span>إعلان عام لكل اللاعبين (Broadcast)</span></div>
           <form class="adminBroadcastForm" style="display:flex;gap:8px;flex-wrap:wrap;">
-            <input type="text" class="input broadcastInput" value="${serverBroadcast.replace(/"/g, '&quot;')}" placeholder="اكتب إعلان للسيرفر (اتركه فارغاً لإخفائه)..." style="flex:1;min-width:220px;" />
+            <input type="text" class="input broadcastInput" value="${serverBroadcast.replace(/"/g, '&quot;')}" placeholder="اكتب إعلان للسيرفر..." style="flex:1;min-width:220px;" />
             <button type="submit" class="btn btn-gold">نشر الإعلان</button>
             <button type="button" class="btn btn-ghost clearBroadcastBtn">مسح</button>
           </form>
@@ -2034,10 +2467,8 @@
       `;
 
       if (!state.users.length) {
-        box.innerHTML = `${crafterSection}${fxSection}${broadcastSection}<div class="admin-box"><div class="tx-sub">لا توجد حسابات مسجلة بعد. ${cloudNote}</div></div>`;
-        bindCrafterGrantEvents(box, 'الأدمن');
-        bindFxAdminEvents(box);
-        bindBroadcastEvents(box);
+        box.innerHTML = `${statsHtml}${depositsReviewHtml}${ticketsHtml}${crafterSection}${fxSection}${broadcastSection}<div class="admin-box"><div class="tx-sub">لا توجد حسابات مسجلة بعد.</div></div>`;
+        bindAdminAuxiliaryEvents(box);
         return;
       }
 
@@ -2053,7 +2484,7 @@
         <div class="acc-item ${u.username === acc.username ? 'active' : ''}" data-acc="${encodeURIComponent(u.username)}">
           <div>
             <div class="tx-title">${u.username} (${u.iban}) ${u.frozen ? '<span class="tag" style="margin-right:6px;">مجمّد</span>' : ''}</div>
-            <div class="tx-sub">آخر دخول: ${u.lastLoginAt || 'غير مسجل'} • أدوات: ${(u.inventory || []).length}</div>
+            <div class="tx-sub">سلفة: ${Number(u.loanDebt || 0).toLocaleString()} • أدوات: ${(u.inventory || []).length}</div>
           </div>
           <div class="tx-plus">${Number(u.balance || 0).toLocaleString()} PTS</div>
         </div>
@@ -2075,10 +2506,12 @@
       `).join('') || `<div class="tx-sub">لا توجد عمليات.</div>`;
 
       box.innerHTML = `
+        ${statsHtml}
+        ${depositsReviewHtml}
+        ${ticketsHtml}
         ${crafterSection}
         ${fxSection}
         ${broadcastSection}
-        <div style="margin-bottom:12px;">${cloudNote}</div>
         <div class="grid-2" style="margin-bottom:14px;">
           <div class="admin-box" style="margin:0;">
             <div class="section-title"><span>الحسابات المسجلة (${state.users.length})</span></div>
@@ -2113,14 +2546,17 @@
             <span class="tx-plus">${Number(acc.balance || 0).toLocaleString()} PTS</span>
           </div>
           <div class="tx-sub" style="margin-bottom:8px;">
-            رقم الحساب: <strong>${acc.iban}</strong> • آخر تسجيل دخول: <strong>${acc.lastLoginAt || 'غير مسجل'}</strong> • فتح الحساب: <strong>${acc.createdAt || 'غير مسجل'}</strong>
+            رقم الحساب: <strong>${acc.iban}</strong> • مديونية السلفة: <strong>${Number(acc.loanDebt || 0).toLocaleString()} PTS</strong> • آخر دخول: <strong>${acc.lastLoginAt || 'غير مسجل'}</strong>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
             <button type="button" id="adminToggleFreezeBtn" class="btn ${acc.frozen ? 'btn-gold' : 'btn-crimson'}" style="padding:7px 12px;font-size:0.82rem;">
               ${acc.frozen ? 'فك تجميد الحساب' : 'تجميد الحساب'}
             </button>
             <button type="button" id="adminResetCuffBtn" class="btn btn-ghost" style="padding:7px 12px;font-size:0.82rem;">
-              تصفير عداد الكلبشات (24 ساعة)
+              تصفير عداد الكلبشات
+            </button>
+            <button type="button" id="adminClearLoanBtn" class="btn btn-ghost" style="padding:7px 12px;font-size:0.82rem;">
+              إعفاء من السلفة
             </button>
           </div>
           <div style="margin-bottom:10px;">${invHtml}</div>
@@ -2128,10 +2564,7 @@
         </div>
       `;
 
-      bindCrafterGrantEvents(box, 'الأدمن');
-      bindFxAdminEvents(box);
-      bindBroadcastEvents(box);
-      bindAccountControlEvents(box, acc);
+      bindAdminAuxiliaryEvents(box);
 
       box.querySelectorAll('.acc-item').forEach(el => {
         el.addEventListener('click', () => {
@@ -2140,77 +2573,154 @@
         });
       });
 
+      box.querySelector('#adminToggleFreezeBtn')?.addEventListener('click', async () => {
+        const latest = await cloudGetUsers();
+        const list = cloudConnected ? latest : state.users;
+        const target = list.find(u => u.username === acc.username);
+        if (!target) return;
+        target.frozen = !target.frozen;
+        await cloudSaveUsers(list);
+        render();
+        toast(target.frozen ? `تم تجميد حساب ${target.username}` : `تم فك تجميد حساب ${target.username}`);
+      });
+
+      box.querySelector('#adminResetCuffBtn')?.addEventListener('click', async () => {
+        const latest = await cloudGetUsers();
+        const list = cloudConnected ? latest : state.users;
+        const target = list.find(u => u.username === acc.username);
+        if (!target) return;
+        target.lastHandcuffBoughtAt = null;
+        await cloudSaveUsers(list);
+        render();
+        toast(`تم تصفير عداد الكلبشات لحساب ${target.username}`);
+      });
+
+      box.querySelector('#adminClearLoanBtn')?.addEventListener('click', async () => {
+        const latest = await cloudGetUsers();
+        const list = cloudConnected ? latest : state.users;
+        const target = list.find(u => u.username === acc.username);
+        if (!target) return;
+        target.loanDebt = 0;
+        await cloudSaveUsers(list);
+        render();
+        toast(`تم تصفير مديونية السلفة لحساب ${target.username}`);
+      });
+
       const adjForm = box.querySelector('.adminAdjustForm');
-      if (adjForm) {
-        adjForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const uName = adjForm.querySelector('.adjUser').value;
-          const act = adjForm.querySelector('.adjAction').value;
-          const val = Number(adjForm.querySelector('.adjAmount').value);
-          if (!Number.isFinite(val) || val < 0) return;
+      adjForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const uName = adjForm.querySelector('.adjUser').value;
+        const act = adjForm.querySelector('.adjAction').value;
+        const val = Number(adjForm.querySelector('.adjAmount').value);
+        if (!Number.isFinite(val) || val < 0) return;
 
-          const latest = await cloudGetUsers();
-          const list = cloudConnected ? latest : state.users;
-          const target = list.find(u => u.username === uName);
-          if (!target) return;
+        const latest = await cloudGetUsers();
+        const list = cloudConnected ? latest : state.users;
+        const target = list.find(u => u.username === uName);
+        if (!target) return;
 
-          const before = Number(target.balance || 0);
-          if (act === 'add') target.balance = before + val;
-          if (act === 'sub') target.balance = Math.max(0, before - val);
-          if (act === 'set') target.balance = val;
+        const before = Number(target.balance || 0);
+        if (act === 'add') target.balance = before + val;
+        if (act === 'sub') target.balance = Math.max(0, before - val);
+        if (act === 'set') target.balance = val;
 
-          const diff = Number(target.balance || 0) - before;
-          if (diff !== 0) {
-            target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
-            target.transactions.unshift({
-              id: Date.now(),
-              type: diff > 0 ? 'in' : 'out',
-              title: 'تعديل رصيد من الأدمن',
-              meta: `${makeTxCode()} • الرصيد الجديد: ${Number(target.balance || 0).toLocaleString()} PTS`,
-              amount: Math.abs(diff),
-              date: new Date().toLocaleString('ar-EG')
-            });
-          }
+        const diff = Number(target.balance || 0) - before;
+        if (diff !== 0) {
+          target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
+          target.transactions.unshift({
+            id: Date.now(),
+            type: diff > 0 ? 'in' : 'out',
+            title: 'تعديل رصيد من الأدمن',
+            meta: `${makeTxCode()} • الرصيد الجديد: ${Number(target.balance || 0).toLocaleString()} PTS`,
+            amount: Math.abs(diff),
+            date: new Date().toLocaleString('ar-EG')
+          });
+        }
 
-          inspectedUser = target.username;
-          await cloudSaveUsers(list);
-          render();
-          toast('تم تحديث رصيد ' + target.username);
-        });
-      }
+        inspectedUser = target.username;
+        await cloudSaveUsers(list);
+        render();
+        toast('تم تحديث رصيد ' + target.username);
+      });
     }
 
-    function bindBroadcastEvents(box) {
+    function bindAdminAuxiliaryEvents(box) {
+      bindCrafterGrantEvents(box, 'الأدمن');
+      bindFxAdminEvents(box);
+
       const bForm = box.querySelector('.adminBroadcastForm');
-      if (!bForm) return;
-      bForm.addEventListener('submit', async (e) => {
+      bForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const val = bForm.querySelector('.broadcastInput').value;
         await cloudSaveBroadcast(val);
         renderBroadcast();
         toast(val.trim() ? 'تم نشر الإعلان للجميع' : 'تم إخفاء الإعلان');
       });
-      bForm.querySelector('.clearBroadcastBtn')?.addEventListener('click', async () => {
+      bForm?.querySelector('.clearBroadcastBtn')?.addEventListener('click', async () => {
         await cloudSaveBroadcast('');
         renderBroadcast();
         render();
         toast('تم مسح الإعلان');
       });
-    }
 
-    function renderPendingBadges() {
-      const pendingCount = ordersState.filter(o => o.status === 'pending').length;
-      ['dealerPendingBadge', 'adminPendingBadge'].forEach(id => {
-        const badge = document.getElementById(id);
-        if (!badge) return;
-        badge.textContent = String(pendingCount);
-        badge.classList.toggle('hidden', pendingCount <= 0);
+      box.querySelectorAll('.order-card[data-deposit-id]').forEach(card => {
+        const did = card.getAttribute('data-deposit-id');
+        card.querySelector('.reviewProofImg')?.addEventListener('click', (e) => {
+          openImageModal(e.target.src);
+        });
+        card.querySelector('.approveDepositBtn')?.addEventListener('click', async () => {
+          await handleDepositDecision(did, 'approve', '');
+        });
+        card.querySelector('.rejectDepositBtn')?.addEventListener('click', async () => {
+          const reason = (card.querySelector('.depositRejectReason')?.value || '').trim();
+          await handleDepositDecision(did, 'reject', reason);
+        });
       });
+
+      box.querySelectorAll('[data-ticket-id] .closeTicketBtn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const tid = btn.closest('[data-ticket-id]')?.getAttribute('data-ticket-id');
+          if (!tid) return;
+          const latestTickets = await cloudGetTickets();
+          const list = Array.isArray(latestTickets) ? [...latestTickets] : [...ticketsState];
+          const t = list.find(x => String(x.id) === String(tid));
+          if (t) t.status = 'closed';
+          await cloudSaveTickets(list);
+          render();
+          toast('تم إغلاق البلاغ.');
+        });
+      });
+    }
+    function renderPendingBadges() {
+      const pendingOrders = ordersState.filter(o => o.status === 'pending').length;
+      const pendingDeposits = depositsState.filter(d => d.status === 'pending').length;
+      const openTickets = ticketsState.filter(t => t.status !== 'closed').length;
+
+      const dBadge = document.getElementById('dealerPendingBadge');
+      if (dBadge) {
+        dBadge.textContent = String(pendingOrders);
+        dBadge.classList.toggle('hidden', pendingOrders <= 0);
+      }
+
+      const aBadge = document.getElementById('adminPendingBadge');
+      const totalAdminAlerts = pendingOrders + pendingDeposits + openTickets;
+      if (aBadge) {
+        aBadge.textContent = String(totalAdminAlerts);
+        aBadge.classList.toggle('hidden', totalAdminAlerts <= 0);
+      }
     }
 
     function render() {
       renderBroadcast();
       renderPendingBadges();
+
+      const pulseBadge = document.getElementById('cloudPulseBadge');
+      const pulseText = document.getElementById('cloudPulseText');
+      if (pulseBadge && pulseText) {
+        pulseBadge.classList.toggle('online', cloudConnected);
+        pulseText.textContent = cloudConnected ? 'متصل بالسحابة' : 'وضع محلي';
+      }
+
       const user = getCurrentUser();
       const authSec = document.getElementById('authSection');
       const appSec = document.getElementById('appSection');
@@ -2227,32 +2737,75 @@
         document.getElementById('standaloneDealerPanelBox').classList.toggle('hidden', standaloneMode !== 'dealer_panel');
         authBox.classList.toggle('wide', standaloneMode === 'panel' || standaloneMode === 'dealer_panel');
 
-        if (standaloneMode === 'panel') {
-          buildAdminHtml('extAdminContent');
-        }
-        if (standaloneMode === 'dealer_panel') {
-          buildDealerPanelHtml('extDealerContent');
-        }
+        if (standaloneMode === 'panel') buildAdminHtml('extAdminContent');
+        if (standaloneMode === 'dealer_panel') buildDealerPanelHtml('extDealerContent');
         return;
       }
 
       authSec.classList.add('hidden');
       appSec.classList.remove('hidden');
 
-      document.getElementById('welcomeUserText').textContent = `الحساب النشط: ${user.username}${user.frozen ? ' (مجمّد)' : ''}`;
+      const bal = Number(user.balance || 0);
+      const loanDebt = Number(user.loanDebt || 0);
+      let tier = 'STANDARD CARD';
+      if (bal >= 25000) tier = 'BLACK VIP • SAN ORI';
+      else if (bal >= 5000) tier = 'GOLD ELITE';
+
+      document.getElementById('welcomeUserText').textContent = `الحساب النشط: ${user.username}`;
+      document.getElementById('cardTierLabel').textContent = tier;
+      const statusBadge = document.getElementById('cardStatusBadge');
+      statusBadge.textContent = user.frozen ? 'مجمّد' : 'نشط';
+      statusBadge.className = `card-status-badge ${user.frozen ? 'card-status-frozen' : 'card-status-active'}`;
+
       document.getElementById('cardHolder').textContent = user.username;
       document.getElementById('cardIban').textContent = user.iban;
-      document.getElementById('cardBalance').textContent = `${Number(user.balance || 0).toLocaleString()} PTS`;
+      document.getElementById('cardBalance').textContent = `${bal.toLocaleString()} PTS`;
+      document.getElementById('cardLoanNotice').textContent = loanDebt > 0
+        ? `عليك سلفة قائمة بقيمة: ${loanDebt.toLocaleString()} PTS (تُسدد تلقائياً من الإيداع/التحويل)`
+        : '';
 
       const txs = user.transactions || [];
       document.getElementById('txList').innerHTML = txs.length
-        ? txs.map(t => `
-            <div class="tx-item">
+        ? txs.map((t, idx) => `
+            <div class="tx-item" data-tx-idx="${idx}" style="cursor:pointer;">
               <div><div class="tx-title">${t.title}</div><div class="tx-sub">${t.meta || ''} • ${t.date}</div></div>
               <div class="${t.type === 'in' ? 'tx-plus' : 'tx-minus'}">${t.type === 'in' ? '+' : '-'}${Number(t.amount).toLocaleString()} PTS</div>
             </div>
           `).join('')
         : `<div class="tx-sub">لا توجد عمليات مسجلة حتى الآن.</div>`;
+
+      document.querySelectorAll('#txList .tx-item[data-tx-idx]').forEach(el => {
+        el.addEventListener('click', () => {
+          const i = Number(el.getAttribute('data-tx-idx'));
+          if (txs[i]) openReceiptModal(txs[i]);
+        });
+      });
+
+      const myDeposits = depositsState.filter(d => String(d.username).toLowerCase() === String(user.username).toLowerCase());
+      document.getElementById('myDepositsList').innerHTML = myDeposits.length
+        ? myDeposits.map(d => {
+            const stClass = d.status === 'approved' ? 'status-approved' : (d.status === 'rejected' ? 'status-rejected' : 'status-pending');
+            const stLabel = d.status === 'approved' ? 'مقبول • تمت إضافة الرصيد' : (d.status === 'rejected' ? 'مرفوض' : 'قيد المراجعة');
+            return `
+              <div class="order-card">
+                <div class="order-header">
+                  <div>
+                    <span class="status-pill ${stClass}">${stLabel}</span>
+                    <strong style="margin-right:8px;">+${Number(d.amount).toLocaleString()} PTS</strong>
+                    <span class="tx-sub" style="margin-right:8px;">(${d.source})</span>
+                  </div>
+                  <span class="tx-sub">#${d.txCode} • ${d.createdAt}</span>
+                </div>
+                ${d.imageData ? `<div><img src="${d.imageData}" class="proof-thumb myProofImg" alt="إثبات الإيداع" /></div>` : ''}
+                ${d.status === 'rejected' ? `<div class="tx-sub" style="color:#fda4af;">سبب الرفض: ${d.rejectReason || 'غير محدد'}</div>` : ''}
+              </div>
+            `;
+          }).join('')
+        : `<div class="tx-sub">لم ترسل أي طلبات إيداع من اللعبة بعد.</div>`;
+
+      document.querySelectorAll('.myProofImg').forEach(img => {
+        img.addEventListener('click', () => openImageModal(img.src));
+      });
 
       const myOrders = ordersState.filter(o => String(o.username).toLowerCase() === String(user.username).toLowerCase());
       document.getElementById('myOrdersList').innerHTML = myOrders.length
@@ -2280,19 +2833,22 @@
                   </div>
                   <span class="tx-sub">#${o.txCode} • ${o.createdAt}</span>
                 </div>
-                ${(o.status === 'approved' || o.status === 'delivered')
-                  ? `<div class="delivery-box">
-                       <strong>تفاصيل التسليم في سان أوري:</strong><br/>
-                       المنطقة: <strong>${o.deliveryZone}</strong> • المعاد: <strong>${o.deliveryTime}</strong> • كود التسليم: <strong>${o.deliveryCode || '----'}</strong>
-                       ${o.dealerNote ? `<br/>ملاحظة التاجر: <strong>${o.dealerNote}</strong>` : ''}
-                     </div>
-                     ${o.status === 'approved'
-                       ? `<button type="button" class="btn btn-emerald confirmReceivedBtn" style="align-self:flex-start;padding:8px 14px;font-size:0.85rem;">تأكيد استلام المعدات</button>`
-                       : `<div class="tx-sub" style="color:#93c5fd;">تم تأكيد الاستلام بتاريخ ${o.deliveredAt || ''}</div>`
-                     }`
-                  : (o.status === 'rejected'
-                    ? `<div class="tx-sub" style="color:#fda4af;">سبب الرفض: ${o.rejectReason || 'غير محدد'}</div>`
-                    : `<div class="tx-sub">تم خصم النقاط مبدئياً وبانتظار قرار التاجر أو الأدمن.</div>`
+                ${o.status === 'pending'
+                  ? `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+                       <span class="tx-sub">تم خصم النقاط مبدئياً وبانتظار قرار التاجر أو الأدمن.</span>
+                       <button type="button" class="btn btn-crimson cancelMyOrderBtn" style="padding:6px 12px;font-size:0.8rem;">إلغاء الطلب واسترجاع النقاط</button>
+                     </div>`
+                  : ((o.status === 'approved' || o.status === 'delivered')
+                    ? `<div class="delivery-box">
+                         <strong>تفاصيل التسليم في سان أوري:</strong><br/>
+                         المنطقة: <strong>${o.deliveryZone}</strong> • المعاد: <strong>${o.deliveryTime}</strong> • كود التسليم: <strong>${o.deliveryCode || '----'}</strong>
+                         ${o.dealerNote ? `<br/>ملاحظة التاجر: <strong>${o.dealerNote}</strong>` : ''}
+                       </div>
+                       ${o.status === 'approved'
+                         ? `<button type="button" class="btn btn-emerald confirmReceivedBtn" style="align-self:flex-start;padding:8px 14px;font-size:0.85rem;">تأكيد استلام المعدات</button>`
+                         : `<div class="tx-sub" style="color:#93c5fd;">تم تأكيد الاستلام بتاريخ ${o.deliveredAt || ''}</div>`
+                       }`
+                    : `<div class="tx-sub" style="color:#fda4af;">سبب الرفض: ${o.rejectReason || 'غير محدد'}</div>`
                   )
                 }
               </div>
@@ -2302,11 +2858,15 @@
 
       document.querySelectorAll('.order-card[data-my-order-id] .confirmReceivedBtn').forEach(btn => {
         btn.addEventListener('click', async () => {
-          const card = btn.closest('[data-my-order-id]');
-          const oid = card?.getAttribute('data-my-order-id');
-          if (oid) {
-            await confirmOrderReceivedByPlayer(oid);
-          }
+          const oid = btn.closest('[data-my-order-id]')?.getAttribute('data-my-order-id');
+          if (oid) await confirmOrderReceivedByPlayer(oid);
+        });
+      });
+
+      document.querySelectorAll('.order-card[data-my-order-id] .cancelMyOrderBtn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const oid = btn.closest('[data-my-order-id]')?.getAttribute('data-my-order-id');
+          if (oid) await cancelPendingOrderByPlayer(oid);
         });
       });
 
@@ -2353,12 +2913,10 @@
 
           const currentSession = getCurrentUser();
           if (!currentSession) return;
-
           if (currentSession.frozen) {
             toast('حسابك مجمّد حالياً، تواصل مع الإدارة.');
             return;
           }
-
           if (item.dailyLimit && cuffRemaining(currentSession) > 0) {
             toast('مسموح بالكلبشات مرة واحدة كل 24 ساعة.');
             return;
@@ -2371,14 +2929,8 @@
           const latestUsers = await cloudGetUsers();
           const usersList = cloudConnected ? [...latestUsers] : [...state.users];
           const current = usersList.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
-          if (!current) return;
-
-          if (current.frozen) {
-            toast('حسابك مجمّد حالياً، تواصل مع الإدارة.');
-            return;
-          }
-          if (Number(current.balance || 0) < item.price) {
-            toast('رصيدك غير كافٍ.');
+          if (!current || current.frozen || Number(current.balance || 0) < item.price) {
+            toast('تعذر إتمام الطلب، تحقق من الرصيد أو حالة الحساب.');
             return;
           }
 
@@ -2443,16 +2995,164 @@
 
       document.getElementById('inAppDealerLoginBox').classList.toggle('hidden', dealerUnlocked);
       document.getElementById('inAppDealerContent').classList.toggle('hidden', !dealerUnlocked);
-      if (dealerUnlocked) {
-        buildDealerPanelHtml('inAppDealerContent');
-      }
+      if (dealerUnlocked) buildDealerPanelHtml('inAppDealerContent');
 
       document.getElementById('inAppAdminLoginBox').classList.toggle('hidden', adminUnlocked);
       document.getElementById('inAppAdminContent').classList.toggle('hidden', !adminUnlocked);
-      if (adminUnlocked) {
-        buildAdminHtml('inAppAdminContent');
-      }
+      if (adminUnlocked) buildAdminHtml('inAppAdminContent');
     }
+
+    document.getElementById('closeReceiptModalBtn')?.addEventListener('click', () => {
+      document.getElementById('receiptModal').classList.add('hidden');
+    });
+
+    document.getElementById('closeImageModalBtn')?.addEventListener('click', () => {
+      document.getElementById('imageModal').classList.add('hidden');
+    });
+
+    document.getElementById('rpThemeSelect')?.addEventListener('change', (e) => {
+      document.body.setAttribute('data-rp-theme', e.target.value);
+    });
+
+    document.getElementById('depositImageInput')?.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) {
+        pendingProofDataUrl = '';
+        document.getElementById('depositPreviewWrap').classList.add('hidden');
+        return;
+      }
+      try {
+        pendingProofDataUrl = await compressImageFile(file);
+        document.getElementById('depositPreviewImg').src = pendingProofDataUrl;
+        document.getElementById('depositPreviewWrap').classList.remove('hidden');
+      } catch (err) {
+        toast('تعذر قراءة الصورة، اختر صورة أخرى.');
+      }
+    });
+
+    document.getElementById('depositProofForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = getCurrentUser();
+      if (!user) return;
+      if (user.frozen) {
+        toast('حسابك مجمّد حالياً.');
+        return;
+      }
+
+      const hasOpenDeposit = depositsState.some(
+        d => String(d.username).toLowerCase() === String(user.username).toLowerCase() && d.status === 'pending'
+      );
+      if (hasOpenDeposit) {
+        toast('لديك طلب إيداع قيد المراجعة بالفعل، انتظر قرار الأدمن أولاً.');
+        return;
+      }
+
+      const amount = Number(document.getElementById('depositAmountInput').value);
+      const source = document.getElementById('depositSourceSelect').value;
+      const note = document.getElementById('depositNoteInput').value.trim();
+
+      if (!Number.isFinite(amount) || amount <= 0) {
+        toast('أدخل مبلغاً صحيحاً أكبر من صفر.');
+        return;
+      }
+      if (!pendingProofDataUrl) {
+        toast('يجب رفع صورة الإثبات من اللعبة أولاً.');
+        return;
+      }
+
+      const latestDeposits = await cloudGetDeposits();
+      const list = Array.isArray(latestDeposits) ? [...latestDeposits] : [...depositsState];
+      list.unshift({
+        id: 'dep_' + Date.now(),
+        txCode: makeTxCode(),
+        username: user.username,
+        iban: user.iban,
+        amount,
+        source,
+        note,
+        imageData: pendingProofDataUrl,
+        status: 'pending',
+        rejectReason: '',
+        createdAt: new Date().toLocaleString('ar-EG'),
+        decidedAt: ''
+      });
+
+      await cloudSaveDeposits(list);
+      pendingProofDataUrl = '';
+      document.getElementById('depositProofForm').reset();
+      document.getElementById('depositPreviewWrap').classList.add('hidden');
+      render();
+      toast('تم إرسال طلب الإيداع وصورة الإثبات للأدمن بنجاح!');
+    });
+
+    document.getElementById('requestLoanBtn')?.addEventListener('click', async () => {
+      const currentSession = getCurrentUser();
+      if (!currentSession) return;
+      if (currentSession.frozen) {
+        toast('حسابك مجمّد حالياً.');
+        return;
+      }
+
+      const reqAmount = Number(document.getElementById('loanAmountInput').value);
+      if (!Number.isFinite(reqAmount) || reqAmount < 50 || reqAmount > MAX_LOAN_AMOUNT) {
+        toast(`مبلغ السلفة يجب أن يكون بين 50 و ${MAX_LOAN_AMOUNT} نقطة.`);
+        return;
+      }
+
+      const latestUsers = await cloudGetUsers();
+      const usersList = cloudConnected ? [...latestUsers] : [...state.users];
+      const user = usersList.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
+      if (!user) return;
+
+      const existingDebt = Number(user.loanDebt || 0);
+      if (existingDebt + reqAmount > MAX_LOAN_AMOUNT) {
+        toast(`الحد الأقصى لإجمالي السلفة هو ${MAX_LOAN_AMOUNT} PTS.`);
+        return;
+      }
+
+      const nowStr = new Date().toLocaleString('ar-EG');
+      user.loanDebt = existingDebt + reqAmount;
+      user.balance = Number(user.balance || 0) + reqAmount;
+      user.transactions = Array.isArray(user.transactions) ? user.transactions : [];
+      user.transactions.unshift({
+        id: Date.now(),
+        type: 'in',
+        title: 'استلام سلفة بنكية (RP Loan)',
+        meta: `#${makeTxCode()} • إجمالي السلفة القائمة: ${user.loanDebt.toLocaleString()} PTS`,
+        amount: reqAmount,
+        date: nowStr
+      });
+
+      await cloudSaveUsers(usersList);
+      document.getElementById('loanAmountInput').value = '';
+      render();
+      toast(`تم إضافة سلفة بقيمة ${reqAmount.toLocaleString()} PTS لحسابك!`);
+    });
+
+    document.getElementById('ticketForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = getCurrentUser();
+      if (!user) return;
+      const msg = document.getElementById('ticketMessageInput').value.trim();
+      if (!msg) return;
+
+      const latestTickets = await cloudGetTickets();
+      const list = Array.isArray(latestTickets) ? [...latestTickets] : [...ticketsState];
+      list.unshift({
+        id: 'tkt_' + Date.now(),
+        username: user.username,
+        iban: user.iban,
+        message: msg,
+        status: 'open',
+        createdAt: new Date().toLocaleString('ar-EG')
+      });
+
+      await cloudSaveTickets(list);
+      document.getElementById('ticketForm').reset();
+      render();
+      toast('تم إرسال بلاغك للإدارة بنجاح.');
+    });
+
     document.querySelectorAll('.copySupportBtn').forEach(btn => {
       btn.addEventListener('click', () => {
         navigator.clipboard?.writeText(SUPPORT_DISCORD).catch(() => {});
@@ -2474,21 +3174,9 @@
       document.getElementById('loginForm').classList.add('hidden');
     });
 
-    document.getElementById('openAdminBtn').addEventListener('click', () => {
-      standaloneMode = 'login';
-      render();
-    });
-
-    document.getElementById('extAdminBackBtn').addEventListener('click', () => {
-      standaloneMode = 'none';
-      render();
-    });
-
-    document.getElementById('extAdminCloseBtn').addEventListener('click', () => {
-      adminUnlocked = false;
-      standaloneMode = 'none';
-      render();
-    });
+    document.getElementById('openAdminBtn').addEventListener('click', () => { standaloneMode = 'login'; render(); });
+    document.getElementById('extAdminBackBtn').addEventListener('click', () => { standaloneMode = 'none'; render(); });
+    document.getElementById('extAdminCloseBtn').addEventListener('click', () => { adminUnlocked = false; standaloneMode = 'none'; render(); });
 
     document.getElementById('extAdminLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -2497,8 +3185,7 @@
       if (u === ADMIN_USER && p === ADMIN_PASS) {
         adminUnlocked = true;
         standaloneMode = 'panel';
-        document.getElementById('extAdminUser').value = '';
-        document.getElementById('extAdminPass').value = '';
+        document.getElementById('extAdminLoginForm').reset();
         await syncFromCloud();
         render();
         toast('تم فتح لوحة الأدمن');
@@ -2507,21 +3194,9 @@
       }
     });
 
-    document.getElementById('openDealerAuthBtn').addEventListener('click', () => {
-      standaloneMode = 'dealer_login';
-      render();
-    });
-
-    document.getElementById('extDealerBackBtn').addEventListener('click', () => {
-      standaloneMode = 'none';
-      render();
-    });
-
-    document.getElementById('extDealerCloseBtn').addEventListener('click', () => {
-      dealerUnlocked = false;
-      standaloneMode = 'none';
-      render();
-    });
+    document.getElementById('openDealerAuthBtn').addEventListener('click', () => { standaloneMode = 'dealer_login'; render(); });
+    document.getElementById('extDealerBackBtn').addEventListener('click', () => { standaloneMode = 'none'; render(); });
+    document.getElementById('extDealerCloseBtn').addEventListener('click', () => { dealerUnlocked = false; standaloneMode = 'none'; render(); });
 
     document.getElementById('extDealerLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -2530,8 +3205,7 @@
       if ((u === DEALER_USER && p === DEALER_PASS) || (u === ADMIN_USER && p === ADMIN_PASS)) {
         dealerUnlocked = true;
         standaloneMode = 'dealer_panel';
-        document.getElementById('extDealerUser').value = '';
-        document.getElementById('extDealerPass').value = '';
+        document.getElementById('extDealerLoginForm').reset();
         await syncFromCloud();
         render();
         toast('تم فتح لوحة تاجر الأسلحة');
@@ -2562,6 +3236,7 @@
         password,
         iban: makeIban(usersList),
         balance: INITIAL_BALANCE,
+        loanDebt: 0,
         frozen: false,
         lastHandcuffBoughtAt: null,
         createdAt: nowStr,
@@ -2621,7 +3296,7 @@
       btn.addEventListener('click', () => {
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        ['bankView', 'shopView', 'invView', 'dealerView', 'adminView'].forEach(id => {
+        ['bankView', 'depositView', 'shopView', 'invView', 'dealerView', 'adminView'].forEach(id => {
           document.getElementById(id).classList.toggle('hidden', id !== btn.dataset.view);
         });
         render();
@@ -2639,7 +3314,6 @@
       e.preventDefault();
       const currentSession = getCurrentUser();
       if (!currentSession) return;
-
       if (currentSession.frozen) {
         toast('حسابك مجمّد حالياً، لا يمكنك إجراء تحويلات.');
         return;
@@ -2651,12 +3325,8 @@
       const amount = Number(document.getElementById('transferAmount').value);
       const note = document.getElementById('transferNote').value.trim();
 
-      if (!normalizedTarget) {
-        toast('أدخل رقم حساب المستلم بشكل صحيح.');
-        return;
-      }
-      if (!Number.isFinite(amount) || amount <= 0) {
-        toast('أدخل مبلغاً صحيحاً أكبر من صفر.');
+      if (!normalizedTarget || !Number.isFinite(amount) || amount <= 0) {
+        toast('تحقق من رقم الحساب والمبلغ.');
         return;
       }
       if (cleanIbanKey(currentSession.iban) === normalizedTarget) {
@@ -2673,16 +3343,12 @@
       const sender = usersList.find(u => String(u.username).toLowerCase() === String(currentSession.username).toLowerCase());
       const receiver = usersList.find(u => cleanIbanKey(u.iban) === normalizedTarget);
 
-      if (!sender) {
-        toast('تعذر العثور على حسابك.');
-        return;
-      }
-      if (sender.frozen) {
-        toast('حسابك مجمّد حالياً، لا يمكنك إجراء تحويلات.');
+      if (!sender || sender.frozen) {
+        toast('تعذر إتمام التحويل من حسابك.');
         return;
       }
       if (!receiver) {
-        toast(`لم يتم العثور على حساب برقم (${normalizedTarget}). تأكد من الرقم أو اطلب من المستلم نسخ رقم حسابه.`);
+        toast(`لم يتم العثور على حساب برقم (${normalizedTarget}).`);
         return;
       }
       if (Number(sender.balance || 0) < amount) {
@@ -2693,8 +3359,6 @@
       const now = new Date().toLocaleString('ar-EG');
       const txCode = makeTxCode();
       sender.balance = Number(sender.balance || 0) - amount;
-      receiver.balance = Number(receiver.balance || 0) + amount;
-
       sender.transactions = Array.isArray(sender.transactions) ? sender.transactions : [];
       sender.transactions.unshift({
         id: Date.now() + 1,
@@ -2705,15 +3369,13 @@
         date: now
       });
 
-      receiver.transactions = Array.isArray(receiver.transactions) ? receiver.transactions : [];
-      receiver.transactions.unshift({
-        id: Date.now() + 2,
-        type: 'in',
-        title: `استلام من ${sender.username} (${sender.iban})`,
-        meta: `#${txCode}${note ? ' • ' + note : ''}`,
+      applyIncomingFundsWithLoanSettlement(
+        receiver,
         amount,
-        date: now
-      });
+        now,
+        `استلام من ${sender.username} (${sender.iban})`,
+        `#${txCode}${note ? ' • ' + note : ''}`
+      );
 
       await cloudSaveUsers(usersList);
       document.getElementById('transferForm').reset();
@@ -2728,8 +3390,7 @@
       const p = document.getElementById('inAppDealerPass').value;
       if ((u === DEALER_USER && p === DEALER_PASS) || (u === ADMIN_USER && p === ADMIN_PASS)) {
         dealerUnlocked = true;
-        document.getElementById('inAppDealerUser').value = '';
-        document.getElementById('inAppDealerPass').value = '';
+        document.getElementById('inAppDealerLoginForm').reset();
         await syncFromCloud();
         render();
         toast('تم فتح لوحة تاجر الأسلحة');
@@ -2744,8 +3405,7 @@
       const p = document.getElementById('inAppAdminPass').value;
       if (u === ADMIN_USER && p === ADMIN_PASS) {
         adminUnlocked = true;
-        document.getElementById('inAppAdminUser').value = '';
-        document.getElementById('inAppAdminPass').value = '';
+        document.getElementById('inAppAdminLoginForm').reset();
         await syncFromCloud();
         render();
         toast('تم فتح لوحة الأدمن');
